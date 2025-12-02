@@ -1,0 +1,24 @@
+<div class="movies-container">
+    @for (movie of movies; track movie.id){
+    <div class="movie-card" [routerLink]="['/movies', movie.slug]" (click)="goToMovieDetail(movie.slug)">
+        <h2 class="movie-title">{{ movie.title }}</h2>
+        <ul class="movie-details">
+            <li><strong>Año:</strong> {{ movie.year }}</li>
+            <li><strong>Valoración:</strong> {{ movie.rating }}</li>
+            <li><strong>País:</strong> {{ movie.country }}</li>
+        </ul>
+        <div class="movie-image">
+            <img [src]="movie.image" [alt]="movie.title" />
+        </div>
+    </div>
+    } @empty{
+    @for (s of skeletons; track $index) {
+    <app-skeleton-loader></app-skeleton-loader>
+    }
+    }
+    <div class="pagination">
+        <button (click)="prevPage()" [disabled]="currentPage === 1">Anterior</button>
+        <span>Página {{ currentPage }} de {{ lastPage }}</span>
+        <button (click)="nextPage()" [disabled]="currentPage === lastPage">Siguiente</button>
+    </div>
+</div>

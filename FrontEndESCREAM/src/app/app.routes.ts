@@ -1,8 +1,10 @@
 import { Routes } from '@angular/router';
 import { CabeceraLoginComponent } from './components/cabecera-login/cabecera-login.component';
 import { MainComponent } from './components/main/main.component';
-import { MoviesListComponent } from './components/movies-list/movies-list.component';
+import { MoviesListComponent } from './components/movies/movies-list/movies-list.component';
 import { MainLayoutComponent } from './layout/main-layout/main-layout.component';
+import { MovieDetailsComponent } from './components/movies/movie-details/movie-details.component';
+import { PlansListComponent } from './components/plans/plans-list/plans-list.component';
 
 export const routes: Routes = [
   {
@@ -11,6 +13,8 @@ export const routes: Routes = [
     children: [
       { path: '', component: MainComponent },
       { path: 'movies', component: MoviesListComponent },
+      { path: 'plans', component: PlansListComponent },
+      { path: 'movies/:slug', component: MovieDetailsComponent },
     ]
   },
   // Rutas sin layout (login, register)

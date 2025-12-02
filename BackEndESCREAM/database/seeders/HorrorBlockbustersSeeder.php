@@ -122,9 +122,9 @@ class HorrorBlockbustersSeeder extends Seeder
             Subgenre::updateOrCreate(
                 ['id' => $sub['id']],
                 [
-                    'name' => $sub['name'],
-                    'description' => $sub['description'],
-                    'slug' => Str::slug($sub['name']),
+                    'name' => $sub['name'] ?? null,
+                    'description' => $sub['description'] ?? null,
+                    'slug' => Str::slug($sub['name']) ?? null,
                 ]
             );
         }
@@ -159,8 +159,23 @@ class HorrorBlockbustersSeeder extends Seeder
         ];
 
         foreach ($moviesData as $movie) {
-            Movie::updateOrCreate(['id' => $movie['id']], $movie);
+            Movie::updateOrCreate(
+                ['id' => $movie['id']], // condición para buscar
+                [
+                    'title' => $movie['title'],
+                    'slug' => Str::slug($movie['title']), 
+                    'year' => $movie['year'] ?? null,
+                    'synopsis' => $movie['synopsis'] ?? null,
+                    'image' => $movie['image'] ?? null,
+                    'rating' => $movie['rating'] ?? null,
+                    'director_id' => $movie['director_id'] ?? null,
+                    'production_company_id' => $movie['production_company_id'] ?? null,
+                    'country' => $movie['country'] ?? null
+                ]
+            );
         }
+
+
 
         // Tabla pivote movie_actor
         DB::table('movie_actor')->truncate();

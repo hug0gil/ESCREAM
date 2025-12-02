@@ -6,6 +6,7 @@
   --color-accent1: #FF3C38;
   --color-accent2: #ff9f1c;
   --color-text: #FFFFFF;
+  --degradado: linear-gradient(180deg, #180a31 0%, #0D0DFF 100%);
 }
 
 * {

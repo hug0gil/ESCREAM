@@ -13,12 +13,49 @@ class MovieService
 {
     public function getAllPaginated(int $perPage = 10)
     {
-        return Movie::paginate($perPage);
+        $movies = Movie::with(['actors', 'director', 'productionCompany', 'subgenres'])
+            ->paginate($perPage);
+
+        // Transformamos cada película a camelCase
+        $movies->getCollection()->transform(function ($movie) {
+            return [
+                'id' => $movie->id,
+                'title' => $movie->title,
+                'slug' => $movie->slug,
+                'year' => $movie->year,
+                'rating' => $movie->rating,
+                'country' => $movie->country,
+                'synopsis' => $movie->synopsis,
+                'image' => $movie->image,
+                'director' => $movie->director,
+                'productionCompany' => $movie->productionCompany,
+                'actors' => $movie->actors,
+                'subgenres' => $movie->subgenres,
+            ];
+        });
+
+        return $movies;
     }
 
-    public function getMovieWithRelations(Movie $movie)
+
+    public function getMovie(Movie $movie)
     {
-        return $movie->load(['actors', 'director', 'productionCompany', 'subgenres']);
+        return Movie::with(['actors', 'director', 'productionCompany', 'subgenres']);
+    }
+
+    public function createMovie(array $validatedData)
+    {
+        try {
+            $movie = Movie::create($validatedData);
+            return $movie;
+        } catch (QueryException $e) {
+            Log::error('Failed to create movie', [
+                'validated_data_movie' => $validatedData,
+                'error_message' => $e->getMessage(),
+                'error_code' => $e->getCode()
+            ]);
+            throw $e;
+        };
     }
 
     public function updateMovie(Movie $movie, array $validatedData): Movie
@@ -35,6 +72,7 @@ class MovieService
 
         return $movie;
     }
+
 
     public function deleteMovie(Movie $movie): bool
     {

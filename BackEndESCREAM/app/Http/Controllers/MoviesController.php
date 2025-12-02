@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateMovieRequest;
 use App\Http\Requests\UpdateMovieRequest;
 use App\Models\Movie;
 use App\Services\Movie\MovieService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Symfony\Component\HttpFoundation\Response;
 
 class MoviesController extends Controller
@@ -23,9 +25,32 @@ class MoviesController extends Controller
 
     public function show(Movie $movie)
     {
-        $movieData = $this->movieService->getMovieWithRelations($movie);
+        $movieData = $this->movieService->getMovie($movie);
         return response()->json(['movieData' => $movieData], Response::HTTP_OK);
     }
+
+    public function store(CreateMovieRequest $request)
+    {
+        try {
+            $movie = $this->movieService->createMovie($request->validated());
+
+
+            Artisan::call('db:seed', [
+                '--class' => 'MovieImageSeeder',
+            ]);
+
+            return response()->json([
+                "message" => "Movie created successfully!",
+                "movie" => $movie
+            ], Response::HTTP_CREATED);
+        } catch (\Exception $e) {
+            return response()->json([
+                "error" => "Failed to create movie",
+                "details" => $e->getMessage()
+            ], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
 
     public function update(UpdateMovieRequest $request, Movie $movie)
     {
@@ -74,5 +99,11 @@ class MoviesController extends Controller
         }
 
         return response()->json($movies, Response::HTTP_OK);
+    }
+
+    public function showBySlug(string $slug)
+    {
+        $movie = Movie::where('slug', $slug)->firstOrFail();
+        return response()->json($movie, Response::HTTP_OK);
     }
 }

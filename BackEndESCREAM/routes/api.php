@@ -48,17 +48,21 @@ Route::prefix('admin')->middleware([LogRequests::class, CheckRole::class])->grou
 });
 
 // PUBLIC MOVIES
-Route::get("/movies/plans", [MoviesController::class, "getAllPlans"]);
+Route::get('/movies/plans', [MoviesController::class, "getAllPlans"]);
 Route::get('/movies/subgenres', [SubGenresController::class, "index"]);
 Route::get('/movies/subgenre/{subgenreSlug}', [MoviesController::class, 'getMoviePerSubgenre'])->middleware(LogRequests::class);
 Route::get('/movies/getImage/{movie}', [MoviesController::class, 'getImage']);
+
+// Provisional
 Route::get('movies/', action: [MoviesController::class, 'index']);
+Route::get('/movies/slug/{slug}', [MoviesController::class, 'showBySlug']);
+Route::get('/{movie}', [MoviesController::class, 'show']);
 
 
 // AUTHTENTICATED + SUBSCRIBED MOVIES
 Route::prefix('movies')->middleware([CheckSubscription::class])->group(function () {
     //Route::get('/', [MoviesController::class, 'index']);
-    Route::get('/{movie}', [MoviesController::class, 'show']);
+    // Route::get('/{movie}', [MoviesController::class, 'show']);
 });
 
 // ADMIN MOVIES

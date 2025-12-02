@@ -42,6 +42,8 @@
   animation-delay: 0.6s;
   /* cascada: comienza después del fade-in del logo */
   -webkit-text-stroke: 1px black;
+  user-select: none;
+
 }
 
 /* Span "CREAM" entra desde la derecha con retraso */
@@ -53,6 +55,8 @@
   animation: slideInRight 0.8s ease-out forwards;
   animation-delay: 0.9s;
   -webkit-text-stroke: 1px black;
+  user-select: none;
+
 }
 
 /* Keyframes para entrada lateral de las letras */

@@ -7,8 +7,6 @@ div {
 .main-container {
   display: flex;
   justify-content: center;
-  /* centra horizontalmente */
   align-items: center;
-  /* centra verticalmente */
   padding: 2rem;
 }

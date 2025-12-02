@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Subgenre extends Model
 {
@@ -13,6 +14,19 @@ class Subgenre extends Model
         "created_at",
         "updated_at"
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::creating(function ($subgenre) {
+            $subgenre->slug = Str::slug($subgenre->name);
+        });
+
+        static::updating(function ($subgenre) {
+            $subgenre->slug = Str::slug($subgenre->name);
+        });
+    }
 
 
     public function movies()

@@ -1,0 +1,29 @@
+<div class="movies-container">
+    @for (p of plans; track p.id) {
+
+    <div class="movie-card">
+        <h2 class="movie-title">{{p.name}}</h2>
+        <ul class="movie-details">
+            <li><strong>Precio:</strong> {{p.price}} €</li>
+            <li><strong>Nº de dispositivos:</strong> {{p.devices_allowed}} </li>
+
+        </ul>
+    </div>
+    }
+    @empty{
+    @for (s of skeletons; track $index) {
+    <app-skeleton-loader></app-skeleton-loader>
+    }
+    }
+
+
+
+</div>
+
+<!-- 
+
+@for (plan of plans; track plan.id){
+
+[routerLink]="['/plans', plan.id]"
+
+-->
