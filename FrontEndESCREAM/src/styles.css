@@ -78,6 +78,48 @@ button:hover {
   transform: scale(1.05);
 }
 
+/* ==============================================================
+   BOTÓN DE SUBMIT ADAPTADO CON ESTILO PÍLDORA Y RETRO
+   ============================================================== */
+.login button[type="submit"] {
+    /* --- Propiedades fusionadas de la inspiración --- */
+    font-family: 'Monoton', cursive;
+    /* La fuente retro clave */
+    border-radius: 50px;
+    /* Forma de píldora súper redondeada */
+    /* Sombra de texto sutil para dar profundidad y legibilidad */
+    text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+
+    /* --- Propiedades originales ajustadas para el nuevo estilo --- */
+    width: 100%;
+    padding: 1rem 2rem;
+    /* Mantenemos un buen acolchado */
+    margin: 1.5rem 0;
+    /* Aumentamos el margen para que respire */
+    font-size: 1.1rem;
+    /* Un poco más grande para la fuente 'Monoton' */
+    font-weight: normal;
+    /* 'Monoton' no necesita bold */
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    /* Más espaciado para esta fuente */
+
+    /* --- Estilo visual y de interacción --- */
+    background: var(--color-accent2);
+    color: var(--color-primary);
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(255, 159, 28, 0.4);
+    /* Sombra "glow" */
+    transition: all 0.3s ease-out;
+}
+
+/* Efecto hover mejorado: se eleva y brilla más */
+.login button[type="submit"]:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(255, 159, 28, 0.6);
+}
+
 .container {
   width: 90%;
   max-width: 1200px;

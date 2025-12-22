@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario con Dropdown</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 2rem;
+            background-color: #f5f5f5;
+        }
+
+        form {
+            max-width: 400px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 1rem 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-item {
+            position: relative;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .filter-item label {
+            font-weight: bold;
+        }
+
+        .dropdown-button {
+            margin-left: 0.5rem;
+            padding: 0.3rem 0.6rem;
+            border: none;
+            background-color: #ff9f1c;
+            color: #fff;
+            border-radius: 0.3rem;
+            cursor: pointer;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 40px;
+            left: 0;
+            width: 150px;
+            background-color: #ffb347;
+            border-radius: 0.5rem;
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s ease;
+            opacity: 0;
+            z-index: 10;
+        }
+
+        .dropdown-menu.open {
+            max-height: 500px;
+            opacity: 1;
+        }
+
+        .dropdown-menu li {
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+        }
+
+        .dropdown-menu li:hover {
+            background-color: #ff9f1c;
+            color: #fff;
+        }
+    </style>
+</head>
+
+<body>
+
+    <form>
+        <div class="filter-item">
+            <label>Género:</label>
+            <button type="button" class="dropdown-button" onclick="toggleDropdown()">▼</button>
+            <ul class="dropdown-menu" id="genreDropdown">
+                <li>Acción</li>
+                <li>Comedia</li>
+                <li>Drama</li>
+                <li>Terror</li>
+            </ul>
+        </div>
+
+        <div class="filter-item">
+            <label>Año:</label>
+            <button type="button" class="dropdown-button" onclick="toggleDropdownYear()">▼</button>
+            <ul class="dropdown-menu" id="yearDropdown">
+                <li>2025</li>
+                <li>2024</li>
+                <li>2023</li>
+                <li>2022</li>
+            </ul>
+        </div>
+    </form>
+
+    <script>
+        function toggleDropdown() {
+            const dropdown = document.getElementById('genreDropdown');
+            dropdown.classList.toggle('open');
+        }
+
+        function toggleDropdownYear() {
+            const dropdown = document.getElementById('yearDropdown');
+            dropdown.classList.toggle('open');
+        }
+    </script>
+
+</body>
+
+</html>

@@ -2,19 +2,171 @@
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2rem;
-    padding: 2.5rem;
     justify-items: center;
 }
+
+/* ============================================================
+ MENÚ DESPLEGABLE DE FILTRADO
+============================================================ */
+
+.filter-menu {
+    background: var(--degradado);
+    width: 100%;
+    border-radius: 1.2rem;
+    padding: 1rem;
+    border: 4px solid #000000;
+
+    box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.7),
+        0 0 25px rgba(47, 47, 255, 0.45);
+    display: flex;
+    flex-direction: row;
+}
+
+.filter-menu form {
+    opacity: 0;
+    transition: opacity 0.2s ease-out;
+}
+
+.filter-menu.visible form {
+    opacity: 1;
+    transition-delay: 0.6s;
+    /* ponemos un retardo acorde a la duración de la animación del menú */
+}
+
+.filter-button {
+    background: var(--color-accent2);
+    font-family: 'Monoton';
+    border: none;
+    color: var(--color-primary);
+    text-shadow: 2px 2px var(--color-accent2);
+    padding: 0.8rem 1.6rem;
+    border-radius: 50px;
+    margin: 0 0.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: transform 0.8s ease, box-shadow 0.8s ease, background-color 0.8s ease, color 0.8s ease;
+    margin: 20px 0 20px 0;
+}
+
+.filter-button:hover {
+    transform: translateY(-6px);
+    background-color: var(--color-accent1);
+    box-shadow: 0 0 20px rgba(255, 159, 28, 0.6);
+    color: var(--color-primary);
+}
+
+form {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    /* espacio entre input y dropdown */
+}
+
+#searchBar {
+    width: 100%;
+    padding: 7px;
+    margin: 5px 0 5px 0;
+    box-sizing: border-box;
+    /* importante para ancho correcto */
+}
+
+
+.filters-container {
+    display: flex;
+    align-items: start;
+    justify-content: space-around;
+    gap: 10px;
+}
+
+/*
+    HACER RESPONSIVE
+*/
+
+.filter-wrapper {
+    border-radius: 30px;
+    padding: 12px;
+}
+
+.list-button {
+    background: none;
+    padding: 5px 10px;
+    /* agranda el área clicable del + */
+    font-size: 1.4rem;
+    /* hace el + más grande */
+    border: none;
+    cursor: pointer;
+}
+
+.layout-container-dropdown {
+    display: flex;
+    /* label a la izquierda, botón a la derecha */
+    align-items: center;
+    /* centra verticalmente */
+    width: 100%;
+    gap: 10px;
+    /* opcional: espacio entre label y botón */
+}
+
+.filter-item {
+    gap: 5px;
+    /* espacio entre fila y dropdown */
+    width: 100%;
+}
+
+.list-button {
+    cursor: pointer;
+    font-size: 1.4rem;
+    padding: 5px 10px;
+    border: none;
+    background: none;
+}
+
+.dropdown-list {
+    max-height: 0px;
+    list-style: none;
+    margin: 0;
+    padding-left: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition: max-height 0.6s ease, opacity 0.2s ease-in;
+}
+
+.dropdown-list.open {
+    max-height: 500px;
+    opacity: 1;
+    transition: max-height 1s ease-in, opacity 2s ease;
+}
+
+.dropdown-list li {
+    width: fit-content;
+    margin-left: 10px;
+    padding: 6px;
+    align-items: center;
+}
+
+.dropdown-list li:hover {
+    background-color: var(--color-accent1);
+    border-radius: 15px;
+}
+
+.dropdown-list li input {
+    margin-left: 3px;
+    margin-right: 5px;
+}
+
 
 /* ============================================================
 💀 TARJETA DE PELÍCULA — ESTILO VHS
 ============================================================ */
 .movie-card {
     border-radius: 1.2rem;
-    padding: 22px;
+    padding: 2rem;
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 1.5rem;
     width: 100%;
     max-width: 380px;
     overflow: hidden;
@@ -67,18 +219,27 @@
 /* ============================================================
 📼 IMAGEN POSTER — VHS STYLE
 ============================================================ */
-.movie-image img {
+
+.movie-image {
+    display: flex;
+    justify-content: center;
+    /* centra horizontal */
+    align-items: center;
+    /* centra vertical */
     width: 100%;
-    height: 450px;
+    height: 100%;
+    /* para que ocupe todo el espacio disponible */
+}
+
+.movie-image img {
+    width: 90%;
+    max-height: 400px;
     object-fit: cover;
     border-radius: 0.6rem;
-
     border: 4px solid var(--color-accent2);
-
     box-shadow:
         0 0 0 4px #000,
         inset 0 0 30px rgba(0, 0, 0, 0.9);
-
 }
 
 
@@ -87,9 +248,10 @@
 ============================================================ */
 .movie-title {
     font-family: "Righteous", sans-serif;
-    font-size: 1.6rem;
+    font-size: 1.8rem;
     color: var(--color-accent1);
     /* rojo sangre */
+    text-align: center;
 
     text-shadow:
         0 0 4px rgba(255, 60, 56, 0.45),
@@ -181,7 +343,7 @@
     width: 100%;
     height: 450px;
     border-radius: 0.6rem;
-    background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
+    background: var(--skeleton-background);
     background-size: 200% 100%;
     border: 4px solid var(--color-accent2);
     box-shadow: 0 0 0 4px #000, 0 0 20px rgba(255, 159, 28, 0.15);
@@ -192,7 +354,7 @@
     width: 50%;
     height: 20px;
     border-radius: 0.6rem;
-    background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
+    background: var(--skeleton-background);
     background-size: 200% 100%;
     border: 4px solid var(--color-accent2);
     box-shadow: 0 0 0 4px #000, 0 0 20px rgba(255, 159, 28, 0.15);
@@ -203,7 +365,7 @@
     width: 100%;
     height: 20px;
     border-radius: 0.6rem;
-    background: linear-gradient(90deg, #2a2a2a 25%, #3a3a3a 50%, #2a2a2a 75%);
+    background: var(--skeleton-background);
     background-size: 200% 100%;
     border: 4px solid var(--color-accent2);
     box-shadow: 0 0 0 4px #000, 0 0 20px rgba(255, 159, 28, 0.15);
@@ -263,8 +425,8 @@
 
 .pagination button:disabled {
     transform: translateY(0px) scale(1);
-    opacity: 0.4;
-    cursor: not-allowed;
+    cursor: default;
+    opacity: 0.5;
     box-shadow: none;
 }
 

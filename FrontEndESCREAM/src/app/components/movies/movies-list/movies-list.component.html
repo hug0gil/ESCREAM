@@ -1,3 +1,82 @@
+<button class="filter-button" (click)="toggleFilter()">Búsqueda avanzada</button>
+
+<div class="filter-menu" [@filterMenuAnimation]="showFilter ? 'visible' : 'hidden'" [class.visible]="showFilter">
+    <form>
+        <input id="searchBar" type="text" placeholder="Search">
+
+        <!-- Contenedor de filtros -->
+        <div class="filters-container">
+
+            <!-- Dropdown de géneros -->
+            <div class="filter-wrapper">
+                <div class="layout-container-dropdown">
+                    <label>Subgéneros</label>
+                    <button type="button" class="list-button" (click)="toggleDropdown('genre')">
+                        {{dropdownOpen['genre'] ? '-' : '+'}}
+                    </button>
+                </div>
+                <ul class="dropdown-list" [class.open]="dropdownOpen['genre']">
+                    @for (g of years; track $index) {
+                    <li>
+                        <input type="checkbox"> {{ g }}
+                    </li>
+                    }
+                </ul>
+            </div>
+
+            <div class="filter-wrapper">
+                <div class="layout-container-dropdown">
+                    <label>Años</label>
+                    <button type="button" class="list-button" (click)="toggleDropdown('year')">
+                        {{dropdownOpen['year'] ? '-' : '+'}}
+                    </button>
+                </div>
+                <ul class="dropdown-list" [class.open]="dropdownOpen['year']">
+                    @for (g of years; track $index) {
+                    <li>
+                        <input type="checkbox"> {{ g }}
+                    </li>
+                    }
+                </ul>
+            </div>
+
+
+
+            <div class="filter-wrapper">
+                <div class="layout-container-dropdown">
+                    <label>Valoración</label>
+                    <button type="button" class="list-button" (click)="toggleDropdown('rating')">
+                        {{dropdownOpen['rating'] ? '-' : '+'}}
+                    </button>
+                </div>
+                <ul class="dropdown-list" [class.open]="dropdownOpen['rating']">
+                    @for (g of years; track $index) {
+                    <li>
+                        <input type="checkbox"> {{ g }}
+                    </li>
+                    }
+                </ul>
+            </div>
+
+
+            <div class="filter-wrapper">
+                <div class="layout-container-dropdown">
+                    <label>Países</label>
+                    <button type="button" class="list-button" (click)="toggleDropdown('countries')">
+                        {{dropdownOpen['countries'] ? '-' : '+'}}
+                    </button>
+                </div>
+                <ul class="dropdown-list" [class.open]="dropdownOpen['countries']">
+                    @for (g of years; track $index) {
+                    <li>
+                        <input type="checkbox"> {{ g }}
+                    </li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </form>
+</div>
 <div class="movies-container">
     @for (movie of movies; track movie.id){
     <div class="movie-card" [routerLink]="['/movies', movie.slug]" (click)="goToMovieDetail(movie.slug)">
