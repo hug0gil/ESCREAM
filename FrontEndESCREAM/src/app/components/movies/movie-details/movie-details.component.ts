@@ -24,13 +24,16 @@ export class MovieDetailsComponent implements OnInit {
     // Obtener slug de la URL
     this.movieSlug = this.route.snapshot.paramMap.get('slug') ?? '';
 
+
     // Esperar a que las películas estén cargadas
-    this.movieService.movies$.pipe(
+    this.movieService.paginatedMovies$.pipe(
       filter(movies => movies.length > 0),
       take(1)
     ).subscribe(() => {
       this.loadMovie(this.movieSlug);
     });
+
+
   }
 
   /*

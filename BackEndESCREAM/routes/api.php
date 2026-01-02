@@ -55,6 +55,7 @@ Route::get('/movies/getImage/{movie}', [MoviesController::class, 'getImage']);
 
 // Provisional
 Route::get('movies/', action: [MoviesController::class, 'index']);
+Route::get('movies/all', action: [MoviesController::class, 'all']);
 Route::get('/movies/slug/{slug}', [MoviesController::class, 'showBySlug']);
 Route::get('/{movie}', [MoviesController::class, 'show']);
 

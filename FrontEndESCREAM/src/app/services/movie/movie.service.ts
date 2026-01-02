@@ -1,83 +1,123 @@
-import { inject, Injectable } from '@angular/core';
-import {
-  BehaviorSubject,
-  Observable,
-  catchError,
-  map,
-  tap,
-  throwError,
-  of
-} from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { BehaviorSubject, Observable, of, catchError, map, tap, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Movie } from '../../interfaces/movie-interface';
-
 
 @Injectable({
   providedIn: 'root',
 })
 export class MovieService {
-  // Estado interno
-  private movies: Movie[] = [];
-
-  // Subject reactivo con valor inicial vacío
-  private moviesSubject = new BehaviorSubject<Movie[]>([]);
-  public movies$: Observable<Movie[]> = this.moviesSubject.asObservable();
-
   private http = inject(HttpClient);
+  private ip = "127.0.0.1";
 
-  private ip = "127.0.0.1"
+  // API base
+  private readonly apiUrl = `http://${this.ip}:8000/api/movies`;
+  private readonly apiAllUrl = `http://${this.ip}:8000/api/movies/all`;
 
-  private readonly apiUrl = `http://${this.ip}:8000/api/movies?per_page=30`;
 
-  constructor() {
-    this.getMoviesPaginated();
-  }
+  // 🎬 Caché de películas paginadas
+  private paginatedMoviesSubject = new BehaviorSubject<Movie[]>([]);
+  public paginatedMovies$ = this.paginatedMoviesSubject.asObservable();
 
-  /**
-   * Obtiene películas paginadas desde el backend.
-   */
-  getMoviesPaginated(page: number = 1, perPage: number = 10): Observable<{ data: Movie[], last_page: number }> {
-    const url = `http://${this.ip}:8000/api/movies?per_page=${perPage}&page=${page}`;
-    return this.http.get<{ data: Movie[], last_page: number }>(url)
-      .pipe(
-        tap(response => {
-          this.moviesSubject.next(response.data);
-        }),
-        catchError(err => {
-          console.error('Error al obtener películas paginadas:', err);
-          this.moviesSubject.next([]);
-          return throwError(() => err);
-        })
-      );
-  }
+  // 🎬 Caché de todas las películas
+  private allMoviesSubject = new BehaviorSubject<Movie[]>([]);
+  public allMovies$ = this.allMoviesSubject.asObservable();
+
+  // 🌍 Países únicos derivados de todas las películas
+  public allCountries$ = this.allMovies$.pipe(
+    map(movies => Array.from(new Set(movies.map(movie => {
+      return movie.country
+    }))))
+  );
 
   /**
-   * Devuelve un observable con todas las películas.
+   * Obtiene películas paginadas desde el backend y actualiza el subject
    */
-  getMovies$(): Observable<Movie[]> {
-    return this.movies$;
-  }
-
-  /**
-   * Obtiene una película por ID desde la caché (sin petición HTTP).
-   */
-  getMovieBySlug(slug: string): Observable<Movie> {
-    // 1. Buscar en caché
-    const cachedMovie = this.moviesSubject.value.find(m => m.slug === slug);
-
-    if (cachedMovie) {
-      return of(cachedMovie);
-    }
-
-    // 2. Si no está en caché, pedirla por API
-    console.log("Petición API slug: " + slug)
-    const url = `http://${this.ip}:8000/api/movies/slug/${slug}`;
-    console.log(url)
-    return this.http.get<Movie>(url).pipe(
+  public getMoviesPaginated(
+    page: number = 1,
+    perPage: number = 10
+  ): Observable<{ data: Movie[]; last_page: number }> {
+    const url = `${this.apiUrl}?per_page=${perPage}&page=${page}`;
+    return this.http.get<{ data: Movie[]; last_page: number }>(url).pipe(
+      tap(response => this.paginatedMoviesSubject.next(response.data)),
       catchError(err => {
-        console.error('❌ Error al obtener película por ID:', err);
+        console.error('Error al obtener películas paginadas:', err);
+        this.paginatedMoviesSubject.next([]);
+        return of({ data: [], last_page: 1 });
+      })
+    );
+  }
+
+  /**
+   * Obtiene todas las películas desde el backend y actualiza la caché
+   */
+  public getAllMovies(): Observable<Movie[]> {
+    return this.http.get<Movie[]>(this.apiAllUrl).pipe(
+      tap(movies => this.allMoviesSubject.next(movies)), // tap solo se ejecuta una vez
+      catchError(err => {
+        console.error('Error al obtener todas las películas: ', err);
+        this.allMoviesSubject.next([]);
+        return of([]);
+      })
+    );
+  }
+
+  // public getFilteredMovies(filters): Observable<Movie[]> {
+  //   return this.http.get<Movie[]>(this.apiAllUrl).pipe(
+  //     tap(movies => this.allMoviesSubject.next(movies)),
+  //     catchError(err => {
+  //       console.error('Error al obtener las películas filtradas: ', err);
+  //       this.allMoviesSubject.next([]);
+  //       return of([]);
+  //     })
+  //   );
+  // }
+
+  /**
+   * Devuelve todos los países en un observable reactivo
+   */
+
+  public getAllCountries$(): Observable<string[]> {
+    return this.allCountries$;
+  }
+
+  /**
+   * Devuelve todas las películas en un observable reactivo
+   */
+  public getAllMovies$(): Observable<Movie[]> {
+    return this.allMovies$;
+  }
+
+  /**
+   * Devuelve las películas paginadas en un observable reactivo
+   */
+  public getPaginatedMovies$(): Observable<Movie[]> {
+    return this.paginatedMovies$;
+  }
+
+  /**
+   * Obtiene una película por slug. Busca primero en caché, si no está llama a la API
+   */
+  public getMovieBySlug(slug: string): Observable<Movie> {
+    const url = `${this.apiUrl}/slug/${slug}`;
+    return this.http.get<Movie>(url).pipe(
+      tap(movie => {
+        // Actualizar caché de todas las películas
+        const currentMovies = this.allMoviesSubject.value;
+        this.allMoviesSubject.next([...currentMovies, movie]);
+      }),
+      catchError(err => {
+        console.error(`Error al obtener película ${slug}:`, err);
         return throwError(() => err);
       })
     );
+  }
+
+  /**
+   * Añadir manualmente una película a la caché de todas las películas
+   */
+  public addMovieToCache(newMovie: Movie) {
+    const currentMovies = this.allMoviesSubject.value;
+    this.allMoviesSubject.next([...currentMovies, newMovie]);
   }
 }

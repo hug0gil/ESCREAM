@@ -14,6 +14,6 @@ export interface Movie {
   // Relaciones
   actors?: { id: number; name: string }[];
   director?: { id: number; name: string } | null;
-  productionCompany?: { id: number; name: string } | null;
+  production_company?: { id: number; name: string } | null;
   subgenres?: { id: number; name: string }[];
 }

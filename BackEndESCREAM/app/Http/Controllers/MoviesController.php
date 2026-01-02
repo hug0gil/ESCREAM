@@ -23,6 +23,12 @@ class MoviesController extends Controller
         return response()->json($movies, Response::HTTP_OK);
     }
 
+    public function all()
+    {
+        $movies = $this->movieService->getAllMovies();
+        return response()->json($movies, Response::HTTP_OK);
+    }
+
     public function show(Movie $movie)
     {
         $movieData = $this->movieService->getMovie($movie);
@@ -103,7 +109,7 @@ class MoviesController extends Controller
 
     public function showBySlug(string $slug)
     {
-        $movie = Movie::where('slug', $slug)->firstOrFail();
+        $movie = Movie::with(['actors', 'director', 'productionCompany', 'subgenres'])->where('slug', $slug)->firstOrFail();
         return response()->json($movie, Response::HTTP_OK);
     }
 }

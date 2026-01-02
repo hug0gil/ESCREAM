@@ -1,0 +1,94 @@
+<form [formGroup]="form" (ngSubmit)="submit()">
+
+    <!-- Búsqueda -->
+    <input id="searchBar" type="text" placeholder="Buscar por título..." formControlName="search">
+
+    <div class="filters-container">
+        <!-- SUBGÉNEROS -->
+        <div class="filter-section">
+            <div class="layout-container-dropdown" [class.open]="dropdownOpen['subgenres']">
+                <label>Subgéneros</label>
+                <button type="button" class="list-button" (click)="toggleDropdown('subgenres')">
+                    {{ dropdownOpen['subgenres'] ? '-' : '+' }}
+                </button>
+            </div>
+            <ul class="column-dropdown-list" [class.open]="dropdownOpen['subgenres']">
+                <li *ngFor="let s of subgenres">
+                    <label>
+                        <input type="checkbox" (change)="toggleCheckbox(s, subgenresArray)"
+                            [checked]="subgenresArray.value.includes(s)">
+                        {{ s }}
+                    </label>
+                </li>
+            </ul>
+        </div>
+
+        <!-- RANGO DE AÑOS -->
+        <div class="filter-section">
+            <div class="layout-container-dropdown" [class.open]="dropdownOpen['year']">
+                <label>Años</label>
+                <button type="button" class="list-button" (click)="toggleDropdown('year')">
+                    {{ dropdownOpen['year'] ? '-' : '+' }}
+                </button>
+            </div>
+
+            <!-- Contenedor del slider -->
+            <div class="column-dropdown-list" [class.open]="dropdownOpen['year']">
+                <div class="slider-wrapper">
+                    <ngx-slider [value]="form.value.yearRange.min" [highValue]="form.value.yearRange.max"
+                        (valueChange)="form.get('yearRange.min')?.setValue($event)"
+                        (highValueChange)="form.get('yearRange.max')?.setValue($event)"
+                        [options]="{ floor: yearRangeLimits.min, ceil: yearRangeLimits.max }">
+                    </ngx-slider>
+                </div>
+            </div>
+        </div>
+
+        <!-- VALORACIÓN -->
+        <div class="filter-section">
+            <div class="layout-container-dropdown" [class.open]="dropdownOpen['rating']">
+                <label>Valoración</label>
+                <button type="button" class="list-button" (click)="toggleDropdown('rating')">
+                    {{ dropdownOpen['rating'] ? '-' : '+' }}
+                </button>
+            </div>
+            <ul class="dropdown-list" [class.open]="dropdownOpen['rating']">
+                <li *ngFor="let r of ratings">
+                    <label>
+                        <input type="checkbox" (change)="toggleCheckbox(r, ratingArray)"
+                            [checked]="ratingArray.value.includes(r)">
+                        {{ '💀'.repeat(r) }}
+                    </label>
+                </li>
+            </ul>
+        </div>
+
+
+        <!-- PAÍSES -->
+        <div class="filter-section">
+            <div class="layout-container-dropdown" [class.open]="dropdownOpen['countries']">
+                <label>Países</label>
+                <button type="button" class="list-button" (click)="toggleDropdown('countries')">
+                    {{ dropdownOpen['countries'] ? '-' : '+' }}
+                </button>
+            </div>
+            <ul class="dropdown-list" [class.open]="dropdownOpen['countries']">
+                <li *ngFor="let c of countries">
+                    <label>
+                        <input type="checkbox" (change)="toggleCheckbox(c, countriesArray)"
+                            [checked]="countriesArray.value.includes(c)">
+                        {{ c }}
+                    </label>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+    <!-- BOTONES -->
+    <div class="filter-buttons-container">
+        <button type="submit" class="filter-button">Buscar</button>
+        <button type="button" class="clean-button" (click)="reset()">Limpiar filtros</button>
+    </div>
+
+</form>

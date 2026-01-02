@@ -37,6 +37,11 @@ class MovieService
         return $movies;
     }
 
+    public function getAllMovies()
+    {
+        return Movie::all();
+    }
+
 
     public function getMovie(Movie $movie)
     {
