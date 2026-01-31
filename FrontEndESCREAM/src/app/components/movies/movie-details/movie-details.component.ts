@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { Movie } from '../../../interfaces/movie-interface';
-import { filter, take } from 'rxjs';
+import { Observable, switchMap } from 'rxjs';
 import { MovieService } from '../../../services/movie/movie.service';
 
 @Component({
@@ -17,46 +17,25 @@ export class MovieDetailsComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private movieService = inject(MovieService);
 
-  public movieSlug: string = "";
-  public movie: Movie | null = null;
+  public movie$!: Observable<Movie>;
 
   ngOnInit(): void {
-    // Obtener slug de la URL
-    this.movieSlug = this.route.snapshot.paramMap.get('slug') ?? '';
-
-
-    // Esperar a que las películas estén cargadas
-    this.movieService.paginatedMovies$.pipe(
-      filter(movies => movies.length > 0),
-      take(1)
-    ).subscribe(() => {
-      this.loadMovie(this.movieSlug);
-    });
-
-
-  }
-
-  /*
-take(1) recibe la primera emisión válida y después:
-  se desuscribe automáticamente
-  no escucha más cambios
-  no vuelve a llamar a loadMovie
- */
-
-  loadMovie(slug: string): void {
-    this.movieService.getMovieBySlug(slug).subscribe({
-      next: (movie) => {
-        this.movie = movie;
-        console.log('✅ Película cargada');
-      },
-      error: (err) => {
-        console.error('❌ Error al cargar película:', err);
-      }
-    });
+    // 🔥 Reactivo: se actualiza automáticamente cuando cambia el parámetro slug
+    this.movie$ = this.route.paramMap.pipe(
+      switchMap(params => {
+        const slug = params.get('slug') ?? '';
+        return this.movieService.getMovieBySlug(slug);
+      })
+    );
   }
 
   goToTrailer(title?: string) {
-    const url = `https://www.youtube.com/watch?search_query=${title}`;
+    if (!title) return;
+
+    // Buscamos el trailer en YouTube
+    const query = encodeURIComponent(`${title} trailer`);
+    const url = `https://www.youtube.com/results?search_query=${query}&sp=EgIQAQ%3D%3D`;
     window.open(url, '_blank');
   }
+
 }

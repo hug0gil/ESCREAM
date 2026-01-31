@@ -2,8 +2,7 @@
 
 @if (showFilter) {
 <div class="filter-menu" [@filterMenuAnimation]>
-    <app-movies-filter [countries]="countries" [subgenres]="subgenres" [yearRangeLimits]="yearRangeLimits"
-        (filtersChange)="onFiltersChange($event)">
+    <app-movies-filter [countries]="countries" [subgenres]="subgenres" [yearRangeLimits]="yearRangeLimits">
     </app-movies-filter>
 </div>
 }
@@ -26,9 +25,10 @@
     <app-skeleton-loader></app-skeleton-loader>
     }
     }
-    <div class="pagination">
-        <button (click)="prevPage()" [disabled]="currentPage === 1">Anterior</button>
-        <span>Página {{ currentPage }} de {{ lastPage }}</span>
-        <button (click)="nextPage()" [disabled]="currentPage === lastPage">Siguiente</button>
-    </div>
+</div>
+<div class="pagination">
+    <button (click)="prevPage()" [disabled]="currentPage === 1">Anterior</button>
+    <span>Página {{ currentPage }} de {{ lastPage }}</span>
+    <button (click)="nextPage()" [disabled]="currentPage === lastPage">Siguiente</button>
+    <!-- <span>{{perPage}}</span> -->
 </div>

@@ -2,6 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, of, catchError, map, tap, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { Movie } from '../../interfaces/movie-interface';
+import { MoviesFilter } from '../../interfaces/movie-filters';
 
 @Injectable({
   providedIn: 'root',
@@ -96,18 +97,30 @@ export class MovieService {
   }
 
   /**
-   * Obtiene una película por slug. Busca primero en caché, si no está llama a la API
-   */
+ * Obtiene una película por slug con TODOS sus datos (actores, productora, etc.)
+ * Siempre hace petición HTTP para garantizar datos completos
+ */
   public getMovieBySlug(slug: string): Observable<Movie> {
+    console.log('🌐 Buscando película completa en API...');
     const url = `${this.apiUrl}/slug/${slug}`;
     return this.http.get<Movie>(url).pipe(
       tap(movie => {
-        // Actualizar caché de todas las películas
+        console.log('✅ Película completa obtenida de la API');
+        // Actualizar caché con datos completos
         const currentMovies = this.allMoviesSubject.value;
-        this.allMoviesSubject.next([...currentMovies, movie]);
+        const index = currentMovies.findIndex(m => m.slug === slug);
+
+        if (index !== -1) {
+          // Reemplazar película existente con datos completos
+          currentMovies[index] = movie;
+          this.allMoviesSubject.next([...currentMovies]);
+        } else {
+          // Añadir nueva película
+          this.allMoviesSubject.next([...currentMovies, movie]);
+        }
       }),
       catchError(err => {
-        console.error(`Error al obtener película ${slug}:`, err);
+        console.error(`❌ Error al obtener película ${slug}:`, err);
         return throwError(() => err);
       })
     );
@@ -119,5 +132,19 @@ export class MovieService {
   public addMovieToCache(newMovie: Movie) {
     const currentMovies = this.allMoviesSubject.value;
     this.allMoviesSubject.next([...currentMovies, newMovie]);
+  }
+
+
+  public filterMovies(filters: MoviesFilter) {
+    return this.http.post<any>(`${this.apiUrl}/filter`, filters).pipe(
+      tap(response => {
+        this.paginatedMoviesSubject.next(response.data);
+      }),
+      catchError(err => {
+        console.error('Error al filtrar películas:', err);
+        this.paginatedMoviesSubject.next([]);
+        return of([]);
+      })
+    );
   }
 }

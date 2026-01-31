@@ -54,10 +54,12 @@ Route::get('/movies/subgenre/{subgenreSlug}', [MoviesController::class, 'getMovi
 Route::get('/movies/getImage/{movie}', [MoviesController::class, 'getImage']);
 
 // Provisional
-Route::get('movies/', action: [MoviesController::class, 'index']);
-Route::get('movies/all', action: [MoviesController::class, 'all']);
+Route::get('movies/', [MoviesController::class, 'index'])->middleware(LogRequests::class);
+Route::get('movies/all', [MoviesController::class, 'all']);
 Route::get('/movies/slug/{slug}', [MoviesController::class, 'showBySlug']);
+Route::post('/movies/filter', [MoviesController::class, 'filter']);
 Route::get('/{movie}', [MoviesController::class, 'show']);
+
 
 
 // AUTHTENTICATED + SUBSCRIBED MOVIES
@@ -70,7 +72,6 @@ Route::prefix('movies')->middleware([CheckSubscription::class])->group(function 
 Route::apiResource('/movies', MoviesController::class)
     ->except(['index', 'show'])
     ->middleware([LogRequests::class, CheckRole::class]);
-
 /*
 |--------------------------------------------------------------------------
 | Notas

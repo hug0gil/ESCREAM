@@ -6,8 +6,8 @@ import { MovieService } from '../../../services/movie/movie.service';
 import { trigger, state, style, transition, animate } from '@angular/animations';
 import { SkeletonLoaderComponent } from "../../skeleton-loader/skeleton-loader.component";
 import { MoviesFilterComponent } from "../movies-filter/movies-filter.component";
-import { MoviesFilter } from '../../../interfaces/movie-filters';
 import { SubgenreService } from '../../../services/subgenre/subgenre.service';
+import { MoviesFilter } from '../../../interfaces/movie-filters';
 
 @Component({
   selector: 'app-movies-list',
@@ -16,25 +16,25 @@ import { SubgenreService } from '../../../services/subgenre/subgenre.service';
   templateUrl: './movies-list.component.html',
   styleUrls: ['./movies-list.component.css'],
   animations: [
-  trigger('filterMenuAnimation', [
-    transition(':enter', [
-      style({
-        opacity: 0,
-        transform: 'translateY(-20px)'
-      }),
-      animate('0.4s ease-out', style({
-        opacity: 1,
-        transform: 'translateY(0)'
-      }))
-    ]),
-    transition(':leave', [
-      animate('0.3s ease-in', style({
-        opacity: 0,
-        transform: 'translateY(-20px)'
-      }))
+    trigger('filterMenuAnimation', [
+      transition(':enter', [
+        style({
+          opacity: 0,
+          transform: 'translateY(-20px)'
+        }),
+        animate('0.4s ease-out', style({
+          opacity: 1,
+          transform: 'translateY(0)'
+        }))
+      ]),
+      transition(':leave', [
+        animate('0.3s ease-in', style({
+          opacity: 0,
+          transform: 'translateY(-20px)'
+        }))
+      ])
     ])
-  ])
-]
+  ]
 })
 export class MoviesListComponent {
   private moviesService = inject(MovieService);
@@ -47,6 +47,7 @@ export class MoviesListComponent {
   public skeletons = new Array(6);      // Skeleton loaders
   public showFilter: boolean = false;   // Mostrar/ocultar filtro
   public yearRangeLimits: { min: number; max: number } = { min: 1900, max: new Date().getFullYear() };
+  public currentFilters: MoviesFilter = {} as MoviesFilter;
 
   public currentPage = 1;
   public lastPage = 1;
@@ -58,6 +59,14 @@ export class MoviesListComponent {
     this.loadAllMovies();
     this.loadPaginatedMovies();
     this.loadSubgenres();
+
+    // Suscripción para actualizar la lista cada vez que cambie el subject
+    this.moviesService.getPaginatedMovies$().subscribe({
+      next: movies => {
+        this.paginatedMovies = movies; // aquí se actualizará tras un filtrado
+      },
+      error: () => this.paginatedMovies = []
+    });
 
     this.moviesService.getAllCountries$().subscribe({
       next: data => this.countries = data,
@@ -136,18 +145,5 @@ export class MoviesListComponent {
 
   toggleFilter() {
     this.showFilter = !this.showFilter;
-  }
-
-  // Se ejecuta cuando el componente hijo emite filtros
-  onFiltersChange(filters: MoviesFilter) {
-
-    // this.moviesService.getFilteredMovies(filters).subscribe({
-    //   next: movies => {
-    //     this.allMovies = movies;
-    //     this.paginatedMovies = movies.slice(0, this.perPage);
-    //     this.lastPage = Math.ceil(movies.length / this.perPage);
-    //   },
-    //   error: err => console.error('❌ Error al filtrar películas:', err)
-    // });
   }
 }

@@ -1,8 +1,9 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, inject, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { MoviesFilter } from '../../../interfaces/movie-filters';
+import { MovieService } from '../../../services/movie/movie.service';
 
 @Component({
   selector: 'app-movies-filter',
@@ -13,6 +14,7 @@ import { MoviesFilter } from '../../../interfaces/movie-filters';
 })
 export class MoviesFilterComponent {
   private fb = new FormBuilder();
+  private moviesService = inject(MovieService);
 
   @Input() subgenres: string[] = [];
   @Input() ratings: number[] = [1, 2, 3, 4, 5];
@@ -76,9 +78,21 @@ export class MoviesFilterComponent {
   // SUBMIT / RESET
   // ========================
   submit() {
-    this.filtersChange.emit(this.form.value);
-    console.log(this.form.value);
+    const filters: MoviesFilter = this.form.value;
+
+    // Emitimos para que el padre sepa los filtros actuales
+    this.filtersChange.emit(filters);
+
+    // Llamamos al servicio y nos subscribimos
+    this.moviesService.filterMovies(filters).subscribe({
+      next: movies => {
+        console.log('Películas filtradas:', movies);
+        // opcional: actualizar un array local si quieres mostrar en la lista directamente
+      },
+      error: err => console.error('Error al filtrar películas:', err)
+    });
   }
+
 
   reset() {
     this.subgenresArray.clear();

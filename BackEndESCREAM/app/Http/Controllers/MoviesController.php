@@ -112,4 +112,10 @@ class MoviesController extends Controller
         $movie = Movie::with(['actors', 'director', 'productionCompany', 'subgenres'])->where('slug', $slug)->firstOrFail();
         return response()->json($movie, Response::HTTP_OK);
     }
+
+    public function filter(Request $request)
+    {
+        $movies = $this->movieService->filter($request->all());
+        return response()->json($movies);
+    }
 }

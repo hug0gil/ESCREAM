@@ -25,6 +25,6 @@ class ApiFormRequest extends FormRequest
 
     Sobrescribimos failedValidation para forzar siempre respuestas JSON,
     garantizando consistencia en la API, evitando redirecciones y facilitando
-    que frontends o apps móviles manejen los errores de validación de manera uniforme.
+    que frontends o apps móviles manejen los errores de validación.
     */
 }

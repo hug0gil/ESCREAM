@@ -111,4 +111,41 @@ class MovieService
             ->with(['actors', 'director', 'productionCompany', 'subgenres'])
             ->get();
     }
+
+    public function filter(array $filters, int $page = 1, int $perPage = 6)
+    {
+        $countries = array_filter($filters['countries'] ?? [], fn($c) => !empty($c));
+        $rating    = array_filter($filters['rating'] ?? [], fn($r) => !empty($r));
+        $subgenres = array_filter($filters['subgenres'] ?? [], fn($s) => !empty($s));
+        $search    = $filters['search'] ?? '';
+        $yearRange = $filters['yearRange'] ?? [];
+
+        $query = Movie::query();
+
+        if (!empty($countries)) {
+            $query->whereIn('country', $countries);
+        }
+
+        if (!empty($rating)) {
+            $query->whereIn('rating', $rating);
+        }
+
+        if (!empty($search)) {
+            $query->where('title', 'LIKE', "%{$search}%");
+        }
+
+        if (!empty($subgenres)) {
+            $query->whereHas('subgenres', function ($q) use ($subgenres) {
+                $q->whereIn('name', $subgenres);
+            });
+        }
+
+        $minYear = $yearRange['min'] ?? 1900;
+        $maxYear = $yearRange['max'] ?? date('Y');
+        $query->whereBetween('year', [$minYear, $maxYear]);
+
+        // Paginación
+        return $query->with(['director', 'productionCompany', 'actors', 'subgenres'])
+            ->paginate($perPage, ['*'], 'page', $page);
+    }
 }
