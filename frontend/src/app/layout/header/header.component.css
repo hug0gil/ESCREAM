@@ -1,0 +1,247 @@
+/* ==============================================================
+   HEADER PRINCIPAL
+   ============================================================== */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0px 25px;
+  background: linear-gradient(180deg, #160435 10%, #2f2fff 100%);
+  border-bottom: 2px solid var(--color-accent1);
+  box-shadow: 0 8px 20px -4px var(--color-accent1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+/* ==============================================================
+   BARRA DE BÚSQUEDA (solo en /movies)
+   ============================================================== */
+.header-search {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 0 1 380px;
+  background: rgba(0, 0, 0, 0.3);
+  border: 1.5px solid rgba(255, 159, 28, 0.4);
+  border-radius: 50px;
+  padding: 0.55rem 1.1rem;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.header-search:focus-within {
+  border-color: var(--color-accent2);
+  background: rgba(0, 0, 0, 0.45);
+  box-shadow: var(--neon-amber);
+}
+
+.header-search .search-icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  color: var(--color-accent2);
+  opacity: 0.8;
+  transition:
+    opacity 0.25s ease,
+    filter 0.25s ease;
+}
+
+.header-search:focus-within .search-icon {
+  opacity: 1;
+  filter: drop-shadow(0 0 5px rgba(255, 159, 28, 0.7));
+}
+
+.header-search input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #fff;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.95rem;
+}
+
+.header-search input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+/* Botón de filtro avanzado (⛭) dentro de la barra */
+.header-search .filter-toggle {
+  flex: 0 0 auto;
+  background: none;
+  border: none;
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  margin-left: 0.4rem;
+  padding: 0 0.1rem 0 0.7rem;
+  color: var(--color-accent2);
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    color 0.25s ease,
+    transform 0.35s ease,
+    filter 0.25s ease;
+}
+
+.header-search .filter-toggle:hover {
+  color: var(--color-accent1);
+  transform: scale(1.1);
+  filter: drop-shadow(0 0 5px rgba(255, 60, 56, 0.6));
+}
+
+/* ==============================================================
+   LOGO CON ANIMACIÓN DE OPACIDAD
+   ============================================================== */
+.header .logo {
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  /* Fade-in general del logo completo para que aparezca suavemente */
+  animation: fadeIn 1s ease-out forwards;
+  /*
+  ease-out a animación empieza más rápido y termina más lento
+  forwards el elemento mantiene el estado final de la animación
+  */
+}
+
+/* ==============================================================
+   IMAGEN DEL LOGO CON ANIMACIÓN Y HOVER
+   ============================================================== */
+.header .logo img {
+  height: 140px;
+  width: auto;
+  filter: drop-shadow(0 0 8px var(--color-accent1));
+  opacity: 0;
+  /* Fade-in independiente del logo, para que imagen y letras puedan animarse separadamente */
+  animation: fadeIn 1s ease-out forwards;
+  transition:
+    transform 0.8s ease,
+    filter 0.6s ease;
+  cursor: pointer;
+}
+
+.logo img:hover {
+  transform: scale(1.1) translateZ(0);
+  filter: drop-shadow(0 0 12px var(--color-accent1));
+}
+
+/* ==============================================================
+   ESTILO DE LETRAS DEL LOGO
+   ============================================================== */
+.header .logo span {
+  font-family: "Righteous", sans-serif;
+  font-size: 2.8rem;
+  letter-spacing: 2.5px;
+}
+
+/* ==============================================================
+   NAV LINKS CON FADE-IN Y CASCADA
+   ============================================================== */
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 45px;
+  cursor: pointer;
+}
+
+/* Links individuales con fade-in y transición para hover */
+nav a {
+  display: inline-block;
+  position: relative;
+  font-family: "Righteous", sans-serif;
+  font-size: 1.3rem;
+  color: var(--color-accent2);
+  background: none;
+  padding: 8px 6px;
+  letter-spacing: 1px;
+  text-decoration: none;
+  opacity: 0;
+  /* inicia invisible */
+  animation: fadeIn 0.5s ease-out forwards;
+  /* fade-in de cada enlace */
+  transition:
+    color 0.25s ease,
+    transform 0.25s ease;
+}
+
+.pillLink {
+  border: none;
+  background: none;
+}
+
+/* Subrayado neón que se despliega al hover/focus */
+.pillLink::after {
+  content: "";
+  position: absolute;
+  left: 6px;
+  right: 6px;
+  bottom: 0;
+  height: 2px;
+  background: var(--color-accent1);
+  border-radius: 2px;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition:
+    transform 0.28s ease,
+    box-shadow 0.28s ease;
+}
+
+.pillLogin img {
+  width: 48px;
+  height: 48px;
+  display: block;
+  transition:
+    transform 0.8s ease,
+    filter 0.8s ease;
+}
+
+/* Cascada de animación: cada link aparece ligeramente después del anterior */
+.nav-links a:nth-child(1) {
+  animation-delay: 1.4s;
+}
+
+.nav-links a:nth-child(2) {
+  animation-delay: 1.6s;
+}
+
+.nav-links a:nth-child(3) {
+  animation-delay: 1.8s;
+}
+
+/* Hover/focus: el texto se ilumina y aparece el subrayado neón */
+nav a.pillLink:hover,
+nav a.pillLink:focus-visible {
+  color: #fff;
+  outline: none;
+}
+
+nav a.pillLink:hover::after,
+nav a.pillLink:focus-visible::after {
+  transform: scaleX(1);
+  box-shadow: 0 0 10px rgba(255, 60, 56, 0.85);
+}
+
+/* Hover: agranda y cambia color del logo */
+nav a.pillLogin:hover img {
+  transform: scale(1.1);
+  filter: brightness(0) saturate(100%) invert(58%) sepia(97%) saturate(3200%)
+    hue-rotate(2deg) brightness(103%) contrast(101%);
+}
+
+/* ==============================================================
+   KEYFRAMES FADE-IN GENERAL
+   ============================================================== */
+/* Utilizado para el logo, la imagen y los links. Solo cambia opacidad de 0 a 1 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

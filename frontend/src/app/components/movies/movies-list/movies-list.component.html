@@ -1,0 +1,66 @@
+@if (featured(); as movie) {
+<!-- ====== BILLBOARD: película destacada del catálogo ====== -->
+<section class="billboard">
+    <div class="billboard-bg" [style.background-image]="'url(' + movie.image + ')'"></div>
+    <div class="billboard-scrim"></div>
+
+    <div class="billboard-content">
+        <img class="billboard-poster" [src]="movie.image" [alt]="movie.title" />
+
+        <div class="billboard-info">
+            <p class="eyebrow">Destacada</p>
+            <h1 class="billboard-title">{{ movie.title }}</h1>
+
+            <div class="billboard-meta">
+                <span class="year">{{ movie.year }}</span>
+                <span class="dot">•</span>
+                <span class="country">{{ movie.country }}</span>
+                <span class="skulls">
+                    @for (s of skulls(movie.rating); track $index) { 💀 }
+                </span>
+            </div>
+
+            <p class="billboard-synopsis">{{ movie.synopsis }}</p>
+
+            <div class="billboard-actions">
+                <a class="btn-primary" [routerLink]="['/movies', movie.slug]">▶ Ver película</a>
+            </div>
+        </div>
+    </div>
+</section>
+}
+
+<!-- Overlay + drawer lateral izquierdo (se abre con el botón ⛭ del header) -->
+<div class="drawer-overlay" [class.visible]="filterOpen" (click)="closeFilter()"></div>
+<aside class="filter-drawer" [class.visible]="filterOpen">
+    <div class="drawer-header">
+        <h2>Búsqueda avanzada</h2>
+        <button class="drawer-close" (click)="closeFilter()" aria-label="Cerrar filtros">✕</button>
+    </div>
+    <app-movies-filter [countries]="countries" [subgenres]="subgenres" [yearRangeLimits]="yearRangeLimits"
+        [initialFilters]="currentFilters" (filtersChange)="onFiltersChange($event)">
+    </app-movies-filter>
+</aside>
+
+<div class="movies-container">
+    @for (movie of movies; track movie.id) {
+    <app-movie-poster-card [movie]="movie" />
+    }
+
+    <!-- Skeletons solo durante la primera carga -->
+    @if (!movies.length && loading()) {
+    @for (s of skeletons; track $index) {
+    <app-skeleton-loader></app-skeleton-loader>
+    }
+    }
+</div>
+
+<!-- Centinela del scroll infinito: al entrar en pantalla, carga más -->
+<div #sentinel class="scroll-sentinel" aria-hidden="true"></div>
+
+@if (loading() && movies.length) {
+<p class="scroll-status">Cargando más películas…</p>
+}
+@if (!movies.length && !loading()) {
+<p class="scroll-status">No se han encontrado películas.</p>
+}

@@ -1,0 +1,109 @@
+:host {
+    display: block;
+}
+
+/* La card es la propia portada (ratio cartel 2:3). Limpia en reposo;
+   el neón aparece solo al hover/focus. */
+.movie-card {
+    position: relative;
+    display: block;
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    border-radius: 0.7rem;
+    overflow: hidden;
+    text-decoration: none;
+    background: var(--surface);
+    border: 1px solid var(--surface-border);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    transition:
+        transform 0.28s ease,
+        box-shadow 0.28s ease,
+        border-color 0.28s ease;
+}
+
+.poster {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.4s ease;
+}
+
+/* Capa de info: degradado inferior + datos. Oculta hasta hover en escritorio. */
+.card-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    gap: 0.3rem;
+    padding: 0.9rem 0.8rem;
+    background: linear-gradient(
+        to top,
+        rgba(8, 4, 20, 0.94) 0%,
+        rgba(8, 4, 20, 0.55) 35%,
+        transparent 70%
+    );
+    opacity: 0;
+    transition: opacity 0.28s ease;
+}
+
+.movie-card:hover,
+.movie-card:focus-visible {
+    transform: translateY(-6px);
+    border-color: var(--color-primary);
+    box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.6),
+        var(--neon-blue);
+    outline: none;
+}
+
+.movie-card:hover .poster {
+    transform: scale(1.06);
+}
+
+.movie-card:hover .card-overlay,
+.movie-card:focus-visible .card-overlay {
+    opacity: 1;
+}
+
+/* En táctil no hay hover → la info se queda visible */
+@media (hover: none) {
+    .card-overlay {
+        opacity: 1;
+    }
+}
+
+/* ----- Título y datos ----- */
+.movie-title {
+    font-family: "Righteous", sans-serif;
+    font-size: 1rem;
+    line-height: 1.2;
+    color: #fff;
+    text-shadow: 0 0 8px rgba(255, 60, 56, 0.5);
+}
+
+.movie-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: "Montserrat", sans-serif;
+    font-size: 0.8rem;
+}
+
+.movie-meta .year {
+    color: var(--color-accent2);
+    font-weight: 700;
+}
+
+.movie-meta .skulls {
+    font-size: 0.72rem;
+    letter-spacing: -2px;
+}
+
+.country {
+    font-size: 0.72rem;
+    color: rgba(255, 255, 255, 0.6);
+    font-family: "Montserrat", sans-serif;
+}

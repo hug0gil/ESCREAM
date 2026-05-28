@@ -1,0 +1,301 @@
+/* El host centra la tarjeta (el layout de auth no lo hace por sí mismo) */
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+/* ==============================================================
+   CARRUSEL DE PORTADAS (FONDO)
+   ============================================================== */
+.poster-wall {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  display: flex;
+  gap: 12px;
+  padding: 12px;
+  overflow: hidden;
+}
+
+/* Overlay del carrusel */
+.poster-wall::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 40%,
+    rgba(10, 20, 80, 0.5),
+    rgba(5, 8, 45, 0.75) 70%
+  );
+} 
+
+.poster-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  animation: scroll-down 60s linear infinite;
+}
+
+/* Las columnas impares se mueven en sentido contrario */
+.poster-col.reverse {
+  animation-name: scroll-up;
+}
+
+.poster {
+  width: 100%;
+  display: block;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+@keyframes scroll-up {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+
+@keyframes scroll-down {
+  from {
+    transform: translateY(-50%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+/* Respeta a quien prefiere menos movimiento */
+@media (prefers-reduced-motion: reduce) {
+  .poster-col {
+    animation: none;
+  }
+}
+
+.main-content {
+  background:
+    radial-gradient(
+      ellipse 60% 55% at 50% -10%,
+      rgba(30, 60, 255, 0.2),
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 95% 50% at 50% 115%,
+      rgba(255, 60, 56, 0.08),
+      transparent 60%
+    ),
+    radial-gradient(125% 125% at 50% 45%, transparent 55%, rgba(0, 0, 0, 0.35)),
+    #010a71f1;
+  background-attachment: fixed;
+  /* borde inferior igual que .header */
+  border: 1px solid rgba(47, 47, 255, 0.25);
+  border-bottom: 2px solid var(--color-accent1);
+  box-shadow: 0 1px 20px 3px var(--color-accent1);
+  padding: 2rem 3rem;
+  border-radius: 12px;
+  max-width: 800px;
+  text-align: center;
+  color: white;
+  opacity: 0;
+  transform: scale(0.95) translateY(20px);
+  animation: formFadeIn 0.8s ease-out 0.2s forwards;
+}
+
+.main-content h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-family: "Righteous", sans-serif;
+}
+
+.main-content p {
+  color: #ccc;
+  margin-bottom: 2rem;
+  font-family: "Montserrat", sans-serif;
+}
+
+/* ==============================================================
+   BOTONES DE ACCIONES
+   ============================================================== */
+
+.actions {
+  display: flex;
+  gap: 10px;
+}
+
+.actions button {
+  flex: 1;
+  font-family: "Righteous", sans-serif;
+  font-size: 0.95rem;
+  padding: 0.75rem 1rem;
+  border-radius: 50px;
+  cursor: pointer;
+  background: var(--color-accent1);
+  color: #fff;
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    background-color 0.25s ease,
+    color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.actions button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--neon-red);
+}
+
+/* ==============================================================
+   EXTRA LINKS
+   ============================================================== */
+.extra-links {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  margin-top: 20px;
+  font-size: 14px;
+}
+
+.extra-links a:first-child::after {
+  content: "|";
+  margin-left: 12px;
+  color: #ccc;
+  pointer-events: none;
+}
+
+.extra-links a {
+  color: var(--color-accent2);
+  text-decoration: none;
+  transition:
+    color 0.8s ease,
+    text-decoration 0.8s ease;
+}
+
+.extra-links a:hover,
+.extra-links a:focus {
+  text-decoration: underline;
+  outline: none;
+}
+
+.separator {
+  color: var(--color-primary);
+}
+
+@keyframes formFadeIn {
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.es {
+  margin-left: 10px;
+}
+
+/* ==============================================================
+   EYEBROW
+   ============================================================== */
+.eyebrow {
+  font-family: "Montserrat", sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: #8b0000;
+  margin-bottom: 1.2rem;
+  opacity: 0.9;
+}
+
+/* La parte "CREAM!" parpadea como neón defectuoso */
+.cream {
+  color: #c41e3a;
+  text-shadow:
+    0 0 8px rgba(196, 30, 58, 0.9),
+    0 0 20px rgba(196, 30, 58, 0.5);
+  animation: neon-flicker 7s ease-in-out infinite;
+}
+
+@keyframes neon-flicker {
+  0%,
+  100% {
+    opacity: 1;
+    text-shadow:
+      0 0 8px rgba(196, 30, 58, 0.9),
+      0 0 20px rgba(196, 30, 58, 0.5);
+  }
+  /* apagón largo */
+  41% {
+    opacity: 1;
+  }
+  42% {
+    opacity: 0.15;
+    text-shadow: none;
+  }
+  43% {
+    opacity: 1;
+  }
+  /* microparpadeo doble */
+  75% {
+    opacity: 1;
+  }
+  75.5% {
+    opacity: 0.4;
+    text-shadow: none;
+  }
+  76% {
+    opacity: 1;
+  }
+  76.5% {
+    opacity: 0.2;
+    text-shadow: none;
+  }
+  77% {
+    opacity: 1;
+  }
+  /* apagón breve final */
+  93% {
+    opacity: 1;
+  }
+  93.5% {
+    opacity: 0.05;
+    text-shadow: none;
+  }
+  94% {
+    opacity: 1;
+  }
+}
+
+/* ==============================================================
+   DIVISOR CON LUNA
+   ============================================================== */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 1.2rem auto 1.4rem;
+  width: 260px;
+}
+
+.divider-line {
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(
+    to right,
+    transparent,
+    rgba(139, 0, 0, 0.7),
+    transparent
+  );
+}
+
+.divider-moon {
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.35);
+  line-height: 1;
+}

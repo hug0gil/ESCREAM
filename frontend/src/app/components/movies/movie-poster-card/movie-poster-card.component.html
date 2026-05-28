@@ -1,0 +1,13 @@
+<a class="movie-card" [routerLink]="['/movies', movie.slug]" [attr.aria-label]="movie.title">
+    <img class="poster" [src]="movie.image" [alt]="movie.title" loading="lazy" />
+    <div class="card-overlay">
+        <h3 class="movie-title">{{ movie.title }}</h3>
+        <div class="movie-meta">
+            <span class="year">{{ movie.year }}</span>
+            <span class="skulls">
+                @for (s of skulls(movie.rating); track $index) { 💀 }
+            </span>
+        </div>
+        <span class="country">{{ movie.country }}</span>
+    </div>
+</a>

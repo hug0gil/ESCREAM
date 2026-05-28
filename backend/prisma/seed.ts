@@ -1,0 +1,519 @@
+import 'dotenv/config';
+import { PrismaPg } from '@prisma/adapter-pg';
+import { PrismaClient } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
+import slugify from 'slugify';
+
+const prisma = new PrismaClient({
+  adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
+});
+const makeSlug = (s: string) => slugify(s, { lower: true, strict: true });
+
+async function main() {
+  console.log('Seeding plans…');
+  const plans = [
+    { id: 1, name: 'Sombrío', price: 6.99, devicesAllowed: 1 },
+    { id: 2, name: 'Siniestro', price: 12.99, devicesAllowed: 2 },
+    { id: 3, name: 'Aterrador', price: 15.99, devicesAllowed: 4 },
+  ];
+  for (const p of plans) {
+    await prisma.plan.upsert({
+      where: { id: p.id },
+      update: p,
+      create: p,
+    });
+  }
+
+  console.log('Seeding users…');
+  const users = [
+    { id: 1, name: 'Hugo', email: 'hugo@example.com', plain: 'hugo1234', planId: 1, role: 'ADMIN' as const },
+    { id: 2, name: 'Alice', email: 'alice@example.com', plain: 'password123', planId: 1, role: 'EDITOR' as const },
+    { id: 3, name: 'Bob', email: 'bob@example.com', plain: 'secret456', planId: 2, role: 'USER' as const },
+    { id: 4, name: 'Charlie', email: 'charlie@example.com', plain: 'mypassword789', planId: 3, role: 'USER' as const },
+  ];
+  for (const u of users) {
+    const password = await bcrypt.hash(u.plain, 10);
+    await prisma.user.upsert({
+      where: { id: u.id },
+      update: { name: u.name, email: u.email, password, planId: u.planId, role: u.role },
+      create: { id: u.id, name: u.name, email: u.email, password, planId: u.planId, role: u.role },
+    });
+  }
+
+  console.log('Seeding profiles…');
+  const profiles = [
+    { id: 1, userId: 1, profileName: 'Hugo', ageRestriction: 18 },
+    { id: 2, userId: 1, profileName: 'Julio', ageRestriction: 12 },
+    { id: 3, userId: 1, profileName: 'Ana', ageRestriction: 16 },
+    { id: 4, userId: 2, profileName: 'Celeste', ageRestriction: 16 },
+    { id: 5, userId: 2, profileName: 'Leo', ageRestriction: 18 },
+    { id: 6, userId: 2, profileName: 'Luis', ageRestriction: 12 },
+    { id: 7, userId: 3, profileName: 'Tomás', ageRestriction: 18 },
+    { id: 8, userId: 3, profileName: 'Sofía', ageRestriction: 16 },
+    { id: 9, userId: 3, profileName: 'Lucas', ageRestriction: 12 },
+  ];
+  for (const p of profiles) {
+    await prisma.profile.upsert({
+      where: { id: p.id },
+      update: p,
+      create: p,
+    });
+  }
+
+  console.log('Seeding directors…');
+  const directors = [
+    { id: 1, name: 'John Carpenter', birthDate: '1948-01-16' },
+    { id: 2, name: 'Wes Craven', birthDate: '1939-08-02' },
+    { id: 3, name: 'James Wan', birthDate: '1977-02-26' },
+    { id: 4, name: 'Guillermo del Toro', birthDate: '1964-10-09' },
+    { id: 5, name: 'David Cronenberg', birthDate: '1943-03-15' },
+    { id: 6, name: 'Tobe Hooper', birthDate: '1943-01-25' },
+    { id: 7, name: 'Ari Aster', birthDate: '1986-07-15' },
+    { id: 8, name: 'Robert Eggers', birthDate: '1983-07-14' },
+    { id: 9, name: 'Jordan Peele', birthDate: '1979-02-21' },
+    { id: 10, name: 'Mike Flanagan', birthDate: '1978-05-20' },
+    { id: 11, name: 'Stanley Kubrick', birthDate: '1928-07-26' },
+    { id: 12, name: 'George A. Romero', birthDate: '1940-02-04' },
+    { id: 13, name: 'Sam Raimi', birthDate: '1959-10-23' },
+    { id: 14, name: 'Dario Argento', birthDate: '1940-09-07' },
+    { id: 15, name: 'Jennifer Kent', birthDate: '1969-08-05' },
+    { id: 16, name: 'Ti West', birthDate: '1980-10-05' },
+    { id: 17, name: 'M. Night Shyamalan', birthDate: '1970-08-06' },
+    { id: 18, name: 'Julia Ducournau', birthDate: '1983-11-18' },
+    { id: 19, name: 'Paco Plaza', birthDate: '1973-04-01' },
+    { id: 20, name: 'Jaume Balagueró', birthDate: '1968-03-08' },
+    { id: 21, name: 'Alejandro Amenábar', birthDate: '1972-03-31' },
+    { id: 22, name: 'Álex de la Iglesia', birthDate: '1965-12-04' },
+    { id: 23, name: 'Rose Glass', birthDate: '1990-01-01' },
+  ];
+  for (const d of directors) {
+    await prisma.director.upsert({
+      where: { id: d.id },
+      update: { name: d.name, birthDate: new Date(d.birthDate) },
+      create: { id: d.id, name: d.name, birthDate: new Date(d.birthDate) },
+    });
+  }
+
+  console.log('Seeding production companies…');
+  const companies = [
+    { id: 1, name: 'Compass International Pictures', country: 'EE.UU.' },
+    { id: 2, name: 'New Line Cinema', country: 'EE.UU.' },
+    { id: 3, name: 'Blumhouse Productions', country: 'EE.UU.' },
+    { id: 4, name: 'Guillermo del Toro Productions', country: 'EE.UU.' },
+    { id: 5, name: 'Dimension Films', country: 'EE.UU.' },
+    { id: 6, name: 'Miramax Films', country: 'EE.UU.' },
+    { id: 7, name: 'A24', country: 'EE.UU.' },
+    { id: 8, name: 'Lionsgate Films', country: 'EE.UU.' },
+    { id: 9, name: 'Warner Bros.', country: 'EE.UU.' },
+    { id: 10, name: 'Universal Pictures', country: 'EE.UU.' },
+    { id: 11, name: 'Paramount Pictures', country: 'EE.UU.' },
+    { id: 12, name: 'Netflix', country: 'EE.UU.' },
+    { id: 13, name: 'Sony Pictures', country: 'EE.UU.' },
+    { id: 14, name: 'Focus Features', country: 'EE.UU.' },
+    { id: 15, name: 'Neon', country: 'EE.UU.' },
+    { id: 16, name: 'IFC Films', country: 'EE.UU.' },
+  ];
+  for (const c of companies) {
+    await prisma.productionCompany.upsert({
+      where: { id: c.id },
+      update: c,
+      create: c,
+    });
+  }
+
+  console.log('Seeding actors…');
+  const actors = [
+    { id: 1, name: 'Jamie Lee Curtis', birthDate: '1958-11-22', country: 'EE.UU.' },
+    { id: 2, name: 'Robert Englund', birthDate: '1947-06-06', country: 'EE.UU.' },
+    { id: 3, name: 'Patrick Wilson', birthDate: '1973-07-03', country: 'EE.UU.' },
+    { id: 4, name: 'Doug Jones', birthDate: '1960-05-24', country: 'EE.UU.' },
+    { id: 5, name: 'Neve Campbell', birthDate: '1973-10-03', country: 'EE.UU.' },
+    { id: 6, name: 'Linda Blair', birthDate: '1959-01-22', country: 'EE.UU.' },
+    { id: 7, name: 'Ethan Hawke', birthDate: '1970-11-06', country: 'EE.UU.' },
+    { id: 8, name: 'Maika Monroe', birthDate: '1993-05-29', country: 'EE.UU.' },
+    { id: 9, name: 'Anya Taylor-Joy', birthDate: '1996-04-16', country: 'EE.UU.' },
+    { id: 10, name: 'Kara Hayward', birthDate: '1998-01-17', country: 'EE.UU.' },
+    { id: 11, name: 'Daniel Kaluuya', birthDate: '1989-02-24', country: 'Reino Unido' },
+    { id: 12, name: "Lupita Nyong'o", birthDate: '1983-03-01', country: 'Kenia' },
+    { id: 13, name: 'Jack Nicholson', birthDate: '1937-04-22', country: 'EE.UU.' },
+    { id: 14, name: 'Shelley Duvall', birthDate: '1949-07-07', country: 'EE.UU.' },
+    { id: 15, name: 'Bruce Campbell', birthDate: '1958-06-22', country: 'EE.UU.' },
+    { id: 16, name: 'Toni Collette', birthDate: '1972-11-01', country: 'Australia' },
+    { id: 17, name: 'Vera Farmiga', birthDate: '1973-08-06', country: 'EE.UU.' },
+    { id: 18, name: 'Essie Davis', birthDate: '1970-01-07', country: 'Australia' },
+    { id: 19, name: 'Mia Goth', birthDate: '1993-11-25', country: 'Reino Unido' },
+    { id: 20, name: 'Haley Joel Osment', birthDate: '1988-04-10', country: 'EE.UU.' },
+    { id: 21, name: 'Garance Marillier', birthDate: '1998-02-11', country: 'Francia' },
+    { id: 22, name: 'Thomasin McKenzie', birthDate: '2000-07-26', country: 'Nueva Zelanda' },
+    { id: 23, name: 'Bill Skarsgård', birthDate: '1990-08-09', country: 'Suecia' },
+    { id: 24, name: 'Elisabeth Moss', birthDate: '1982-07-24', country: 'EE.UU.' },
+    { id: 25, name: 'Ana Torrent', birthDate: '1966-07-12', country: 'España' },
+    { id: 26, name: 'Eduardo Noriega', birthDate: '1973-08-01', country: 'España' },
+    { id: 27, name: 'Manuela Velasco', birthDate: '1975-09-13', country: 'España' },
+    { id: 28, name: 'Sandra Escacena', birthDate: '2002-02-28', country: 'España' },
+    { id: 29, name: 'Belén Rueda', birthDate: '1965-10-16', country: 'España' },
+    { id: 30, name: 'Federico Luppi', birthDate: '1934-02-04', country: 'Argentina' },
+    { id: 31, name: 'Morfydd Clark', birthDate: '1989-03-17', country: 'Gales' }
+  ];
+  for (const a of actors) {
+    await prisma.actor.upsert({
+      where: { id: a.id },
+      update: { name: a.name, birthDate: new Date(a.birthDate), country: a.country },
+      create: { id: a.id, name: a.name, birthDate: new Date(a.birthDate), country: a.country },
+    });
+  }
+
+  console.log('Seeding subgenres…');
+  const subgenres = [
+    { id: 1, name: 'Slasher', description: 'Asesino que persigue y mata a sus víctimas de manera violenta' },
+    { id: 2, name: 'Sobrenatural', description: 'Presencias fantasmales o fenómenos paranormales' },
+    { id: 3, name: 'Terror psicológico', description: 'Miedo generado por la mente, paranoia o ansiedad' },
+    { id: 4, name: 'Terror corporal', description: 'Miedo a la mutación, enfermedad o invasión del cuerpo humano' },
+    { id: 5, name: 'Fantasía oscura', description: 'Historias fantásticas con elementos oscuros y macabros' },
+    { id: 6, name: 'Found footage', description: 'Historias contadas mediante material grabado por los propios personajes' },
+    { id: 7, name: 'Terror folk', description: 'Basado en leyendas, tradiciones y mitos locales' },
+    { id: 8, name: 'Terror doméstico', description: 'El horror ocurre en ambientes familiares o cotidianos' },
+    { id: 9, name: 'Terror social', description: 'Crítica social a través del miedo y la opresión' },
+    { id: 10, name: 'Zombies', description: 'Historias con muertos vivientes o apocalipsis zombi' },
+    { id: 11, name: 'Posesión', description: 'Control de una persona por fuerzas sobrenaturales' },
+    { id: 12, name: 'Cultos y sectas', description: 'Amenaza de rituales oscuros y fanatismo religioso' },
+    { id: 13, name: 'Terror de venganza', description: 'Historias donde la venganza genera miedo y violencia' },
+    { id: 14, name: 'Terror cósmico', description: 'Miedo a lo desconocido y entidades incomprensibles' },
+    { id: 15, name: 'Terror de aislamiento', description: 'Miedo derivado de estar solo o atrapado' },
+  ];
+  for (const s of subgenres) {
+    const payload = { name: s.name, description: s.description, slug: makeSlug(s.name) };
+    await prisma.subgenre.upsert({
+      where: { id: s.id },
+      update: payload,
+      create: { id: s.id, ...payload },
+    });
+  }
+
+  console.log('Seeding movies…');
+  const movies = [
+    // ── Originales ──────────────────────────────────────────────────────────
+    { id: 1, title: 'Halloween', year: 1978, synopsis: 'Michael Myers escapa de un hospital psiquiátrico y regresa a su ciudad natal para aterrorizar a la niñera Laurie Strode.', image: 'halloween.jpg', rating: 4, directorId: 1, productionCompanyId: 1, country: 'US' },
+    { id: 2, title: 'Pesadilla en Elm Street', year: 1984, synopsis: 'Un grupo de adolescentes es acosado y asesinado en sus sueños por Freddy Krueger, un asesino con guantes con cuchillas.', image: 'pesadilla_elm_street.jpg', rating: 3, directorId: 2, productionCompanyId: 2, country: 'US' },
+    { id: 3, title: 'Expediente Warren: The Conjuring', year: 2013, synopsis: 'Basada en hechos reales, la familia Perron sufre actividad paranormal y llama a investigadores de lo sobrenatural.', image: 'conjuring.jpg', rating: 3, directorId: 3, productionCompanyId: 3, country: 'US' },
+    { id: 4, title: 'El laberinto del fauno', year: 2006, synopsis: 'En la España fascista de 1944, una niña se encuentra con un mundo fantástico y oscuro para escapar de su realidad brutal.', image: 'laberinto_fauno.jpg', rating: 5, directorId: 4, productionCompanyId: 4, country: 'ES' },
+    { id: 5, title: 'Scream', year: 1996, synopsis: 'Un grupo de adolescentes es perseguido por un asesino enmascarado que sigue las reglas de las películas de terror.', image: 'scream.jpg', rating: 4, directorId: 2, productionCompanyId: 5, country: 'US' },
+    { id: 6, title: 'El exorcista', year: 1973, synopsis: 'Una niña sufre posesión demoníaca y su madre busca la ayuda de dos sacerdotes para salvarla.', image: 'exorcista.jpg', rating: 5, directorId: 6, productionCompanyId: 6, country: 'US' },
+    { id: 7, title: 'Hereditary', year: 2018, synopsis: 'Después de la muerte de la matriarca, una familia comienza a descubrir secretos oscuros y eventos terroríficos se desatan.', image: 'hereditary.jpg', rating: 4, directorId: 7, productionCompanyId: 7, country: 'US' },
+    { id: 8, title: 'Midsommar', year: 2019, synopsis: 'Un grupo de amigos viaja a Suecia para un festival que ocurre una vez cada 90 años y descubren horrores inimaginables.', image: 'midsommar.jpg', rating: 3, directorId: 7, productionCompanyId: 7, country: 'SE' },
+    { id: 9, title: 'La bruja', year: 2015, synopsis: 'Una familia puritana en Nueva Inglaterra sufre la influencia de fuerzas malignas tras ser expulsada de su comunidad.', image: 'la_bruja.jpg', rating: 3, directorId: 8, productionCompanyId: 7, country: 'US' },
+    { id: 10, title: 'It Follows', year: 2014, synopsis: 'Una joven es perseguida por una entidad sobrenatural tras un encuentro sexual, enfrentando un miedo constante e ineludible.', image: 'it_follows.jpg', rating: 2, directorId: 7, productionCompanyId: 7, country: 'US' },
+    { id: 11, title: 'Get Out', year: 2017, synopsis: 'Un joven afroamericano visita la finca de la familia de su novia blanca y descubre secretos perturbadores.', image: 'get_out.jpg', rating: 5, directorId: 9, productionCompanyId: 3, country: 'US' },
+    { id: 12, title: 'Us', year: 2019, synopsis: 'Una familia se enfrenta a sus doppelgängers terroríficos durante unas vacaciones.', image: 'us.jpg', rating: 1, directorId: 9, productionCompanyId: 10, country: 'US' },
+    { id: 13, title: 'El resplandor', year: 1980, synopsis: 'Un escritor acepta un trabajo como cuidador de invierno en un hotel aislado donde gradualmente pierde la cordura.', image: 'el_resplandor.jpg', rating: 5, directorId: 11, productionCompanyId: 9, country: 'US' },
+    { id: 14, title: 'La noche de los muertos vivientes', year: 1968, synopsis: 'Un grupo de personas se refugia en una casa rural mientras hordas de zombies los rodean.', image: 'noche_muertos_vivientes.jpg', rating: 2, directorId: 12, productionCompanyId: 16, country: 'US' },
+    { id: 15, title: 'Posesión infernal', year: 1981, synopsis: 'Un grupo de jóvenes en una cabaña despierta fuerzas demoníacas al leer un libro maldito.', image: 'posesion_infernal.jpg', rating: 2, directorId: 13, productionCompanyId: 16, country: 'US' },
+    { id: 16, title: 'Suspiria', year: 1977, synopsis: 'Una bailarina americana ingresa a una prestigiosa academia de danza en Roma que esconde secretos siniestros.', image: 'suspiria.jpg', rating: 4, directorId: 14, productionCompanyId: 16, country: 'IT' },
+    { id: 17, title: 'The Babadook', year: 2014, synopsis: 'Una madre soltera lucha contra una entidad siniestra que emerge de un libro de cuentos infantil.', image: 'babadook.jpg', rating: 1, directorId: 15, productionCompanyId: 16, country: 'AU' },
+    { id: 18, title: 'X', year: 2022, synopsis: 'Un grupo de cineastas porno en los años 70 se enfrenta a una pareja de ancianos asesinos.', image: 'x_movie.jpg', rating: 1, directorId: 16, productionCompanyId: 7, country: 'US' },
+    { id: 19, title: 'El sexto sentido', year: 1999, synopsis: 'Un psicólogo infantil trata a un niño que afirma poder ver y hablar con personas muertas.', image: 'sexto_sentido.jpg', rating: 5, directorId: 17, productionCompanyId: 9, country: 'US' },
+    { id: 20, title: 'Cruda', year: 2016, synopsis: 'Una joven vegetariana desarrolla un gusto por la carne humana durante su primer año en la universidad veterinaria.', image: 'cruda.jpg', rating: 1, directorId: 18, productionCompanyId: 14, country: 'FR' },
+    { id: 21, title: 'Doctor Sleep', year: 2019, synopsis: 'Danny Torrance, ahora adulto, debe proteger a una niña con habilidades psíquicas de un culto que se alimenta de ellas.', image: 'doctor_sleep.jpg', rating: 2, directorId: 10, productionCompanyId: 9, country: 'US' },
+    { id: 22, title: 'It', year: 2017, synopsis: 'Un grupo de niños marginados debe enfrentarse a sus peores miedos cuando se encuentran con un payaso asesino.', image: 'it_2017.jpg', rating: 4, directorId: 16, productionCompanyId: 9, country: 'US' },
+    { id: 23, title: 'El hombre invisible', year: 2020, synopsis: 'Una mujer cree que su ex abusivo ha encontrado una manera de volverse invisible para aterrorizarla.', image: 'hombre_invisible.jpg', rating: 1, directorId: 3, productionCompanyId: 10, country: 'US' },
+    { id: 24, title: 'El faro', year: 2019, synopsis: 'Dos fareros quedan varados en una isla remota y comienzan a perder la cordura.', image: 'el_faro.jpg', rating: 2, directorId: 8, productionCompanyId: 7, country: 'US' },
+    { id: 25, title: 'Insidious', year: 2010, synopsis: 'Una familia descubre que su hijo está atrapado en un reino astral y recurre a especialistas en lo paranormal para rescatarlo.', image: 'insidious.jpg', rating: 3, directorId: 3, productionCompanyId: 3, country: 'US' },
+    // ── Tanda 2 ─────────────────────────────────────────────────────────────
+    { id: 26, title: 'Annabelle', year: 2014, synopsis: 'Una muñeca de colección es poseída por un espíritu demoníaco y aterroriza a una joven pareja que espera su primer hijo.', image: 'annabelle.jpg', rating: 2, directorId: 3, productionCompanyId: 9, country: 'US' },
+    { id: 27, title: 'Terrifier', year: 2016, synopsis: 'El payaso Art siembra el terror en una ciudad durante la noche de Halloween, cazando a sus víctimas sin piedad.', image: 'terrifier.jpg', rating: 3, directorId: 16, productionCompanyId: 16, country: 'US' },
+    { id: 28, title: 'Saint Maud', year: 2019, synopsis: 'Una enfermera de cuidados paliativos desarrolla una obsesión religiosa extrema mientras cuida a una paciente terminal.', image: 'saint_maud.jpg', rating: 4, directorId: 23, productionCompanyId: 7, country: 'GB' },
+    { id: 29, title: 'Sinister', year: 2012, synopsis: 'Un escritor de crímenes reales descubre unas películas caseras que revelan una serie de asesinatos familiares ligados a una entidad sobrenatural.', image: 'sinister.jpg', rating: 3, directorId: 10, productionCompanyId: 3, country: 'US' },
+    { id: 30, title: 'Noroi: La maldición', year: 2005, synopsis: 'Un documentalista investiga una serie de sucesos paranormales que lo llevan a descubrir un ritual demoníaco ancestral.', image: 'noroi.jpg', rating: 4, directorId: 8, productionCompanyId: 16, country: 'JP' },
+    { id: 31, title: 'REC', year: 2007, synopsis: 'Una periodista y su cámara quedan atrapados en un edificio en cuarentena donde los habitantes se convierten en seres violentos.', image: 'rec.jpg', rating: 4, directorId: 19, productionCompanyId: 13, country: 'ES' },
+    { id: 32, title: 'Mandy', year: 2018, synopsis: 'Un leñador emprende una brutal venganza contra el culto que asesinó a su pareja en un bosque remoto.', image: 'mandy.jpg', rating: 3, directorId: 7, productionCompanyId: 16, country: 'US' },
+    { id: 33, title: 'The Wailing', year: 2016, synopsis: 'Un policía investiga una serie de muertes misteriosas en un pueblo tras la llegada de un extranjero japonés.', image: 'the_wailing.jpg', rating: 5, directorId: 9, productionCompanyId: 16, country: 'KR' },
+    { id: 34, title: 'Posesión', year: 1981, synopsis: 'Un matrimonio en plena ruptura descubre que algo monstruoso y sobrenatural se ha adueñado de su vida.', image: 'posesion_1981.jpg', rating: 4, directorId: 5, productionCompanyId: 16, country: 'FR' },
+    { id: 35, title: 'La mosca', year: 1986, synopsis: 'Un científico se fusiona accidentalmente con una mosca durante un experimento de teletransportación y su cuerpo comienza a transformarse.', image: 'la_mosca.jpg', rating: 5, directorId: 5, productionCompanyId: 11, country: 'US' },
+    // ── Tanda 3 ─────────────────────────────────────────────────────────────
+    { id: 36, title: 'Candyman', year: 1992, synopsis: 'Una estudiante universitaria invoca accidentalmente a un espíritu vengativo al pronunciar su nombre cinco veces frente a un espejo.', image: 'candyman.jpg', rating: 3, directorId: 9, productionCompanyId: 10, country: 'US' },
+    { id: 37, title: 'El pueblo de los malditos', year: 1960, synopsis: 'En un pueblo inglés, un grupo de niños de ojos plateados y poderes telepáticos aterra a sus propios padres.', image: 'pueblo_malditos.jpg', rating: 3, directorId: 11, productionCompanyId: 9, country: 'GB' },
+    { id: 38, title: 'Phantasm', year: 1979, synopsis: 'Un adolescente descubre que el director de una funeraria local utiliza los cadáveres para crear esclavos enanos de otro mundo.', image: 'phantasm.jpg', rating: 2, directorId: 13, productionCompanyId: 16, country: 'US' },
+    { id: 39, title: 'Hellraiser', year: 1987, synopsis: 'Un hombre resuelve un puzzle demoníaco y abre la puerta a una dimensión de dolor y placer extremos habitada por los Cenobitas.', image: 'hellraiser.jpg', rating: 4, directorId: 6, productionCompanyId: 8, country: 'GB' },
+    { id: 40, title: 'Phenomena', year: 1985, synopsis: 'Una joven con la capacidad de comunicarse con insectos ayuda a resolver una serie de crímenes en una pensión suiza.', image: 'phenomena.jpg', rating: 3, directorId: 14, productionCompanyId: 16, country: 'IT' },
+    { id: 41, title: 'El orfanato', year: 2007, synopsis: 'Una mujer regresa al orfanato donde creció para convertirlo en un hogar para niños discapacitados, pero su hijo desaparece misteriosamente.', image: 'orfanato.jpg', rating: 4, directorId: 19, productionCompanyId: 13, country: 'ES' },
+    { id: 42, title: 'REC 2', year: 2009, synopsis: 'Un equipo SWAT acompaña a un inspector sanitario al edificio en cuarentena para investigar el origen de la infección.', image: 'rec2.jpg', rating: 3, directorId: 19, productionCompanyId: 13, country: 'ES' },
+    { id: 43, title: 'A Quiet Place', year: 2018, synopsis: 'Una familia sobrevive en silencio absoluto para evitar ser cazada por criaturas que cazan mediante el sonido.', image: 'quiet_place.jpg', rating: 4, directorId: 10, productionCompanyId: 11, country: 'US' },
+    { id: 44, title: 'Smile', year: 2022, synopsis: 'Una psiquiatra comienza a experimentar aterradores sucesos después de presenciar el suicidio de una paciente que sonreía de forma perturbadora.', image: 'smile.jpg', rating: 3, directorId: 16, productionCompanyId: 11, country: 'US' },
+    { id: 45, title: 'Nope', year: 2022, synopsis: 'Dos hermanos que regentan un rancho descubren algo inexplicable y aterrador en el cielo sobre su propiedad.', image: 'nope.jpg', rating: 4, directorId: 9, productionCompanyId: 10, country: 'US' },
+    { id: 46, title: 'Titane', year: 2021, synopsis: 'Una bailarina con una placa de titanio en la cabeza tras un accidente comienza a experimentar una transformación corporal imposible.', image: 'titane.jpg', rating: 2, directorId: 18, productionCompanyId: 15, country: 'FR' },
+    { id: 47, title: 'La piel que habito', year: 2011, synopsis: 'Un cirujano plástico obsesionado mantiene cautiva a una mujer sobre la que realiza experimentos de modificación corporal.', image: 'piel_habito.jpg', rating: 4, directorId: 4, productionCompanyId: 13, country: 'ES' },
+    { id: 48, title: 'Videodrome', year: 1983, synopsis: 'El director de un canal de televisión descubre una señal que emite snuff films reales y comienza a perder el contacto con la realidad.', image: 'videodrome.jpg', rating: 4, directorId: 5, productionCompanyId: 10, country: 'CA' },
+    { id: 49, title: 'Climax', year: 2018, synopsis: 'Un grupo de bailarines queda atrapado en un ensayo que se convierte en pesadilla cuando alguien adultera la sangría con LSD.', image: 'climax.jpg', rating: 3, directorId: 18, productionCompanyId: 15, country: 'FR' },
+    { id: 50, title: 'Bone Tomahawk', year: 2015, synopsis: 'Un grupo de hombres emprende un rescate desesperado tras el secuestro de varios vecinos por una tribu de caníbales.', image: 'bone_tomahawk.jpg', rating: 3, directorId: 16, productionCompanyId: 16, country: 'US' },
+    { id: 51, title: 'His House', year: 2020, synopsis: 'Una pareja de refugiados sudaneses descubre que el hogar que les asignan en Inglaterra alberga un mal que los siguió desde su tierra.', image: 'his_house.jpg', rating: 4, directorId: 15, productionCompanyId: 12, country: 'GB' },
+    { id: 52, title: 'The Others', year: 2001, synopsis: 'Una mujer vive con sus hijos fotosensibles en una mansión oscura convencida de que la casa está encantada.', image: 'the_others.jpg', rating: 5, directorId: 21, productionCompanyId: 13, country: 'ES' },
+    { id: 53, title: 'Ringu', year: 1998, synopsis: 'Una periodista investiga una cinta de vídeo maldita que mata a quien la ve exactamente siete días después.', image: 'ringu.jpg', rating: 5, directorId: 8, productionCompanyId: 16, country: 'JP' },
+    { id: 54, title: 'Audition', year: 1999, synopsis: 'Un viudo japonés organiza una falsa audición cinematográfica para encontrar esposa y acaba enamorándose de una candidata con un oscuro secreto.', image: 'audition.jpg', rating: 4, directorId: 12, productionCompanyId: 16, country: 'JP' },
+    { id: 55, title: 'Pulse', year: 2001, synopsis: 'En Tokio, una serie de suicidios se relaciona con una web donde los muertos contactan con los vivos a través de internet.', image: 'pulse.jpg', rating: 3, directorId: 12, productionCompanyId: 16, country: 'JP' },
+    { id: 56, title: 'Pontypool', year: 2008, synopsis: 'Un locutor de radio en Ontario descubre que el idioma inglés se ha convertido en el vector de un virus que convierte a las personas en zombies.', image: 'pontypool.jpg', rating: 3, directorId: 15, productionCompanyId: 16, country: 'CA' },
+    { id: 57, title: 'Ginger Snaps', year: 2000, synopsis: 'Dos hermanas obsesionadas con la muerte descubren que una mordedura misteriosa está transformando a la mayor en algo no humano.', image: 'ginger_snaps.jpg', rating: 3, directorId: 15, productionCompanyId: 16, country: 'CA' },
+    { id: 58, title: 'Haunt', year: 2019, synopsis: 'Un grupo de amigos visita una casa del terror extrema en Halloween y descubre que los monstruos son muy reales.', image: 'haunt.jpg', rating: 2, directorId: 10, productionCompanyId: 3, country: 'US' },
+    { id: 59, title: 'The Autopsy of Jane Doe', year: 2016, synopsis: 'Un padre e hijo forenses realizan la autopsia de una mujer no identificada y descubren indicios de algo sobrenatural que desata el caos.', image: 'autopsy_jane_doe.jpg', rating: 4, directorId: 3, productionCompanyId: 16, country: 'GB' },
+    // ── Españolas ────────────────────────────────────────────────────────────
+    { id: 60, title: 'Los sin nombre', year: 1999, synopsis: 'Una madre recibe una llamada de su hija, supuestamente muerta cinco años atrás, que la conduce a una secta que practica rituales del mal absoluto.', image: 'sin_nombre.jpg', rating: 4, directorId: 20, productionCompanyId: 13, country: 'ES' },
+    { id: 61, title: 'Darkness', year: 2002, synopsis: 'Una familia americana se muda a una antigua casa en España donde los hijos comienzan a sufrir visiones y comportamientos inexplicables.', image: 'darkness.jpg', rating: 3, directorId: 20, productionCompanyId: 13, country: 'ES' },
+    { id: 62, title: 'Frágiles', year: 2005, synopsis: 'Una enfermera descubre que un hospital infantil abandonado en una isla inglesa alberga el espíritu vengativo de una niña.', image: 'fragiles.jpg', rating: 3, directorId: 21, productionCompanyId: 13, country: 'ES' },
+    { id: 63, title: 'El espinazo del diablo', year: 2001, synopsis: 'En un orfanato durante la Guerra Civil española, un niño descubre el fantasma de otro chico asesinado que guarda un oscuro secreto.', image: 'espinazo_diablo.jpg', rating: 5, directorId: 4, productionCompanyId: 13, country: 'ES' },
+    { id: 64, title: 'Mientras duermes', year: 2011, synopsis: 'El portero de un edificio de apartamentos oculta una obsesión enfermiza por una de sus vecinas a la que manipula sin que ella lo sepa.', image: 'mientras_duermes.jpg', rating: 5, directorId: 20, productionCompanyId: 13, country: 'ES' },
+    { id: 65, title: 'Verónica', year: 2017, synopsis: 'Basada en hechos reales, una adolescente madrileña invoca sin querer una presencia demoníaca tras usar una ouija en el colegio durante un eclipse.', image: 'veronica.jpg', rating: 4, directorId: 19, productionCompanyId: 13, country: 'ES' },
+    { id: 66, title: 'Tesis', year: 1996, synopsis: 'Una estudiante universitaria descubre cintas de snuff films reales mientras investiga la violencia audiovisual para su tesis doctoral.', image: 'tesis.jpg', rating: 5, directorId: 21, productionCompanyId: 13, country: 'ES' },
+    { id: 67, title: 'El día de la bestia', year: 1995, synopsis: 'Un sacerdote convencido de haber descifrado el número de la bestia viaja a Madrid para presenciar el nacimiento del Anticristo la noche de Navidad.', image: 'dia_bestia.jpg', rating: 5, directorId: 22, productionCompanyId: 13, country: 'ES' },
+    { id: 68, title: "Shrew's Nest", year: 2014, synopsis: 'En el Madrid de los años 50, una joven agorafóbica cuida de su hermana pequeña con una posesividad que esconde algo terrible.', image: 'shrews_nest.jpg', rating: 3, directorId: 20, productionCompanyId: 16, country: 'ES' },
+    { id: 69, title: 'Venus', year: 2022, synopsis: 'Una mujer huye de unos traficantes y se refugia en el bloque de apartamentos de su hermana, donde algo sobrenatural acecha en las paredes.', image: 'venus.jpg', rating: 3, directorId: 19, productionCompanyId: 15, country: 'ES' },
+  ];
+  for (const m of movies) {
+    const payload = {
+      title: m.title,
+      slug: makeSlug(m.title),
+      year: m.year,
+      synopsis: m.synopsis,
+      image: m.image,
+      rating: m.rating,
+      directorId: m.directorId,
+      productionCompanyId: m.productionCompanyId,
+      country: m.country,
+    };
+    await prisma.movie.upsert({
+      where: { id: m.id },
+      update: payload,
+      create: { id: m.id, ...payload },
+    });
+  }
+
+  console.log('Seeding movie_actor pivot…');
+  await prisma.movieActor.deleteMany({});
+  await prisma.movieActor.createMany({
+    data: [
+      { movieId: 1, actorId: 1 },
+      { movieId: 2, actorId: 2 },
+      { movieId: 3, actorId: 3 },
+      { movieId: 3, actorId: 17 },
+      { movieId: 4, actorId: 4 },
+      { movieId: 5, actorId: 5 },
+      { movieId: 6, actorId: 6 },
+      { movieId: 7, actorId: 16 },
+      { movieId: 8, actorId: 8 },
+      { movieId: 9, actorId: 9 },
+      { movieId: 10, actorId: 8 },
+      { movieId: 11, actorId: 11 },
+      { movieId: 12, actorId: 12 },
+      { movieId: 13, actorId: 13 },
+      { movieId: 13, actorId: 14 },
+      { movieId: 14, actorId: 15 },
+      { movieId: 15, actorId: 15 },
+      { movieId: 17, actorId: 18 },
+      { movieId: 18, actorId: 19 },
+      { movieId: 19, actorId: 20 },
+      { movieId: 20, actorId: 21 },
+      { movieId: 21, actorId: 7 },
+      { movieId: 22, actorId: 23 },
+      { movieId: 23, actorId: 24 },
+      { movieId: 24, actorId: 22 },
+      { movieId: 25, actorId: 3 },
+      { movieId: 25, actorId: 17 },
+      { movieId: 26, actorId: 17 },
+      { movieId: 28, actorId: 31 },
+      { movieId: 29, actorId: 7 },
+      { movieId: 31, actorId: 27 },
+      { movieId: 32, actorId: 19 },
+      { movieId: 35, actorId: 13 },
+      { movieId: 41, actorId: 29 },
+      { movieId: 43, actorId: 24 },
+      { movieId: 45, actorId: 11 },
+      { movieId: 46, actorId: 21 },
+      { movieId: 48, actorId: 13 },
+      { movieId: 52, actorId: 22 },
+      { movieId: 59, actorId: 7 },
+      { movieId: 63, actorId: 30 },
+      { movieId: 65, actorId: 28 },
+      { movieId: 66, actorId: 25 },
+      { movieId: 66, actorId: 26 },
+    ],
+  });
+
+  console.log('Seeding movie_subgenre pivot…');
+  await prisma.movieSubgenre.deleteMany({});
+  await prisma.movieSubgenre.createMany({
+    data: [
+      // originales
+      { movieId: 1, subgenreId: 1 },
+      { movieId: 2, subgenreId: 1 },
+      { movieId: 2, subgenreId: 2 },
+      { movieId: 3, subgenreId: 2 },
+      { movieId: 4, subgenreId: 5 },
+      { movieId: 5, subgenreId: 1 },
+      { movieId: 6, subgenreId: 2 },
+      { movieId: 6, subgenreId: 11 },
+      { movieId: 7, subgenreId: 3 },
+      { movieId: 7, subgenreId: 8 },
+      { movieId: 8, subgenreId: 3 },
+      { movieId: 8, subgenreId: 7 },
+      { movieId: 9, subgenreId: 7 },
+      { movieId: 9, subgenreId: 3 },
+      { movieId: 10, subgenreId: 3 },
+      { movieId: 10, subgenreId: 8 },
+      { movieId: 11, subgenreId: 9 },
+      { movieId: 11, subgenreId: 3 },
+      { movieId: 12, subgenreId: 9 },
+      { movieId: 12, subgenreId: 3 },
+      { movieId: 13, subgenreId: 3 },
+      { movieId: 13, subgenreId: 15 },
+      { movieId: 14, subgenreId: 10 },
+      { movieId: 15, subgenreId: 11 },
+      { movieId: 16, subgenreId: 12 },
+      { movieId: 16, subgenreId: 2 },
+      { movieId: 17, subgenreId: 3 },
+      { movieId: 17, subgenreId: 8 },
+      { movieId: 18, subgenreId: 1 },
+      { movieId: 18, subgenreId: 13 },
+      { movieId: 19, subgenreId: 2 },
+      { movieId: 19, subgenreId: 3 },
+      { movieId: 20, subgenreId: 4 },
+      { movieId: 20, subgenreId: 3 },
+      { movieId: 21, subgenreId: 2 },
+      { movieId: 21, subgenreId: 3 },
+      { movieId: 22, subgenreId: 2 },
+      { movieId: 22, subgenreId: 3 },
+      { movieId: 23, subgenreId: 3 },
+      { movieId: 23, subgenreId: 8 },
+      { movieId: 24, subgenreId: 3 },
+      { movieId: 24, subgenreId: 15 },
+      { movieId: 25, subgenreId: 2 },
+      { movieId: 25, subgenreId: 11 },
+      // tanda 2
+      { movieId: 26, subgenreId: 2 },
+      { movieId: 26, subgenreId: 11 },
+      { movieId: 27, subgenreId: 1 },
+      { movieId: 27, subgenreId: 13 },
+      { movieId: 28, subgenreId: 3 },
+      { movieId: 28, subgenreId: 15 },
+      { movieId: 29, subgenreId: 2 },
+      { movieId: 29, subgenreId: 3 },
+      { movieId: 30, subgenreId: 6 },
+      { movieId: 30, subgenreId: 2 },
+      { movieId: 31, subgenreId: 6 },
+      { movieId: 31, subgenreId: 10 },
+      { movieId: 32, subgenreId: 12 },
+      { movieId: 32, subgenreId: 13 },
+      { movieId: 33, subgenreId: 2 },
+      { movieId: 33, subgenreId: 7 },
+      { movieId: 34, subgenreId: 4 },
+      { movieId: 34, subgenreId: 3 },
+      { movieId: 35, subgenreId: 4 },
+      { movieId: 35, subgenreId: 3 },
+      // tanda 3
+      { movieId: 36, subgenreId: 2 },
+      { movieId: 36, subgenreId: 9 },
+      { movieId: 37, subgenreId: 3 },
+      { movieId: 37, subgenreId: 14 },
+      { movieId: 38, subgenreId: 2 },
+      { movieId: 38, subgenreId: 14 },
+      { movieId: 39, subgenreId: 2 },
+      { movieId: 39, subgenreId: 14 },
+      { movieId: 40, subgenreId: 1 },
+      { movieId: 40, subgenreId: 3 },
+      { movieId: 41, subgenreId: 2 },
+      { movieId: 41, subgenreId: 8 },
+      { movieId: 42, subgenreId: 6 },
+      { movieId: 42, subgenreId: 10 },
+      { movieId: 43, subgenreId: 15 },
+      { movieId: 43, subgenreId: 3 },
+      { movieId: 44, subgenreId: 3 },
+      { movieId: 44, subgenreId: 2 },
+      { movieId: 45, subgenreId: 14 },
+      { movieId: 45, subgenreId: 9 },
+      { movieId: 46, subgenreId: 4 },
+      { movieId: 46, subgenreId: 3 },
+      { movieId: 47, subgenreId: 4 },
+      { movieId: 47, subgenreId: 3 },
+      { movieId: 48, subgenreId: 4 },
+      { movieId: 48, subgenreId: 3 },
+      { movieId: 49, subgenreId: 3 },
+      { movieId: 49, subgenreId: 4 },
+      { movieId: 50, subgenreId: 1 },
+      { movieId: 50, subgenreId: 15 },
+      { movieId: 51, subgenreId: 2 },
+      { movieId: 51, subgenreId: 7 },
+      { movieId: 52, subgenreId: 2 },
+      { movieId: 52, subgenreId: 3 },
+      { movieId: 53, subgenreId: 2 },
+      { movieId: 53, subgenreId: 3 },
+      { movieId: 54, subgenreId: 3 },
+      { movieId: 54, subgenreId: 8 },
+      { movieId: 55, subgenreId: 2 },
+      { movieId: 55, subgenreId: 3 },
+      { movieId: 56, subgenreId: 10 },
+      { movieId: 56, subgenreId: 3 },
+      { movieId: 57, subgenreId: 4 },
+      { movieId: 57, subgenreId: 3 },
+      { movieId: 58, subgenreId: 1 },
+      { movieId: 58, subgenreId: 8 },
+      { movieId: 59, subgenreId: 2 },
+      { movieId: 59, subgenreId: 3 },
+      // españolas
+      { movieId: 60, subgenreId: 12 },
+      { movieId: 60, subgenreId: 3 },
+      { movieId: 61, subgenreId: 2 },
+      { movieId: 61, subgenreId: 8 },
+      { movieId: 62, subgenreId: 2 },
+      { movieId: 62, subgenreId: 8 },
+      { movieId: 63, subgenreId: 2 },
+      { movieId: 63, subgenreId: 5 },
+      { movieId: 64, subgenreId: 3 },
+      { movieId: 64, subgenreId: 8 },
+      { movieId: 65, subgenreId: 2 },
+      { movieId: 65, subgenreId: 11 },
+      { movieId: 66, subgenreId: 3 },
+      { movieId: 66, subgenreId: 9 },
+      { movieId: 67, subgenreId: 12 },
+      { movieId: 67, subgenreId: 2 },
+      { movieId: 68, subgenreId: 3 },
+      { movieId: 68, subgenreId: 8 },
+      { movieId: 69, subgenreId: 2 },
+      { movieId: 69, subgenreId: 8 },
+    ],
+  });
+
+  console.log('Seeding reviews…');
+  const reviews = [
+    { id: 1, userId: 1, movieId: 1, rating: 5, comment: '¡Película increíble! Imprescindible verla.', date: '2017-10-01' },
+    { id: 2, userId: 2, movieId: 2, rating: 4, comment: 'Gran historia y personajes.', date: '2023-10-02' },
+    { id: 3, userId: 1, movieId: 3, rating: 3, comment: null, date: '2025-10-03' },
+  ];
+  for (const r of reviews) {
+    const payload = {
+      userId: r.userId,
+      movieId: r.movieId,
+      rating: r.rating,
+      comment: r.comment,
+      date: new Date(r.date),
+    };
+    await prisma.review.upsert({
+      where: { id: r.id },
+      update: payload,
+      create: { id: r.id, ...payload },
+    });
+  }
+
+  console.log('Resetting Postgres sequences…');
+  const tables = [
+    'plans', 'users', 'profiles', 'directors',
+    'production_companies', 'actors', 'subgenres', 'movies', 'reviews',
+  ];
+  for (const table of tables) {
+    await prisma.$executeRawUnsafe(
+      `SELECT setval(pg_get_serial_sequence('${table}', 'id'), COALESCE((SELECT MAX(id) FROM "${table}"), 1));`,
+    );
+  }
+
+  console.log('Done.');
+}
+
+main()
+  .then(async () => { await prisma.$disconnect(); })
+  .catch(async e => { console.error(e); await prisma.$disconnect(); process.exit(1); });

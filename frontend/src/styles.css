@@ -1,0 +1,231 @@
+@import url("https://fonts.googleapis.com/css2?family=Monoton&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Righteous&display=swap");
+
+:root {
+  --color-primary: #0d0dff;
+  --color-secondary: #1a1a1a;
+  --color-accent1: #ff3c38;
+  --color-accent2: #ff9f1c;
+  --color-text: #ffffff;
+  --degradado: linear-gradient(180deg, #180a31 0%, #0d0dff 100%);
+
+  /* Sellos neón reutilizables (se usan sobre todo en hover) */
+  --neon-blue: 0 0 22px rgba(47, 47, 255, 0.55);
+  --neon-red: 0 0 22px rgba(255, 60, 56, 0.55);
+  --neon-amber: 0 0 18px rgba(255, 159, 28, 0.5);
+
+  /* Superficie base para cards/paneles del estilo corporativo */
+  --surface: #15102a;
+  --surface-border: rgba(255, 255, 255, 0.07);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background:
+    /* resplandor de marca azul en la parte superior */
+    radial-gradient(
+      ellipse 80% 55% at 50% -10%,
+      rgba(47, 47, 255, 0.18),
+      transparent 60%
+    ),
+    /* brasa roja tenue en la parte inferior */
+    radial-gradient(
+        ellipse 95% 50% at 50% 115%,
+        rgba(255, 60, 56, 0.1),
+        transparent 60%
+      ),
+    /* viñeta: oscurece los bordes para centrar la atención */
+    radial-gradient(125% 125% at 50% 45%, transparent 55%, rgba(0, 0, 0, 0.6)),
+    /* base casi negra con un punto de morado de marca */ #0d0a16;
+  background-attachment: fixed;
+  color: var(--color-text);
+  font-family: "Montserrat", sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Grano de película: textura VHS muy sutil sobre todo el sitio */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 160px 160px;
+}
+
+/* Títulos de películas */
+h1,
+h2,
+.movie-title {
+  font-family: "Righteous", sans-serif;
+  color: var(--color-text);
+  letter-spacing: 1px;
+  font-weight: 400;
+}
+
+/* Labels y categorías (Año, País, Valoración, etc.) */
+h3,
+.label,
+.category {
+  font-family: "Monoton", cursive;
+  color: var(--color-accent2);
+  letter-spacing: 2px;
+  font-size: 0.9rem;
+}
+
+/* Texto descriptivo (sinopsis, descripciones) */
+p,
+.description,
+.sinopsis {
+  font-family: "Montserrat", sans-serif;
+  color: var(--color-text);
+  line-height: 1.6;
+  font-weight: 400;
+}
+
+button {
+  background-color: var(--color-accent1);
+  color: white;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 20px;
+  font-family: "Righteous", sans-serif;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  letter-spacing: 1px;
+}
+
+button:hover {
+  background-color: var(--color-hover);
+  box-shadow: 0 0 15px var(--color-hover);
+  transform: scale(1.05);
+}
+
+/* ==============================================================
+   BOTÓN DE SUBMIT ADAPTADO CON ESTILO PÍLDORA Y RETRO
+   ============================================================== */
+.login button[type="submit"] {
+  /* --- Propiedades fusionadas de la inspiración --- */
+  font-family: "Monoton", cursive;
+  /* La fuente retro clave */
+  border-radius: 50px;
+  /* Forma de píldora súper redondeada */
+  /* Sombra de texto sutil para dar profundidad y legibilidad */
+  text-shadow: 1px 1px 0px rgba(0, 0, 0, 0.3);
+
+  /* --- Propiedades originales ajustadas para el nuevo estilo --- */
+  width: 100%;
+  padding: 1rem 2rem;
+  /* Mantenemos un buen acolchado */
+  margin: 1.5rem 0;
+  /* Aumentamos el margen para que respire */
+  font-size: 1.1rem;
+  /* Un poco más grande para la fuente 'Monoton' */
+  font-weight: normal;
+  /* 'Monoton' no necesita bold */
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  /* Más espaciado para esta fuente */
+
+  /* --- Estilo visual y de interacción --- */
+  background: var(--color-accent2);
+  color: var(--color-primary);
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(255, 159, 28, 0.4);
+  /* Sombra "glow" */
+  transition: all 0.3s ease-out;
+}
+
+/* Efecto hover mejorado: se eleva y brilla más */
+.login button[type="submit"]:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 30px rgba(255, 159, 28, 0.6);
+}
+
+.container {
+  width: 90%;
+  max-width: 1200px;
+  margin: 2rem auto;
+}
+
+.card {
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 2px solid var(--color-accent2);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 0 20px rgba(255, 159, 28, 0.1);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0 25px rgba(255, 159, 28, 0.3);
+  border-color: var(--color-hover);
+}
+
+/* ==============================================================
+   LETRAS DEL LOGO CON ANIMACIÓN LATERAL
+   ============================================================== */
+/* Span "ES" entra desde la izquierda con retraso */
+.es {
+  margin-left: 25px;
+  color: var(--color-accent1);
+  text-shadow: 3px 3px var(--color-accent2);
+  opacity: 0;
+  animation: slideInLeft 0.8s ease-out forwards;
+  animation-delay: 0.6s;
+  /* cascada: comienza después del fade-in del logo */
+  -webkit-text-stroke: 1px black;
+  user-select: none;
+}
+
+/* Span "CREAM" entra desde la derecha con retraso */
+.cream {
+  margin-left: 7px;
+  color: var(--color-accent2);
+  text-shadow: 3px 3px var(--color-accent1);
+  opacity: 0;
+  animation: slideInRight 0.8s ease-out forwards;
+  animation-delay: 0.9s;
+  -webkit-text-stroke: 1px black;
+  user-select: none;
+}
+
+/* Keyframes para entrada lateral de las letras */
+/* slideInLeft: desde izquierda a su posición original */
+@keyframes slideInLeft {
+  from {
+    transform: translateX(-60px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* slideInRight: desde derecha a su posición original */
+@keyframes slideInRight {
+  from {
+    transform: translateX(60px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}

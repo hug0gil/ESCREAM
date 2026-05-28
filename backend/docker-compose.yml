@@ -1,0 +1,18 @@
+version: '3.9'
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: escream-pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: escream
+      POSTGRES_PASSWORD: escream
+      POSTGRES_DB: escream
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

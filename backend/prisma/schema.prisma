@@ -1,0 +1,164 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Plan {
+  id             Int      @id @default(autoincrement())
+  name           String
+  price          Decimal  @db.Decimal(6, 2)
+  devicesAllowed Int      @map("devices_allowed")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  users          User[]
+
+  @@map("plans")
+}
+
+enum Role {
+  USER
+  EDITOR
+  ADMIN
+}
+
+model User {
+  id              Int       @id @default(autoincrement())
+  name            String
+  email           String    @unique
+  emailVerifiedAt DateTime? @map("email_verified_at")
+  password        String
+  role            Role      @default(USER)
+  startDate       DateTime  @default(now()) @map("start_date")
+  endDate         DateTime? @map("end_date")
+  subscribed      Boolean   @default(false)
+  planId          Int       @default(1) @map("plan_id")
+  createdAt       DateTime  @default(now()) @map("created_at")
+  updatedAt       DateTime  @updatedAt @map("updated_at")
+  profiles        Profile[] //relacion, no es una columna virtual es la manera de hacer FK
+  reviews         Review[]
+  plan            Plan      @relation(fields: [planId], references: [id])
+
+  @@map("users")
+}
+
+model Profile {
+  id             Int      @id @default(autoincrement())
+  profileName    String   @map("profile_name")
+  ageRestriction Int      @map("age_restriction")
+  userId         Int      @map("user_id")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("profiles")
+}
+
+model ProductionCompany {
+  id        Int      @id @default(autoincrement())
+  name      String
+  country   String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  movies    Movie[]
+
+  @@map("production_companies")
+}
+
+model Director {
+  id        Int      @id @default(autoincrement())
+  name      String
+  birthDate DateTime @map("birth_date") @db.Date
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  movies    Movie[]
+
+  @@map("directors")
+}
+
+model Actor {
+  id        Int          @id @default(autoincrement())
+  name      String
+  birthDate DateTime     @map("birth_date") @db.Date
+  country   String
+  createdAt DateTime     @default(now()) @map("created_at")
+  updatedAt DateTime     @updatedAt @map("updated_at")
+  movies    MovieActor[]
+
+  @@map("actors")
+}
+
+model Subgenre {
+  id          Int             @id @default(autoincrement())
+  name        String
+  slug        String          @unique
+  description String?
+  createdAt   DateTime        @default(now()) @map("created_at")
+  updatedAt   DateTime        @updatedAt @map("updated_at")
+  movies      MovieSubgenre[]
+
+  @@map("subgenres")
+}
+
+model Movie {
+  id                  Int               @id @default(autoincrement())
+  title               String            @unique
+  slug                String            @unique
+  year                Int?
+  synopsis            String
+  image               String?
+  rating              Decimal?          @db.Decimal(2, 1)
+  directorId          Int               @map("director_id")
+  productionCompanyId Int               @map("production_company_id")
+  country             String
+  createdAt           DateTime          @default(now()) @map("created_at")
+  updatedAt           DateTime          @updatedAt @map("updated_at")
+  actors              MovieActor[]
+  subgenres           MovieSubgenre[]
+  director            Director          @relation(fields: [directorId], references: [id])
+  productionCompany   ProductionCompany @relation(fields: [productionCompanyId], references: [id])
+  reviews             Review[]
+
+  @@map("movies")
+}
+
+model MovieActor {
+  movieId   Int      @map("movie_id")
+  actorId   Int      @map("actor_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  actor     Actor    @relation(fields: [actorId], references: [id], onDelete: Cascade)
+  movie     Movie    @relation(fields: [movieId], references: [id], onDelete: Cascade)
+
+  @@id([movieId, actorId])
+  @@map("movie_actor")
+}
+
+model MovieSubgenre {
+  movieId    Int      @map("movie_id")
+  subgenreId Int      @map("subgenre_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  movie      Movie    @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  subgenre   Subgenre @relation(fields: [subgenreId], references: [id], onDelete: Cascade)
+
+  @@id([movieId, subgenreId])
+  @@map("movie_subgenre")
+}
+
+model Review {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @map("user_id")
+  movieId   Int      @map("movie_id")
+  rating    Decimal  @db.Decimal(2, 1)
+  comment   String?
+  date      DateTime @db.Date
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  movie     Movie    @relation(fields: [movieId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("reviews")
+}

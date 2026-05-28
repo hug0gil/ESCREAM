@@ -1,0 +1,46 @@
+<div class="logo">
+    <img src="assets/img/LogoTransparenteESCREAM.png" alt="ESCREAM Logo" routerLink="/">
+</div>
+<div class="login">
+    <div class="login-container">
+        <form [formGroup]="form" (ngSubmit)="submit()">
+            <h1>Crear cuenta</h1>
+
+            <div class="form-group">
+                <p>Nombre:</p>
+                <input type="text" formControlName="name" placeholder="Tu nombre">
+                @if (form.get('name')?.invalid && submitted) {
+                <p class="error-message">El nombre es obligatorio.</p>
+                }
+            </div>
+
+            <div class="form-group">
+                <p>Correo electrónico:</p>
+                <input type="text" formControlName="mail" placeholder="ejemplo@correo.com">
+                @if (form.get('mail')?.invalid && submitted) {
+                <p class="error-message">El correo tiene que tener un formato válido.</p>
+                }
+            </div>
+
+            <div class="form-group">
+                <p>Contraseña:</p>
+                <input type="password" formControlName="password" placeholder="••••••••">
+                @if (form.get('password')?.invalid && submitted) {
+                <p class="error-message">La contraseña debe tener mínimo 8 caracteres y un número.</p>
+                }
+            </div>
+
+            @if (errorMsg()) {
+            <p class="error-message">{{ errorMsg() }}</p>
+            }
+
+            <button type="submit" [disabled]="loading()">
+                {{ loading() ? 'Creando…' : 'Crear cuenta' }}
+            </button>
+
+            <div class="extra-links">
+                <a routerLink="/login">¿Ya tienes cuenta? Inicia sesión</a>
+            </div>
+        </form>
+    </div>
+</div>

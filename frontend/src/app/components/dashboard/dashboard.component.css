@@ -1,0 +1,198 @@
+.dashboard {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(300px, 460px));
+  grid-template-areas: "usuario administracion";
+  justify-content: center;
+  align-items: start;
+  gap: 2rem;
+  padding: 3rem 1rem;
+}
+
+/* En pantallas estrechas, los dos grupos se apilan en una sola columna */
+@media (max-width: 760px) {
+  .dashboard {
+    grid-template-columns: minmax(0, 460px);
+    grid-template-areas:
+      "usuario"
+      "administracion";
+  }
+}
+
+.user-card {
+  grid-area: usuario;
+  background: var(--degradado);
+  border: 4px solid #000;
+  border-radius: 1.2rem;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 460px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.7),
+    0 0 25px rgba(47, 47, 255, 0.45);
+}
+
+.avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Righteous", sans-serif;
+  font-size: 2.5rem;
+  color: white;
+  background: var(--color-accent2);
+  border: 4px solid #000;
+  box-shadow: 0 0 20px var(--color-accent1);
+  margin-bottom: 1rem;
+}
+
+.user-card h1 {
+  font-family: "Righteous", sans-serif;
+  color: var(--color-accent1);
+  font-size: 2rem;
+  margin: 0;
+  text-align: center;
+  text-shadow:
+    0 0 4px rgba(255, 60, 56, 0.45),
+    0 0 8px rgba(255, 60, 56, 0.35);
+}
+
+.role-badge {
+  margin-top: 0.5rem;
+  padding: 0.25rem 0.9rem;
+  border-radius: 50px;
+  background: var(--color-accent2);
+  color: white;
+  font-family: "Monoton", sans-serif;
+  font-size: 0.85rem;
+  letter-spacing: 1px;
+  border: 2px solid #000;
+}
+
+.user-info {
+  list-style: none;
+  padding: 0;
+  margin: 2rem 0 1.5rem;
+  width: 100%;
+}
+
+.user-info li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.8rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  font-family: "Montserrat", sans-serif;
+}
+
+.user-info li span {
+  color: var(--color-accent2);
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+}
+
+.user-info li strong {
+  color: var(--color-text);
+}
+
+.logout-btn {
+  margin-top: 0.5rem;
+  width: 100%;
+  padding: 0.9rem;
+  border: none;
+  border-radius: 0.8rem;
+  background: var(--color-accent1);
+  color: white;
+  font-family: "Righteous", sans-serif;
+  font-size: 1rem;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.logout-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 0 25px var(--color-accent1);
+}
+
+.administration{
+  display: flex;
+  flex-direction: column;
+}
+
+/* ==============================================================
+   TARJETA DE ADMINISTRACIÓN
+   ============================================================== */
+.admin-card {
+  grid-area: administracion;
+  background: var(--degradado);
+  border: 4px solid #000;
+  border-radius: 1.2rem;
+  padding: 2rem;
+  width: 100%;
+  max-width: 460px;
+  box-shadow:
+    0 6px 18px rgba(0, 0, 0, 0.7),
+    0 0 25px rgba(47, 47, 255, 0.45);
+}
+
+
+.admin-card h2 {
+  font-family: "Righteous", sans-serif;
+  color: var(--color-accent2);
+  text-align: center;
+  margin: 0 0 0.5rem;
+  text-shadow: 0 0 8px var(--color-accent2);
+}
+
+.user-actions {
+  grid-area: administracion;
+  margin-top: 10px;
+}
+
+.user-actions button{
+  margin: 10px 0px;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.admin-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.3rem 1rem;
+  border: 3px solid #000;
+  border-radius: 1rem;
+  background: rgba(0, 0, 0, 0.25);
+  color: var(--color-text);
+  font-family: "Righteous", sans-serif;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+}
+
+.admin-btn .icon {
+  font-size: 1.9rem;
+  line-height: 1;
+}
+
+.admin-btn:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-accent1);
+  box-shadow: 0 0 20px var(--color-accent1);
+}

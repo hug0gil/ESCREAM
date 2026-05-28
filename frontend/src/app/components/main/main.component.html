@@ -1,0 +1,30 @@
+<div class="poster-wall" aria-hidden="true">
+  @for (col of posterColumns; track $index) {
+  <div class="poster-col" [class.reverse]="$index % 2 === 1">
+    @for (img of col; track $index) {
+    <img class="poster" [src]="img" alt="" loading="lazy" />
+    }
+  </div>
+  }
+</div>
+
+<section class="main-content">
+  <p class="eyebrow">Plataforma de streaming · Terror</p>
+
+  <h1>
+    Bienvenido a <span class="es">ES</span><span class="cream">CREAM</span>
+  </h1>
+
+  <div class="divider" aria-hidden="true">
+    <div class="divider-line"></div>
+    <span class="divider-moon">☽</span>
+    <div class="divider-line"></div>
+  </div>
+
+  <p>La mejor app de streaming de películas de terror</p>
+
+  <div class="actions">
+    <button routerLink="/movies">Ver catálogo</button>
+    <button routerLink="/login">Iniciar Sesión</button>
+  </div>
+</section>

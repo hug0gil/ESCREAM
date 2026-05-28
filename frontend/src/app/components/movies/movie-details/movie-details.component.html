@@ -1,0 +1,66 @@
+<div class="movie-details-container">
+    @if (movie$ | async; as movie) {
+    <div class="movie-image" (click)="goToTrailer(movie.title)">
+        <img [src]="movie.image" [alt]="movie.title" />
+    </div>
+
+    <div class="movie-card detail-card">
+        <h2 class="movie-title">{{ movie.title }}</h2>
+
+        <div class="movie-info-grid">
+            <div class="info-item">
+                <span class="label">Año </span>
+                <span class="value">{{ movie.year }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Miedo</span>
+                <span class="value">
+                    @for (s of skulls(movie.rating); track $index) {
+                    💀
+                    }
+                </span>
+            </div>
+            <div class="info-item">
+                <span class="label">País </span>
+                <span class="value">{{ movie.country }}</span>
+            </div>
+            <div class="info-item">
+                <span class="label">Director</span>
+                <span class="value">{{ movie.director?.name }}</span>
+            </div>
+        </div>
+
+        <div class="movie-details-section-container">
+            <div class="movie-section">
+                <h3>Sinopsis 💬</h3>
+                <p>{{ movie.synopsis }}</p>
+            </div>
+
+            <div class="movie-section">
+                <h3>Productora 🎥</h3>
+                <p>{{ movie.productionCompany?.name }}</p>
+            </div>
+
+            <div class="movie-section">
+                <h3>Actores 🎭</h3>
+                <ul class="inline-list">
+                    @for (actor of movie.actors; track $index) {
+                    <li>{{ actor.name }}</li>
+                    }
+                </ul>
+            </div>
+
+            <div class="movie-section">
+                <h3>Subgéneros 🏷️</h3>
+                <ul class="inline-list">
+                    @for (subgenre of movie.subgenres; track $index) {
+                    <li>{{ subgenre.name }}</li>
+                    }
+                </ul>
+            </div>
+        </div>
+    </div>
+    } @else {
+    <p>Cargando película...</p>
+    }
+</div>
