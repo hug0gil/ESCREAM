@@ -245,3 +245,400 @@ nav a.pillLogin:hover img {
     opacity: 1;
   }
 }
+
+/* ==============================================================
+   📱 RESPONSIVE
+   ============================================================== */
+
+@media (max-width: 900px) {
+  .header {
+    padding: 0 16px;
+    gap: 12px;
+  }
+
+  .header .logo img {
+    height: 90px;
+  }
+
+  .header .logo span {
+    font-size: 1.9rem;
+    letter-spacing: 1.5px;
+  }
+
+  .header-search {
+    flex: 0 1 280px;
+  }
+
+  .nav-links {
+    gap: 22px;
+  }
+
+  nav a {
+    font-size: 1.05rem;
+  }
+
+  .pillLogin img {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+/* Tablets y móviles */
+@media (max-width: 768px) {
+  .header {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-areas:
+      "logo nav"
+      "search search";
+    align-items: center;
+    padding: 10px 14px;
+    gap: 12px;
+  }
+
+  .header .logo {
+    grid-area: logo;
+  }
+
+  .nav-links {
+    grid-area: nav;
+    justify-content: flex-end;
+    gap: 14px;
+  }
+
+  .header-search {
+    grid-area: search;
+    width: 100%;
+    max-width: 100%;
+    flex: none;
+    margin-top: 4px;
+  }
+
+  .header .logo img {
+    height: 65px;
+  }
+
+  /* Oculta el texto ES CREAM */
+  .header .logo span {
+    display: none;
+  }
+
+  nav a {
+    font-size: 0.95rem;
+    padding: 4px;
+  }
+
+  .pillLogin img,
+  .avatar-btn {
+    width: 38px;
+    height: 38px;
+  }
+
+  .nav-links a:nth-child(1),
+  .nav-links a:nth-child(2),
+  .nav-links a:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+}
+
+/* Móviles pequeños */
+@media (max-width: 480px) {
+  .header {
+    padding: 10px;
+  }
+
+  .nav-links {
+    gap: 10px;
+  }
+
+  nav a {
+    font-size: 0.85rem;
+  }
+
+  .header-search {
+    padding: 0.5rem 0.8rem;
+  }
+
+  .header-search input {
+    font-size: 0.85rem;
+  }
+
+  .pillLogin img,
+  .avatar-btn {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+/* ==============================================================
+   USER MENU — CONTENEDOR RELATIVO
+   ============================================================== */
+.user-menu {
+  position: relative;
+}
+
+/* ==============================================================
+   BOTÓN AVATAR
+   ============================================================== */
+.avatar-btn {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  border: 2px solid var(--color-accent2);
+
+  background: radial-gradient(
+    circle at 30% 30%,
+    rgba(255, 159, 28, 0.22),
+    rgba(255, 159, 28, 0.08)
+  );
+
+  color: var(--color-accent2);
+
+  font-family: "Righteous", sans-serif;
+  font-size: 1.15rem;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 0 12px rgba(255, 159, 28, 0.18),
+    inset 0 0 10px rgba(255, 159, 28, 0.06);
+
+  transition:
+    transform 0.25s ease,
+    box-shadow 0.25s ease,
+    border-color 0.25s ease;
+}
+
+.avatar-btn:hover,
+.avatar-btn:focus-visible {
+  background: rgba(255, 159, 28, 0.22);
+  border-color: var(--color-accent1);
+  box-shadow: 0 0 12px rgba(255, 60, 56, 0.55);
+  transform: scale(1.07);
+}
+
+/* Estado activo (menú abierto) */
+.avatar-btn[aria-expanded="true"] {
+  border-color: var(--color-accent1);
+  background: rgba(255, 60, 56, 0.15);
+  box-shadow: 0 0 14px rgba(255, 60, 56, 0.45);
+  color: #fff;
+}
+
+/* ==============================================================
+   DROPDOWN — PANEL FLOTANTE
+   ============================================================== */
+.dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  min-width: 230px;
+  background: linear-gradient(160deg, #1a0840 0%, #0e0525 100%);
+  border: 1.5px solid rgba(255, 60, 56, 0.35);
+  border-radius: 14px;
+  box-shadow:
+    0 4px 32px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 60, 56, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  overflow: hidden;
+  z-index: 200;
+
+  /* Animación de entrada */
+  transform-origin: top right;
+  animation: dropdownIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes dropdownIn {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* ==============================================================
+   CABECERA DEL DROPDOWN — NOMBRE Y EMAIL
+   ============================================================== */
+.dropdown-header {
+  padding: 14px 16px 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.dropdown-name {
+  margin: 0 0 2px;
+  font-family: "Righteous", sans-serif;
+  font-size: 0.95rem;
+  color: #fff;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dropdown-email {
+  margin: 0;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.78rem;
+  color: rgba(255, 255, 255, 0.45);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ==============================================================
+   SECCIONES Y DIVISOR
+   ============================================================== */
+.dropdown-section {
+  padding: 6px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dropdown-divider {
+  margin: 0;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+/* ==============================================================
+   ITEMS DEL DROPDOWN
+   ============================================================== */
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.78);
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.88rem;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background 0.18s ease,
+    color 0.18s ease,
+    transform 0.18s ease;
+  outline: none;
+}
+
+.dropdown-item svg {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  opacity: 0.7;
+  transition:
+    opacity 0.18s ease,
+    filter 0.18s ease;
+}
+
+/* Hover general */
+.dropdown-item:hover,
+.dropdown-item:focus-visible {
+  background: rgba(255, 255, 255, 0.07);
+  color: #fff;
+  transform: translateX(2px);
+}
+
+.dropdown-item:hover svg,
+.dropdown-item:focus-visible svg {
+  opacity: 1;
+}
+
+/* Variante admin — acento ámbar */
+.dropdown-item.admin {
+  color: rgba(255, 159, 28, 0.85);
+}
+
+.dropdown-item.admin:hover,
+.dropdown-item.admin:focus-visible {
+  background: rgba(255, 159, 28, 0.1);
+  color: var(--color-accent2);
+}
+
+.dropdown-item.admin:hover svg,
+.dropdown-item.admin:focus-visible svg {
+  filter: drop-shadow(0 0 4px rgba(255, 159, 28, 0.6));
+}
+
+/* Variante danger — cerrar sesión */
+.dropdown-item.danger {
+  color: rgba(255, 80, 76, 0.85);
+}
+
+.dropdown-item.danger:hover,
+.dropdown-item.danger:focus-visible {
+  background: rgba(255, 60, 56, 0.12);
+  color: #ff5a57;
+}
+
+.dropdown-item.danger:hover svg,
+.dropdown-item.danger:focus-visible svg {
+  filter: drop-shadow(0 0 4px rgba(255, 60, 56, 0.7));
+}
+
+/* ==============================================================
+   BADGE DE ROL
+   ============================================================== */
+.badge {
+  margin-left: auto;
+  padding: 2px 8px;
+  border-radius: 20px;
+  background: rgba(255, 159, 28, 0.15);
+  border: 1px solid rgba(255, 159, 28, 0.4);
+  color: var(--color-accent2);
+  font-size: 0.68rem;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ==============================================================
+   📱 RESPONSIVE 
+   ============================================================== */
+@media (max-width: 900px) {
+  .avatar-btn {
+    width: 42px;
+    height: 42px;
+    font-size: 1rem;
+  }
+
+  .dropdown {
+    min-width: 210px;
+  }
+}
+
+@media (max-width: 600px) {
+  .avatar-btn {
+    width: 44px;
+    height: 44px;
+    font-size: 1rem;
+    border-width: 2.5px;
+    box-shadow:
+      0 0 10px rgba(255, 159, 28, 0.25),
+      inset 0 0 8px rgba(255, 159, 28, 0.08);
+  }
+
+  .dropdown {
+    right: 0;
+    min-width: 220px;
+  }
+}
+
+.logo {
+  cursor: pointer;
+}

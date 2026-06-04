@@ -9,6 +9,7 @@ export interface Movie {
   directorId: number;
   productionCompanyId: number;
   country: string;
+  movie_url: string | null;
 
   // Relaciones (planas; el service aplana los pivots Prisma)
   actors?: { id: number; name: string }[];

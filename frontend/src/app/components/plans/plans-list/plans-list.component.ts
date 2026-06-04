@@ -3,6 +3,7 @@ import { SkeletonLoaderComponent } from '../../skeleton-loader/skeleton-loader.c
 import { CommonModule } from '@angular/common';
 import { PlanService } from '../../../services/plan/plan.service';
 import { Plan } from '../../../interfaces/plan-interface';
+import { AuthService } from '../../../services/auth/auth.service';
 
 @Component({
   selector: 'app-plans-list',
@@ -12,19 +13,17 @@ import { Plan } from '../../../interfaces/plan-interface';
   styleUrl: './plans-list.component.css'
 })
 export class PlansListComponent {
-  private service = inject(PlanService)
-  public plans: Plan[] = [];
+
+  private service = inject(PlanService);
+  private auth = inject(AuthService);
+
+  public plans$ = this.service.getPlans$();
+
   public skeletons = new Array(3);
 
-  ngOnInit() {
-    this.service.getPlans$().subscribe({
-      next: (planSub) => {
-        this.plans = planSub
-      },
-      error:
-        (err) => {
-          console.error('❌ Error al cargar los planes en plans-list:', err);
-        }
-    })
+  getSelectedPlan(plan: Plan) {
+    if (plan.id === this.auth.getCurrentUser()?.planId)
+      return true;
+    else return false;
   }
 }

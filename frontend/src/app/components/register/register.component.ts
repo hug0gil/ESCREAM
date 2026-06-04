@@ -22,6 +22,11 @@ export class RegisterComponent {
   submitted = false;
   loading = signal(false);
   errorMsg = signal<string | null>(null);
+  showPassword = signal(false);
+
+  togglePassword(): void {
+    this.showPassword.update(v => !v);
+  }
 
   form = new FormGroup({
     name: new FormControl('', [Validators.required, Validators.maxLength(255)]),
@@ -45,7 +50,7 @@ export class RegisterComponent {
       .subscribe({
         next: () => {
           this.loading.set(false);
-          this.router.navigate(['/']);
+          this.router.navigate(['/profiles']);
         },
         error: err => {
           this.loading.set(false);

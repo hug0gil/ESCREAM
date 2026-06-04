@@ -12,6 +12,7 @@ import {
   RegisterRequest,
   Role,
 } from '../../interfaces/auth-interface';
+import { ProfileService } from '../profile/profile.service';
 
 const TOKEN_KEY = 'escream_token';
 const USER_KEY = 'escream_user';
@@ -20,6 +21,7 @@ const USER_KEY = 'escream_user';
 export class AuthService {
   private http = inject(HttpClient);
   private router = inject(Router);
+  private profiles = inject(ProfileService);
   private readonly apiUrl = `${environment.apiUrl}/auth`;
 
   // Estado reactivo del usuario autenticado (se rehidrata de localStorage al cargar)
@@ -88,6 +90,10 @@ export class AuthService {
     return r !== null && roles.includes(r);
   }
 
+  getCurrentUser(): AuthUser | null {
+    return this.currentUser();
+  }
+
   // ============================================================
   // HELPERS PRIVADOS DE PERSISTENCIA
   // ============================================================
@@ -101,10 +107,13 @@ export class AuthService {
     this._currentUser.set(user);
   }
 
+
+
   private clearSession(): void {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
     this._currentUser.set(null);
+    this.profiles.clearProfile();
     this.router.navigate(['/login']);
   }
 

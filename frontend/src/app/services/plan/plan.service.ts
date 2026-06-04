@@ -3,6 +3,7 @@ import { Plan } from '../../interfaces/plan-interface';
 import { BehaviorSubject, catchError, map, Observable, tap, throwError } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
+import { AuthService } from '../auth/auth.service';
 
 // Shape de respuesta paginada que devuelve Nest
 interface NestPaginated<T> {
@@ -23,7 +24,7 @@ interface NestPlan {
 })
 export class PlanService {
 
-  private plans: Plan[] = [];
+  private auth = inject(AuthService);
 
   private plansSubject = new BehaviorSubject<Plan[]>([]);
   private plans$: Observable<Plan[]> = this.plansSubject.asObservable();
@@ -46,8 +47,7 @@ export class PlanService {
         devicesAllowed: p.devicesAllowed,
       }) as Plan)),
       tap((plans) => {
-        this.plans = plans
-        this.plansSubject.next([...this.plans])
+        this.plansSubject.next([...plans])
         // console.log('Planes obtenidos de la bdd:', this.plans);
       }),
       catchError((error) => {

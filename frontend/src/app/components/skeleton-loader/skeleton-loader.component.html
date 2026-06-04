@@ -1,15 +1,22 @@
-<div class="skeleton-card">
-    <div class="skeleton title"></div>
-    <ul>
-        <li>
-            <div class="skeleton line"></div>
-        </li>
-        <li>
-            <div class="skeleton line"></div>
-        </li>
-        <li>
-            <div class="skeleton line"></div>
-        </li>
-    </ul>
-    <div class="skeleton-image"></div>
-</div>
+@switch (variant()) {
+  @case ('plan') {
+    <!-- Espejo de .plan-card: nombre, precio, lista de features y botón -->
+    <div class="sk-plan">
+      <div class="sk sk-plan-name"></div>
+      <div class="sk sk-plan-price"></div>
+      <ul class="sk-plan-features">
+        <li><div class="sk sk-line"></div></li>
+        <li><div class="sk sk-line short"></div></li>
+        <li><div class="sk sk-line"></div></li>
+        <li><div class="sk sk-line short"></div></li>
+      </ul>
+      <div class="sk sk-plan-cta"></div>
+    </div>
+  }
+  @default {
+    <!-- Espejo de .movie-card: cartel con ratio 2:3 -->
+    <div class="sk-poster">
+      <div class="sk sk-poster-img"></div>
+    </div>
+  }
+}

@@ -1,29 +1,46 @@
-<div class="movies-container">
-    @for (p of plans; track p.id) {
+<section class="plans">
+    <header class="plans-head">
+        <p class="eyebrow">Elige tu pase</p>
+        <h1 class="plans-title">Suscripciones</h1>
+        <p class="plans-sub">Terror en español sin límites. Sin permanencia. Cancela cuando quieras.</p>
+    </header>
 
-    <div class="movie-card">
-        <h2 class="movie-title">{{p.name}}</h2>
-        <ul class="movie-details">
-            <li><strong>Precio:</strong> {{p.price}} €</li>
-            <li><strong>Nº de dispositivos:</strong> {{p.devicesAllowed}} </li>
+    <div class="plans-grid">
+        @if (plans$ | async; as plans) {
+        @for (p of plans; track p.id; let i = $index) {
+        <article class="plan-card" [class.featured]="i === 1">
+            @if (i === 1) {
+            <span class="plan-badge">Más popular</span>
+            }
 
-        </ul>
+            <h2 class="plan-name">{{ p.name }}</h2>
+
+            <div class="plan-price">
+                <span class="amount">{{ p.price }}</span>
+                <span class="currency">€</span>
+                <span class="period">/mes</span>
+            </div>
+
+            <ul class="plan-features">
+                <li><span class="feat-icon">✓</span> {{ p.devicesAllowed }} dispositivo(s) simultáneo(s)</li>
+                <li><span class="feat-icon">✓</span> Catálogo completo de terror</li>
+                <li><span class="feat-icon">✓</span> Streaming en alta definición</li>
+                <li><span class="feat-icon">✓</span> Sin permanencia</li>
+            </ul>
+
+            @if (getSelectedPlan(p)) {
+            <button class="plan-cta" type="button">Suscrito ✓</button>
+            }
+            @else {
+            <button class="plan-cta" type="button">Suscribirme</button>
+            }
+        </article>
+        }
+        @empty {
+        @for (s of skeletons; track $index) {
+        <app-skeleton-loader variant="plan"></app-skeleton-loader>
+        }
+        }
+        }
     </div>
-    }
-    @empty{
-    @for (s of skeletons; track $index) {
-    <app-skeleton-loader></app-skeleton-loader>
-    }
-    }
-
-
-
-</div>
-
-<!-- 
-
-@for (plan of plans; track plan.id){
-
-[routerLink]="['/plans', plan.id]"
-
--->
+</section>

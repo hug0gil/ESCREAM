@@ -20,13 +20,14 @@ import { MovieSearchService } from '../../../services/movie/movie-search.service
 import { SkeletonLoaderComponent } from "../../skeleton-loader/skeleton-loader.component";
 import { MoviesFilterComponent } from "../movies-filter/movies-filter.component";
 import { MoviePosterCardComponent } from "../movie-poster-card/movie-poster-card.component";
+import { RatingSkullsComponent } from "../rating-skulls/rating-skulls.component";
 import { MoviesFilter } from '../../../interfaces/movie-filters';
 import { Subgenre } from '../../../interfaces/subgenre-interface';
 
 @Component({
   selector: 'app-movies-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, SkeletonLoaderComponent, MoviesFilterComponent, MoviePosterCardComponent],
+  imports: [CommonModule, RouterLink, SkeletonLoaderComponent, MoviesFilterComponent, MoviePosterCardComponent, RatingSkullsComponent],
   templateUrl: './movies-list.component.html',
   styleUrls: ['./movies-list.component.css'],
 })
@@ -202,11 +203,6 @@ export class MoviesListComponent implements OnInit, AfterViewInit, OnDestroy {
       // const random = movies[Math.floor(Math.random() * movies.length)];
       // this.featured.set(random);
     });
-  }
-
-  /** Array de longitud = nota (1-5) para pintar esa cantidad de 💀. */
-  skulls(rating: string): number[] {
-    return Array(Math.round(Number(rating) || 0)).fill(0);
   }
 
   /** Pide los datos para los selectores del filtro y los límites de año. */

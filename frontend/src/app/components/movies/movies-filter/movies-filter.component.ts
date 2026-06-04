@@ -1,14 +1,15 @@
-import { Component, input, output, OnInit } from '@angular/core';
+import { Component, computed, input, output, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray } from '@angular/forms';
 import { NgxSliderModule } from '@angular-slider/ngx-slider';
 import { MoviesFilter } from '../../../interfaces/movie-filters';
 import { Subgenre } from '../../../interfaces/subgenre-interface';
+import { RatingSkullsComponent } from '../rating-skulls/rating-skulls.component';
 
 @Component({
   selector: 'app-movies-filter',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, NgxSliderModule],
+  imports: [CommonModule, ReactiveFormsModule, NgxSliderModule, RatingSkullsComponent],
   templateUrl: './movies-filter.component.html',
   styleUrls: ['./movies-filter.component.css']
 })
@@ -20,6 +21,19 @@ export class MoviesFilterComponent implements OnInit {
   // ========================
   subgenres = input<Subgenre[]>([]);
   ratings = input<number[]>([1, 2, 3, 4, 5]);
+
+  // Estado interactivo del rating: rating bloqueado (click) y rating en hover (preview).
+  hoverRating = 0;
+  get currentRating(): number {
+    return Number(this.ratingArray.controls[0]?.value ?? 0);
+  }
+  setRating(r: number) {
+    const current = this.currentRating;
+    this.ratingArray.clear();
+    if (current !== r) {
+      this.ratingArray.push(this.fb.control(r));
+    }
+  }
   countries = input<string[]>([]);
   yearRangeLimits = input<{ min: number; max: number }>({
     min: 1900,
@@ -106,6 +120,10 @@ export class MoviesFilterComponent implements OnInit {
     } else {
       array.removeAt(index);
     }
+  }
+
+  isActive(value: string | number, array: FormArray): boolean {
+    return array.controls.some(ctrl => ctrl.value === value);
   }
 
   // ========================

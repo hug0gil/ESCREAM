@@ -4,11 +4,12 @@ import { ActivatedRoute } from '@angular/router';
 import { Movie } from '../../../interfaces/movie-interface';
 import { Observable, switchMap } from 'rxjs';
 import { MovieService } from '../../../services/movie/movie.service';
+import { RatingSkullsComponent } from '../rating-skulls/rating-skulls.component';
 
 @Component({
   selector: 'app-movie-details',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RatingSkullsComponent],
   templateUrl: './movie-details.component.html',
   styleUrl: './movie-details.component.css'
 })
@@ -29,17 +30,11 @@ export class MovieDetailsComponent implements OnInit {
     );
   }
 
-  /** Array de longitud = nota (1-5) para pintar esa cantidad de 💀. */
-  skulls(rating: string): number[] {
-    return Array(Math.round(Number(rating) || 0)).fill(0);
-  }
-
-  goToTrailer(title?: string) {
-    if (!title) return;
-
-    // Buscamos el trailer en YouTube
-    const query = encodeURIComponent(`${title} trailer`);
-    const url = `https://www.youtube.com/results?search_query=${query}&sp=EgIQAQ%3D%3D`;
+  goToTrailer(movie?: Movie | null) {
+    // const query = encodeURIComponent(`${movie?.title} ${movie?.year}`);
+    // const url = `https://www.imdb.com/es-es/find/?q=${query}`;
+    if (!movie?.movie_url) return;
+    const url = movie?.movie_url;
     window.open(url, '_blank');
   }
 

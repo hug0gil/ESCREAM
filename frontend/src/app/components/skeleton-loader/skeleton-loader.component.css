@@ -1,59 +1,118 @@
-.skeleton-card {
-    border-radius: 1.2rem;
-    padding: 22px;
-    display: grid;
-    gap: 2rem;
-    padding: 2rem;
-    width: 380px;
-    background: linear-gradient(180deg, #180a31 0%, #0D0DFF 100%);
-    border: 4px solid #000000;
-    box-shadow:
-        0 6px 18px rgba(0, 0, 0, 0.7),
-        0 0 25px rgba(47, 47, 255, 0.45);
+:host {
+  display: block;
 }
 
-
-
-
-.skeleton-image {
-    width: auto;
-    height: 200px;
-    border-radius: 0.8rem;
-    background: linear-gradient(90deg,
-            rgba(255, 255, 255, 0.05) 0%,
-            rgba(255, 255, 255, 0.15) 50%,
-            rgba(255, 255, 255, 0.05) 100%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
+/* En la cuadrícula de planes el host es un ítem flex: imita el sizing de .plan-card */
+:host(.is-plan) {
+  flex: 1 1 0;
+  min-width: 280px;
 }
 
-.skeleton {
-    height: 16px;
-    border-radius: 8px;
-    background: linear-gradient(90deg,
-            rgba(255, 255, 255, 0.05) 0%,
-            rgba(255, 255, 255, 0.15) 50%,
-            rgba(255, 255, 255, 0.05) 100%);
-    background-size: 200% 100%;
-    animation: shimmer 1.5s infinite;
+/* ============================================================
+   ✨ Brillo compartido (shimmer)
+   ============================================================ */
+.sk {
+  position: relative;
+  overflow: hidden;
+  background-color: rgba(255, 255, 255, 0.06);
+  background-image: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.16) 50%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
 }
 
-.title {
-    width: 100%;
+@media (prefers-reduced-motion: reduce) {
+  .sk {
+    animation: none;
+  }
 }
 
-.line {
-    width: 70%;
+/* ============================================================
+   📼 Variante POSTER — espejo de .movie-card (cartel 2:3)
+   ============================================================ */
+.sk-poster {
+  width: 100%;
+  aspect-ratio: 2 / 3;
+  border-radius: 0.7rem;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--surface-border);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
+.sk-poster-img {
+  width: 100%;
+  height: 100%;
+}
 
+/* ============================================================
+   💳 Variante PLAN — espejo de .plan-card
+   ============================================================ */
+.sk-plan {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  gap: 1.4rem;
+  padding: clamp(2rem, 3vw, 2.8rem);
+  background: linear-gradient(135deg, #0d0a16 0%, #1a0b2e 55%, #0d0a16 100%);
+  border: 1px solid rgba(47, 47, 255, 0.35);
+  border-radius: 1.2rem;
+  overflow: hidden;
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.6),
+    0 0 22px rgba(47, 47, 255, 0.12);
+}
 
+.sk-plan-name {
+  height: 1.6rem;
+  width: 55%;
+  border-radius: 8px;
+}
+
+.sk-plan-price {
+  height: 3rem;
+  width: 42%;
+  border-radius: 10px;
+}
+
+.sk-plan-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin: 0;
+  padding: 0;
+}
+
+.sk-line {
+  height: 0.9rem;
+  width: 100%;
+  border-radius: 6px;
+}
+
+.sk-line.short {
+  width: 70%;
+}
+
+.sk-plan-cta {
+  margin-top: auto;
+  height: 3rem;
+  width: 100%;
+  border-radius: 0.7rem;
+}
+
+/* ============================================================
+   📈 Animación
+   ============================================================ */
 @keyframes shimmer {
-    0% {
-        background-position: 200% 0;
-    }
-
-    100% {
-        background-position: -200% 0;
-    }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }

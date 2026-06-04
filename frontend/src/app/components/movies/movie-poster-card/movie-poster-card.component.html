@@ -4,10 +4,11 @@
         <h3 class="movie-title">{{ movie.title }}</h3>
         <div class="movie-meta">
             <span class="year">{{ movie.year }}</span>
-            <span class="skulls">
-                @for (s of skulls(movie.rating); track $index) { 💀 }
-            </span>
+            <app-rating-skulls class="skulls" [rating]="movie.rating" />
         </div>
-        <span class="country">{{ movie.country }}</span>
+        <div class="country-div">
+            <p class="sheet-val">{{ movie.country }} </p>
+            <img [src]="'https://flagsapi.com/' + movie.country + '/flat/16.png'" />
+        </div>
     </div>
 </a>

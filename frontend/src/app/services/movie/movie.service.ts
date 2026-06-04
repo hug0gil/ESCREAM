@@ -21,6 +21,7 @@ interface NestMovie {
   image: string;
   rating: string | number;
   country: string;
+  movieUrl: string | null;
   directorId: number;
   productionCompanyId: number;
   director?: { id: number; name: string } | null;
@@ -65,6 +66,7 @@ export class MovieService {
       image: m.image,
       rating: String(m.rating),
       country: m.country,
+      movie_url: m.movieUrl ?? null,
       directorId: m.directorId,
       productionCompanyId: m.productionCompanyId,
       director: m.director ?? null,

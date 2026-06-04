@@ -9,15 +9,33 @@
                     {{ dropdownOpen['subgenres'] ? '-' : '+' }}
                 </button>
             </div>
-            <ul class="column-dropdown-list" [class.open]="dropdownOpen['subgenres']">
-                <li *ngFor="let s of subgenres()">
-                    <label>
-                        <input type="checkbox" (change)="toggleCheckbox(s.id, subgenreIdsArray)"
-                            [checked]="subgenreIdsArray.value.includes(s.id)">
-                        {{ s.name }}
-                    </label>
-                </li>
-            </ul>
+            <div class="chip-grid-subgenres" [class.open]="dropdownOpen['subgenres']">
+                <button *ngFor="let s of subgenres()" type="button" class="chip"
+                    [class.active]="isActive(s.id, subgenreIdsArray)"
+                    [attr.aria-pressed]="isActive(s.id, subgenreIdsArray)"
+                    (click)="toggleCheckbox(s.id, subgenreIdsArray)">
+                    {{ s.name }}
+                </button>
+            </div>
+        </div>
+
+        <!-- PAÍSES -->
+        <div class="filter-section">
+            <div class="layout-container-dropdown" [class.open]="dropdownOpen['countries']">
+                <label>Países</label>
+                <button type="button" class="list-button" (click)="toggleDropdown('countries')">
+                    {{ dropdownOpen['countries'] ? '-' : '+' }}
+                </button>
+            </div>
+            <div class="chip-grid-countries" [class.open]="dropdownOpen['countries']">
+                @for(c of countries(); track $index) {
+                <button type="button" class="chip chip-country" [class.active]="isActive(c, countriesArray)"
+                    [attr.aria-pressed]="isActive(c, countriesArray)" (click)="toggleCheckbox(c, countriesArray)">
+                    <span>{{ c }}</span>
+                    <img class="flag" [src]="'https://flagsapi.com/' + c + '/flat/32.png'" [alt]="c" />
+                </button>
+                }
+            </div>
         </div>
 
         <!-- RANGO DE AÑOS -->
@@ -30,7 +48,7 @@
             </div>
 
             <!-- Contenedor del slider -->
-            <div class="column-dropdown-list" [class.open]="dropdownOpen['year']">
+            <div class="dropdown-content" [class.open]="dropdownOpen['year']">
                 <div class="slider-wrapper">
                     <ngx-slider [value]="form.value.yearRange.min" [highValue]="form.value.yearRange.max"
                         (valueChange)="form.get('yearRange.min')?.setValue($event)"
@@ -49,35 +67,20 @@
                     {{ dropdownOpen['rating'] ? '-' : '+' }}
                 </button>
             </div>
-            <ul class="dropdown-list" [class.open]="dropdownOpen['rating']">
-                <li *ngFor="let r of ratings()">
-                    <label>
-                        <input type="checkbox" (change)="toggleCheckbox(r, ratingArray)"
-                            [checked]="ratingArray.value.includes(r)">
-                        {{ '💀'.repeat(r) }}
-                    </label>
-                </li>
-            </ul>
-        </div>
-
-
-        <!-- PAÍSES -->
-        <div class="filter-section">
-            <div class="layout-container-dropdown" [class.open]="dropdownOpen['countries']">
-                <label>Países</label>
-                <button type="button" class="list-button" (click)="toggleDropdown('countries')">
-                    {{ dropdownOpen['countries'] ? '-' : '+' }}
-                </button>
+            <div class="rating-stars" [class.open]="dropdownOpen['rating']">
+                <div class="rating-track" (mouseleave)="hoverRating = 0">
+                    @for (r of [1,2,3,4,5]; track r) {
+                    <button type="button" class="rating-skull"
+                        [class.filled]="hoverRating ? r <= hoverRating : r <= currentRating"
+                        [class.dim]="hoverRating > 0 && r > hoverRating"
+                        (mouseenter)="hoverRating = r" (click)="setRating(r)"
+                        [attr.aria-label]="r + ' calaveras'"
+                        [attr.aria-pressed]="r === currentRating">
+                        <app-rating-skulls [rating]="1" />
+                    </button>
+                    }
+                </div>
             </div>
-            <ul class="dropdown-list" [class.open]="dropdownOpen['countries']">
-                <li *ngFor="let c of countries()">
-                    <label>
-                        <input type="checkbox" (change)="toggleCheckbox(c, countriesArray)"
-                            [checked]="countriesArray.value.includes(c)">
-                        {{ c }}
-                    </label>
-                </li>
-            </ul>
         </div>
     </div>
 

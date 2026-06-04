@@ -23,6 +23,11 @@ export class LoginComponent {
   submitted = false;
   loading = signal(false);
   errorMsg = signal<string | null>(null);
+  showPassword = signal(false);
+
+  togglePassword(): void {
+    this.showPassword.update(v => !v);
+  }
 
   constructor() {
     this.form = new FormGroup({
@@ -45,7 +50,7 @@ export class LoginComponent {
     this.auth.login({ email: mail, password }).subscribe({
       next: () => {
         this.loading.set(false);
-        this.router.navigate(['/']);
+        this.router.navigate(['/profiles']);
       },
       error: err => {
         this.loading.set(false);

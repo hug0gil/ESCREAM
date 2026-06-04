@@ -1,0 +1,27 @@
+<div class="logo">
+    <img src="assets/img/LogoTransparenteESCREAM.png" alt="ESCREAM Logo" routerLink="/movies">
+</div>
+
+<section class="profiles">
+    <h1 class="profiles-title">¿Quién está viendo?</h1>
+
+    @if (loading()) {
+    <p class="profiles-status">Cargando perfiles…</p>
+    } @else if (errorMsg()) {
+    <p class="profiles-status error">{{ errorMsg() }}</p>
+    } @else if (profiles().length === 0) {
+    <p class="profiles-status">No hay perfiles asociados a esta cuenta.</p>
+    } @else {
+    <ul class="profiles-grid">
+        @for (p of profiles(); track p.id) {
+        <li>
+            <button class="profile-card" type="button" (click)="choose(p)">
+                <span class="profile-avatar">{{ initial(p) }}</span>
+                <span class="profile-name">{{ p.profileName }}</span>
+                <span class="profile-age">+{{ p.ageRestriction }}</span>
+            </button>
+        </li>
+        }
+    </ul>
+    }
+</section>

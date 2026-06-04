@@ -2,17 +2,27 @@
   @for (col of posterColumns; track $index) {
   <div class="poster-col" [class.reverse]="$index % 2 === 1">
     @for (img of col; track $index) {
-    <img class="poster" [src]="img" alt="" loading="lazy" />
+    <img class="poster" [src]="img" alt="" loading="eager" />
     }
   </div>
   }
 </div>
 
+@if (postersReady()) {
 <section class="main-content">
-  <p class="eyebrow">Plataforma de streaming · Terror</p>
+  <p class="eyebrow">Aquí habita el mal en español</p>
 
   <h1>
-    Bienvenido a <span class="es">ES</span><span class="cream">CREAM</span>
+    @if (currentProfile) {
+    {{ currentProfile.profileName }}, has vuelto a
+    } @else {
+    Bienvenido a
+    }
+
+    <span class="brand">
+      <span class="es">ES</span><span class="cream">CREAM</span>
+    </span>
+
   </h1>
 
   <div class="divider" aria-hidden="true">
@@ -21,10 +31,16 @@
     <div class="divider-line"></div>
   </div>
 
-  <p>La mejor app de streaming de películas de terror</p>
+  <p>
+    El catálogo de cine de terror en español. Sin filtros, terror puro.
+  </p>
 
   <div class="actions">
-    <button routerLink="/movies">Ver catálogo</button>
-    <button routerLink="/login">Iniciar Sesión</button>
+    <button routerLink="/movies">Explorar catálogo</button>
+
+    <button [routerLink]="currentProfile ? '/dashboard' : '/login'">
+      {{ currentProfile ? 'Ver perfil' : 'Acceder' }}
+    </button>
   </div>
 </section>
+}

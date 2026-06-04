@@ -1,66 +1,79 @@
-<div class="movie-details-container">
+<div class="movie-details">
     @if (movie$ | async; as movie) {
-    <div class="movie-image" (click)="goToTrailer(movie.title)">
-        <img [src]="movie.image" [alt]="movie.title" />
-    </div>
 
-    <div class="movie-card detail-card">
-        <h2 class="movie-title">{{ movie.title }}</h2>
-
-        <div class="movie-info-grid">
-            <div class="info-item">
-                <span class="label">Año </span>
-                <span class="value">{{ movie.year }}</span>
-            </div>
-            <div class="info-item">
-                <span class="label">Miedo</span>
-                <span class="value">
-                    @for (s of skulls(movie.rating); track $index) {
-                    💀
-                    }
-                </span>
-            </div>
-            <div class="info-item">
-                <span class="label">País </span>
-                <span class="value">{{ movie.country }}</span>
-            </div>
-            <div class="info-item">
-                <span class="label">Director</span>
-                <span class="value">{{ movie.director?.name }}</span>
-            </div>
-        </div>
-
-        <div class="movie-details-section-container">
-            <div class="movie-section">
-                <h3>Sinopsis 💬</h3>
-                <p>{{ movie.synopsis }}</p>
+    <article class="detail-card">
+        <!-- ── Cabecera: póster + info principal ── -->
+        <header class="card-hero">
+            <div class="hero-poster">
+                <img [src]="movie.image" [alt]="movie.title" (click)="goToTrailer(movie)" />
             </div>
 
-            <div class="movie-section">
-                <h3>Productora 🎥</h3>
-                <p>{{ movie.productionCompany?.name }}</p>
+            <div class="hero-main">
+                <h1 class="hero-title">{{ movie.title }}</h1>
+
+                <div class="hero-meta">
+                    <span class="meta-pill skulls">
+                        <app-rating-skulls [rating]="movie.rating" />
+                    </span>
+                </div>
+
+                <p class="hero-synopsis">{{ movie.synopsis }}</p>
+
+                <div class="hero-actions">
+                    <button class="btn-primary" (click)="goToTrailer(movie)">▶ Ver película</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- ── Ficha técnica: todo en uno ── -->
+        <section class="card-sheet">
+            <h2 class="sheet-title">Ficha técnica</h2>
+
+            <div class="sheet-grid">
+                <div class="sheet-cell">
+                    <span class="sheet-key">Dirección</span>
+                    <span class="sheet-val">{{ movie.director?.name }}</span>
+                </div>
+                <div class="sheet-cell">
+                    <span class="sheet-key">Productora</span>
+                    <span class="sheet-val">{{ movie.productionCompany?.name }}</span>
+                </div>
+                <div class="sheet-cell">
+                    <span class="sheet-key">País</span>
+                    <div class="country-div">
+                        <p class="sheet-val">{{ movie.country }} </p>
+                        <img [src]="'https://flagsapi.com/' + movie.country + '/flat/16.png'" />
+                    </div>
+                </div>
+                <div class="sheet-cell">
+                    <span class="sheet-key">Año</span>
+                    <span class="sheet-val">{{ movie.year }}</span>
+                </div>
             </div>
 
-            <div class="movie-section">
-                <h3>Actores 🎭</h3>
-                <ul class="inline-list">
-                    @for (actor of movie.actors; track $index) {
-                    <li>{{ actor.name }}</li>
-                    }
-                </ul>
-            </div>
+            <div class="sheet-container">
+                <div class="sheet-block">
+                    <span class="sheet-key">Reparto</span>
+                    <ul class="chip-list">
+                        @for (actor of movie.actors; track $index) {
+                        <li>{{ actor.name }}</li>
+                        }
+                    </ul>
+                </div>
 
-            <div class="movie-section">
-                <h3>Subgéneros 🏷️</h3>
-                <ul class="inline-list">
-                    @for (subgenre of movie.subgenres; track $index) {
-                    <li>{{ subgenre.name }}</li>
-                    }
-                </ul>
+                <div class="sheet-block">
+                    <span class="sheet-key">Subgéneros</span>
+                    <ul class="chip-list">
+                        @for (subgenre of movie.subgenres; track $index) {
+                        <li>{{ subgenre.name }}</li>
+                        }
+                    </ul>
+                </div>
             </div>
-        </div>
-    </div>
+        </section>
+    </article>
+
     } @else {
-    <p>Cargando película...</p>
+    <p class="loading-msg">Cargando película…</p>
     }
 </div>

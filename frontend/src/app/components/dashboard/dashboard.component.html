@@ -1,57 +1,32 @@
-@if (auth.currentUser(); as user) {
+@if (profileService.activeProfile(); as profile) {
 <div class="dashboard">
 
     <!-- Tarjeta de usuario -->
     <div class="user-card">
-        <div class="avatar">{{ user.name.charAt(0).toUpperCase() }}</div>
-        <h1>{{ user.name }}</h1>
-        <span class="role-badge">{{ user.role }}</span>
+        <div class="avatar">{{ profile.profileName.charAt(0).toUpperCase() }}</div>
+        <h1>{{ profile.profileName }}</h1>
+        <span class="role-badge">{{ auth.currentUser()?.role }}</span>
 
         <ul class="user-info">
-            <li><span>Correo</span><strong>{{ user.email }}</strong></li>
-            <li><span>Suscripción</span><strong>{{ planName() }}</strong></li>
+            <li><span>Correo</span><strong>{{ auth.currentUser()?.email }}</strong></li>
+            <li><span>Suscripción actual</span><strong>{{ planName() }}</strong></li>
             <li>
                 <span>Estado</span>
-                <strong>{{ user.subscribed ? 'Activa' : 'Inactiva' }}</strong>
+                <strong>{{ auth.currentUser()?.subscribed ? 'Activa' : 'Inactiva' }}</strong>
             </li>
-            @if (user.endDate) {
+            @if (auth.currentUser()?.endDate) {
             <li>
                 <span>Renovación</span>
-                <strong>{{ user.endDate | date: 'dd/MM/yy' }}</strong>
+                <strong>{{ auth.currentUser()?.endDate | date: 'dd/MM/yy' }}</strong>
             </li>
             }
         </ul>
 
     </div>
 
-    <div class="administration">
-        <!-- Tarjeta de administración (solo EDITOR / ADMIN) -->
-        @if (auth.canEdit()) {
-        <div class="admin-card">
-            <h2>Administración</h2>
-            <div class="admin-grid">
-                <button class="admin-btn" (click)="manage('peliculas')">
-                    <span class="icon">🎬</span><span>Películas</span>
-                </button>
-                <button class="admin-btn" (click)="manage('reviews')">
-                    <span class="icon">💬</span><span>Reviews</span>
-                </button>
-                @if (auth.isAdmin()) {
-                <button class="admin-btn" (click)="manage('subscripciones')">
-                    <span class="icon">💳</span><span>Suscripciones</span>
-                </button>
-                <button class="admin-btn" (click)="manage('usuarios')">
-                    <span class="icon">👥</span><span>Usuarios</span>
-                </button>
-                }
-            </div>
-        </div>
-        }
-
-        <div class="user-actions">
-            <button class="logout-btn" (click)="auth.logout()">Editar usuario</button>
-            <button class="logout-btn" (click)="auth.logout()">Cerrar sesión</button>
-        </div>
+    <div class="user-actions">
+        <button class="logout-btn">Guardar cambios</button>
+        <button class="logout-btn">Borrar perfil</button>
     </div>
 </div>
 }

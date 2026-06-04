@@ -4,6 +4,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { Plan } from '../../interfaces/plan-interface';
 import { AuthService } from '../../services/auth/auth.service';
 import { PlanService } from '../../services/plan/plan.service';
+import { ProfileService } from '../../services/profile/profile.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -15,6 +16,7 @@ import { PlanService } from '../../services/plan/plan.service';
 export class DashboardComponent {
   protected auth = inject(AuthService);
   private plansService = inject(PlanService);
+  protected profileService = inject(ProfileService);
 
   // Planes como signal para resolver planId → nombre de la suscripción
   private plans = toSignal(this.plansService.getPlans$(), {
@@ -25,10 +27,4 @@ export class DashboardComponent {
     const id = this.auth.currentUser()?.planId;
     return this.plans().find(p => p.id === id)?.name ?? '—';
   });
-
-  /** Placeholder: navegará a la sección de administración cuando exista. */
-  manage(section: string): void {
-    // TODO: enrutar a /admin/<section> cuando se cree el panel de administración
-    console.log('Administrar:', section);
-  }
 }

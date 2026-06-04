@@ -1,10 +1,11 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, ElementRef, HostListener, inject, signal } from '@angular/core';
 import { Router, NavigationEnd, RouterLink } from '@angular/router';
 import { ReactiveFormsModule, FormControl } from '@angular/forms';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, debounceTime, distinctUntilChanged } from 'rxjs';
 import { AuthService } from '../../services/auth/auth.service';
 import { MovieSearchService } from '../../services/movie/movie-search.service';
+import { ProfileService } from '../../services/profile/profile.service';
 
 @Component({
   selector: 'app-header',
@@ -17,10 +18,14 @@ export class HeaderComponent {
   protected auth = inject(AuthService);
   private router = inject(Router);
   private search = inject(MovieSearchService);
+  protected profileService = inject(ProfileService);
+  private elementRef = inject(ElementRef);
 
   /** La barra de búsqueda y el botón de filtro solo se muestran en /movies. */
-  showSearch = signal(this.isMoviesList(this.router.url));
-  searchControl = new FormControl(this.search.value, { nonNullable: true });
+  protected showSearch = signal(this.isMoviesList(this.router.url));
+  protected searchControl = new FormControl(this.search.value, { nonNullable: true });
+  protected menuOpen = signal(false);
+
 
   constructor() {
     // Mostrar/ocultar según la ruta.
@@ -53,7 +58,54 @@ export class HeaderComponent {
     return url.split('?')[0] === '/movies';
   }
 
-  onClickLink(route: string) {
-    // console.log('Click en enlace a', route);
+  toggleMenu(): void {
+    this.menuOpen.update(v => !v);
   }
+
+  go(path: string): void {
+    this.menuOpen.set(false);
+    this.router.navigate([path]);
+  }
+
+  /**
+   * Escucha cualquier click realizado en el documento.
+   *
+   * Si el menú está abierto y el click se produce fuera del
+   * componente Header, se cierra automáticamente.
+   */
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent): void {
+
+    // No hacemos nada si el menú ya está cerrado.
+    if (!this.menuOpen()) {
+      return;
+    }
+
+    // Comprueba si el elemento pulsado pertenece al Header.
+    const clickedInsideHeader =
+      this.elementRef.nativeElement.contains(event.target);
+
+    // Si el click fue fuera del Header, cerramos el menú.
+    if (!clickedInsideHeader) {
+      this.menuOpen.set(false);
+    }
+  }
+
+/**
+ * Comportamiento del logo.
+ *
+ * - Si estamos en /movies, volvemos a la página principal ('').
+ * - Si estamos en cualquier otra ruta, vamos al catálogo.
+ */
+  onLogoClick(): void {
+    const currentPath = this.router.url.split('?')[0];
+
+    if (currentPath === '/movies') {
+      this.router.navigate(['']);
+      return;
+    }
+
+    this.router.navigate(['/movies']);
+  }
+
 }

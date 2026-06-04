@@ -15,15 +15,15 @@
                 <span class="year">{{ movie.year }}</span>
                 <span class="dot">•</span>
                 <span class="country">{{ movie.country }}</span>
-                <span class="skulls">
-                    @for (s of skulls(movie.rating); track $index) { 💀 }
-                </span>
+                <img class="flag" [src]="'https://flagsapi.com/' + movie.country + '/flat/24.png'" />
+                <span class="dot">•</span>
+                <app-rating-skulls class="skulls" [rating]="movie.rating" />
             </div>
 
             <p class="billboard-synopsis">{{ movie.synopsis }}</p>
 
             <div class="billboard-actions">
-                <a class="btn-primary" [routerLink]="['/movies', movie.slug]">▶ Ver película</a>
+                <a class="btn-primary" [routerLink]="['/movies', movie.slug]">Ver más</a>
             </div>
         </div>
     </div>

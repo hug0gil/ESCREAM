@@ -1,0 +1,169 @@
+/* ==============================================================
+   SELECTOR DE PERFILES — ESTILO SOBRIO COHERENTE CON LA APP
+   ============================================================== */
+:host {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.profiles {
+  width: 100%;
+  max-width: 900px;
+  text-align: center;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.7s ease-out 0.15s forwards;
+}
+
+.profiles-title {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 800;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: #fff;
+  font-size: clamp(1.6rem, 5vw, 2.6rem);
+  margin: 0 0 clamp(2rem, 5vw, 3rem);
+}
+
+.profiles-status {
+  font-family: "Montserrat", sans-serif;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.profiles-status.error {
+  color: #ffd9d8;
+}
+
+/* ----- Rejilla de perfiles ----- */
+.profiles-grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: clamp(1.2rem, 4vw, 2.5rem);
+}
+
+/* ----- Tarjeta de perfil ----- */
+.profile-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.22s ease;
+}
+
+.profile-avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(96px, 22vw, 140px);
+  height: clamp(96px, 22vw, 140px);
+  border-radius: 1rem;
+  font-family: "Montserrat", sans-serif;
+  font-weight: 800;
+  font-size: clamp(2.4rem, 8vw, 3.6rem);
+  color: var(--color-accent2);
+  background: linear-gradient(135deg, #0d0a16 0%, #1a0b2e 55%, #0d0a16 100%);
+  border: 1px solid var(--surface-border);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6), 0 0 22px rgba(47, 47, 255, 0.12);
+  transition:
+    border-color 0.22s ease,
+    box-shadow 0.22s ease;
+}
+
+.profile-card:hover .profile-avatar,
+.profile-card:focus-visible .profile-avatar {
+  border-color: var(--color-accent2);
+  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.7), var(--neon-amber);
+}
+
+.profile-card:hover,
+.profile-card:focus-visible {
+  transform: translateY(-6px);
+  outline: none;
+}
+
+.profile-name {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 600;
+  font-size: clamp(0.95rem, 3vw, 1.1rem);
+  color: rgba(255, 255, 255, 0.85);
+  transition: color 0.22s ease;
+}
+
+.profile-card:hover .profile-name,
+.profile-card:focus-visible .profile-name {
+  color: #fff;
+}
+
+.profile-age {
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 0.7rem;
+  letter-spacing: 0.5px;
+  color: var(--color-accent2);
+  background: rgba(255, 159, 28, 0.1);
+  border: 1px solid rgba(255, 159, 28, 0.4);
+  padding: 0.15rem 0.6rem;
+  border-radius: 50px;
+}
+
+/* ==============================================================
+   LOGO (arriba a la izquierda → catálogo)
+   ============================================================== */
+.logo {
+  position: absolute;
+  top: 0.5rem;
+  left: 1.5rem;
+  z-index: 10;
+}
+
+.logo img {
+  height: 120px;
+  width: auto;
+  filter: drop-shadow(0 0 8px var(--color-accent1));
+  cursor: pointer;
+  transition: transform 0.8s ease, filter 0.6s ease;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.logo img:hover {
+  transform: scale(1.1) translateZ(0);
+  filter: drop-shadow(0 0 12px var(--color-accent1));
+}
+
+/* ==============================================================
+   ANIMACIÓN + RESPONSIVE
+   ============================================================== */
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 600px) {
+  :host {
+    padding: 1.2rem;
+    padding-top: 6rem;
+  }
+
+  .logo {
+    top: 0.4rem;
+    left: 0.9rem;
+  }
+
+  .logo img {
+    height: 64px;
+  }
+}

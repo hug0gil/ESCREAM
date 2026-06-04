@@ -8,6 +8,9 @@ export interface AuthUser {
   role: Role;
   subscribed: boolean;
   planId: number;
+
+  selectedProfileId?: number;
+
   startDate?: string;
   endDate?: string | null;
   emailVerifiedAt?: string | null;
