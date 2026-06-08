@@ -1,14 +1,23 @@
 <section class="plans">
+
     <header class="plans-head">
+
         <p class="eyebrow">Elige tu pase</p>
-        <h1 class="plans-title">Suscripciones</h1>
+
+        <h1 class="plans-title">Planes de suscripción</h1>
+
         <p class="plans-sub">Terror en español sin límites. Sin permanencia. Cancela cuando quieras.</p>
+
     </header>
 
     <div class="plans-grid">
+
         @if (plans$ | async; as plans) {
+
         @for (p of plans; track p.id; let i = $index) {
+
         <article class="plan-card" [class.featured]="i === 1">
+
             @if (i === 1) {
             <span class="plan-badge">Más popular</span>
             }
@@ -16,31 +25,52 @@
             <h2 class="plan-name">{{ p.name }}</h2>
 
             <div class="plan-price">
+
                 <span class="amount">{{ p.price }}</span>
+
                 <span class="currency">€</span>
+
                 <span class="period">/mes</span>
+
             </div>
 
             <ul class="plan-features">
+
                 <li><span class="feat-icon">✓</span> {{ p.devicesAllowed }} dispositivo(s) simultáneo(s)</li>
+
                 <li><span class="feat-icon">✓</span> Catálogo completo de terror</li>
-                <li><span class="feat-icon">✓</span> Streaming en alta definición</li>
-                <li><span class="feat-icon">✓</span> Sin permanencia</li>
+
+                @if (i === 2) {
+                <li><span class="feat-icon">✓</span> Contenido exclusivo y estrenos anticipados</li>
+                <li><span class="feat-icon">✓</span> Calidad 4K HDR</li>
+                } @else if (i === 1) {
+                <li><span class="feat-icon">✓</span> Calidad HD (1080p)</li>
+                }
+
+                <li><span class="feat-icon">✓</span> Descargas offline</li>
+
             </ul>
 
-            @if (getSelectedPlan(p)) {
-            <button class="plan-cta" type="button">Suscrito ✓</button>
-            }
-            @else {
-            <button class="plan-cta" type="button">Suscribirme</button>
-            }
+            <button class="plan-cta" type="button">
+                @if (getSelectedPlan(p)) {
+                Suscrito ✓
+                } @else {
+                Suscribirme
+                }
+            </button>
+
         </article>
+
         }
-        @empty {
+
+        } @else {
+
         @for (s of skeletons; track $index) {
         <app-skeleton-loader variant="plan"></app-skeleton-loader>
         }
+
         }
-        }
+
     </div>
+
 </section>

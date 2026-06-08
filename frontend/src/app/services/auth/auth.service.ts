@@ -3,6 +3,7 @@ import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
+import { ProfileService } from '../profile.service';
 import {
   AuthResponse,
   AuthUser,
@@ -12,7 +13,6 @@ import {
   RegisterRequest,
   Role,
 } from '../../interfaces/auth-interface';
-import { ProfileService } from '../profile/profile.service';
 
 const TOKEN_KEY = 'escream_token';
 const USER_KEY = 'escream_user';
@@ -28,7 +28,8 @@ export class AuthService {
   private _currentUser = signal<AuthUser | null>(this.readStoredUser());
   readonly currentUser = this._currentUser.asReadonly();
 
-  readonly isAuthenticated = computed(() => this._currentUser() !== null);
+  readonly isAuthenticated = computed(() => this.currentUser() !== null && this.profiles.activeProfile() !== null);
+  readonly hasSelectedProfile = computed(() => this.currentUser() !== null);
   readonly role = computed<Role | null>(() => this._currentUser()?.role ?? null);
   readonly isAdmin = computed(() => this.role() === 'ADMIN');
   /** EDITOR o ADMIN (un admin puede hacer todo lo de un editor). */
@@ -46,7 +47,9 @@ export class AuthService {
   login(data: LoginRequest): Observable<AuthResponse> {
     return this.http
       .post<AuthResponse>(`${this.apiUrl}/login`, data)
-      .pipe(tap(res => this.persistSession(res)));
+      .pipe(
+        tap(res => this.persistSession(res))
+      );
   }
 
   /** Cierra sesión eliminando el token (y el usuario) y vuelve a /login. */
@@ -107,14 +110,12 @@ export class AuthService {
     this._currentUser.set(user);
   }
 
-
-
   private clearSession(): void {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
     this._currentUser.set(null);
     this.profiles.clearProfile();
-    this.router.navigate(['/login']);
+    this.router.navigate(['/']);
   }
 
   private readStoredUser(): AuthUser | null {

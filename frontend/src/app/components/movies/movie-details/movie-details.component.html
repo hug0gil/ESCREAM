@@ -1,6 +1,5 @@
+@if (movie$ | async; as movie) {
 <div class="movie-details">
-    @if (movie$ | async; as movie) {
-
     <article class="detail-card">
         <!-- ── Cabecera: póster + info principal ── -->
         <header class="card-hero">
@@ -73,7 +72,9 @@
         </section>
     </article>
 
-    } @else {
-    <p class="loading-msg">Cargando película…</p>
-    }
 </div>
+<app-movie-reviews [movieId]="movie.id">
+</app-movie-reviews>
+} @else {
+<p class="loading-msg">Cargando película…</p>
+}

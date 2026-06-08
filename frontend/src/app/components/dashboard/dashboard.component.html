@@ -1,32 +1,78 @@
 @if (profileService.activeProfile(); as profile) {
-<div class="dashboard">
+<form [formGroup]="form" (ngSubmit)="saveChanges()" class="profile-form" novalidate>
+    <div class="dashboard">
 
-    <!-- Tarjeta de usuario -->
-    <div class="user-card">
-        <div class="avatar">{{ profile.profileName.charAt(0).toUpperCase() }}</div>
-        <h1>{{ profile.profileName }}</h1>
-        <span class="role-badge">{{ auth.currentUser()?.role }}</span>
+        <div class="user-card">
+            <div class="avatar">
+                {{ (form.get('profileName')?.value || profile.profileName).charAt(0).toUpperCase() }}
+            </div>
 
-        <ul class="user-info">
-            <li><span>Correo</span><strong>{{ auth.currentUser()?.email }}</strong></li>
-            <li><span>Suscripción actual</span><strong>{{ planName() }}</strong></li>
-            <li>
-                <span>Estado</span>
-                <strong>{{ auth.currentUser()?.subscribed ? 'Activa' : 'Inactiva' }}</strong>
-            </li>
-            @if (auth.currentUser()?.endDate) {
-            <li>
-                <span>Renovación</span>
-                <strong>{{ auth.currentUser()?.endDate | date: 'dd/MM/yy' }}</strong>
-            </li>
+            <input class="profile-name-input" [value]="form.get('profileName')?.value || profile.profileName"
+                id="profileName" type="text" formControlName="profileName" placeholder="Nombre de usuario" />
+            @if (form.get('profileName')?.invalid && form.get('profileName')?.touched) {
+            <span class="field-error">Mínimo 2 caracteres</span>
             }
-        </ul>
+            <span class="role-badge">{{ auth.currentUser()?.role }}</span>
+
+            <ul class="user-info">
+                <li><span>Correo</span><strong><input [value]="auth.currentUser()?.email" id="email" type="email"
+                            formControlName="email" placeholder="tu@correo.com" />
+                        @if (form.get('email')?.invalid && form.get('email')?.touched) {
+                        <span class="field-error">Correo no válido</span>
+                        }</strong></li>
+                <li><span for="ageRestriction">Restricción de edad</span>
+                    <select id="ageRestriction" formControlName="ageRestriction"
+                        [value]="form.get('ageRestriction')?.value">
+                        <option [value]=" 12">+12</option>
+                        <option [value]="16">+16</option>
+                        <option [value]="18">+18</option>
+                    </select>
+                </li>
+
+                <li><span>Suscripción actual</span><strong>{{ planName() }}</strong></li>
+                <li>
+                    <span>Estado</span>
+                    <strong>{{ auth.currentUser()?.subscribed ? 'Activa' : 'Inactiva' }}</strong>
+                </li>
+                @if (auth.currentUser()?.endDate) {
+                <li>
+                    <span>Renovación</span>
+                    <strong>{{ auth.currentUser()?.endDate | date: 'dd/MM/yy' }}</strong>
+                </li>
+                }
+            </ul>
+        </div>
+
+        <div class="user-actions">
+            <!-- canSave: dirty + valid. disabled nativo bloquea el submit -->
+            <button type="submit" class="action-btn primary" [disabled]="!canSave">
+                Guardar cambios
+            </button>
+
+            @if (isDirty) {
+            <span class="dirty-hint">
+                <span class="dirty-dot"></span>Cambios sin guardar
+            </span>
+            }
+
+            <button type="button" class="action-btn danger" (click)="deleteProfile()">
+                Borrar perfil
+            </button>
+        </div>
 
     </div>
+</form>
+}
 
-    <div class="user-actions">
-        <button class="logout-btn">Guardar cambios</button>
-        <button class="logout-btn">Borrar perfil</button>
-    </div>
+
+@if (saveToast()) {
+<div class="success-toast">
+    Perfil actualizado correctamente
+</div>
+}
+
+@if (deleteToast()) {
+<div class="success-toast">
+    Perfil eliminado correctamente
 </div>
 }

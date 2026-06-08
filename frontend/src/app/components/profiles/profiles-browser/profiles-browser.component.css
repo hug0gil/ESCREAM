@@ -74,7 +74,9 @@
   color: var(--color-accent2);
   background: linear-gradient(135deg, #0d0a16 0%, #1a0b2e 55%, #0d0a16 100%);
   border: 1px solid var(--surface-border);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.6), 0 0 22px rgba(47, 47, 255, 0.12);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.6),
+    0 0 22px rgba(47, 47, 255, 0.12);
   transition:
     border-color 0.22s ease,
     box-shadow 0.22s ease;
@@ -83,7 +85,9 @@
 .profile-card:hover .profile-avatar,
 .profile-card:focus-visible .profile-avatar {
   border-color: var(--color-accent2);
-  box-shadow: 0 16px 38px rgba(0, 0, 0, 0.7), var(--neon-amber);
+  box-shadow:
+    0 16px 38px rgba(0, 0, 0, 0.7),
+    var(--neon-amber);
 }
 
 .profile-card:hover,
@@ -132,7 +136,9 @@
   width: auto;
   filter: drop-shadow(0 0 8px var(--color-accent1));
   cursor: pointer;
-  transition: transform 0.8s ease, filter 0.6s ease;
+  transition:
+    transform 0.8s ease,
+    filter 0.6s ease;
   transform: translateZ(0);
   backface-visibility: hidden;
 }
@@ -140,6 +146,90 @@
 .logo img:hover {
   transform: scale(1.1) translateZ(0);
   filter: drop-shadow(0 0 12px var(--color-accent1));
+}
+
+.profile-form-card {
+  width: min(500px, 100%);
+  margin: 3rem auto 0;
+  padding: 2rem;
+  background: rgba(20, 20, 20, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  backdrop-filter: blur(10px);
+
+  h2 {
+    margin-bottom: 1.5rem;
+    text-align: center;
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 600;
+  }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+
+  label {
+    color: #b3b3b3;
+    font-size: 0.9rem;
+  }
+
+  input,
+  select {
+    width: 100%;
+    padding: 0.85rem 1rem;
+    background: #222;
+    border: 1px solid #333;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 1rem;
+    transition: 0.2s;
+  }
+
+  input:focus,
+  select:focus {
+    outline: none;
+    border-color: #e50914;
+    box-shadow: 0 0 0 3px rgba(229, 9, 20, 0.2);
+  }
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.btn-primary,
+.btn-secondary {
+  border: none;
+  border-radius: 10px;
+  padding: 0.85rem 1.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-primary {
+  background: #e50914;
+  color: white;
+
+  &:hover {
+    background: #f6121d;
+  }
+}
+
+.btn-secondary {
+  background: #2d2d2d;
+  color: white;
+
+  &:hover {
+    background: #3a3a3a;
+  }
 }
 
 /* ==============================================================
@@ -165,5 +255,237 @@
 
   .logo img {
     height: 64px;
+  }
+}
+
+/* ============================================================
+➕ CREAR PERFIL
+============================================================ */
+
+.profile-form-card {
+  position: relative;
+
+  width: 100%;
+  max-width: 500px;
+
+  margin: 3rem auto;
+  padding: clamp(1.8rem, 4vw, 2.5rem);
+
+  background: linear-gradient(135deg, #0d0a16 0%, #1a0b2e 55%, #0d0a16 100%);
+
+  border: 1px solid var(--surface-border);
+  border-radius: 1.2rem;
+
+  overflow: hidden;
+
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.6),
+    0 0 28px rgba(47, 47, 255, 0.15);
+}
+
+.profile-form-card::before {
+  content: "";
+
+  position: absolute;
+
+  top: 0;
+  bottom: 0;
+  left: 0;
+
+  width: 6px;
+
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--color-accent2) 50%,
+    transparent 100%
+  );
+
+  box-shadow: 0 0 18px rgba(255, 159, 28, 0.55);
+}
+
+.profile-form-card h2 {
+  margin: 0 0 2rem;
+
+  text-align: center;
+
+  font-family: "Righteous", sans-serif;
+
+  color: var(--color-accent2);
+
+  font-size: clamp(1.5rem, 5vw, 2rem);
+
+  letter-spacing: 1px;
+}
+
+.profile-form-card form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ============================================================
+📝 CAMPOS
+============================================================ */
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.form-group label {
+  color: rgba(255, 255, 255, 0.6);
+
+  text-transform: uppercase;
+
+  font-size: 0.75rem;
+  font-weight: 700;
+
+  letter-spacing: 1.5px;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+
+  padding: 0.9rem 1rem;
+
+  background: rgba(255, 255, 255, 0.04);
+
+  border: 1px solid var(--surface-border);
+  border-radius: 0.8rem;
+
+  color: var(--color-text);
+
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.95rem;
+
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease,
+    background-color 0.25s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+
+  border-color: var(--color-accent2);
+
+  box-shadow: var(--neon-amber);
+
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Campo nombre destacado */
+
+.form-group input#profileName {
+  text-align: center;
+
+  font-weight: 700;
+
+  color: var(--color-accent2);
+
+  background: rgba(255, 159, 28, 0.08);
+
+  border-color: rgba(255, 159, 28, 0.3);
+}
+
+/* ============================================================
+⚠️ ERRORES
+============================================================ */
+
+.field-error {
+  display: block;
+
+  color: #ff6961;
+
+  font-size: 0.78rem;
+  font-weight: 600;
+
+  animation: errorFade 0.2s ease;
+}
+
+/* ============================================================
+🔘 BOTONES
+============================================================ */
+
+.form-actions {
+  display: flex;
+  gap: 1rem;
+
+  margin-top: 1rem;
+}
+
+.form-actions button {
+  flex: 1;
+}
+
+.btn-primary,
+.btn-secondary {
+  padding: 0.95rem;
+
+  border-radius: 0.8rem;
+
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+
+  text-transform: uppercase;
+
+  cursor: pointer;
+
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    background-color 0.22s ease,
+    border-color 0.22s ease;
+}
+
+.btn-primary:hover:not(:disabled),
+.btn-secondary:hover {
+  transform: translateY(-3px);
+}
+
+.btn-primary:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Crear perfil */
+
+.btn-primary {
+  background: rgba(255, 159, 28, 0.08);
+
+  border: 1.5px solid var(--color-accent2);
+
+  color: var(--color-accent2);
+}
+
+.btn-primary:hover:not(:disabled) {
+  box-shadow: var(--neon-amber);
+}
+
+/* Cancelar */
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.03);
+
+  border: 1.5px solid var(--surface-border);
+
+  color: var(--color-text);
+}
+
+/* ============================================================
+📱 RESPONSIVE
+============================================================ */
+
+@media (max-width: 600px) {
+  .profile-form-card {
+    margin: 1.5rem 1rem;
+  }
+
+  .form-actions {
+    flex-direction: column;
   }
 }

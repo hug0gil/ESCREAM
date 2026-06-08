@@ -1,8 +1,8 @@
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject, signal } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { Profile } from '../../interfaces/profile-interface';
+import { environment } from '../../environments/environment';
+import { Profile } from '../interfaces/profile-interface';
 
 // Shape de respuesta paginada que devuelve Nest
 interface NestPaginated<T> {
@@ -29,6 +29,19 @@ export class ProfileService {
     return this.http
       .get<NestPaginated<Profile>>(this.apiUrl, { params })
       .pipe(map(res => res.data));
+  }
+
+  updateProfile(profileId: number, data: { profileName: string, ageRestriction: number }): Observable<Profile> {
+    return this.http.patch<Profile>(`${this.apiUrl}/${profileId}`, data);
+  }
+
+
+  deleteProfile(profileId: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${profileId}`);
+  }
+
+  createProfile(data: { profileName: string; ageRestriction: number; userId: number }): Observable<Profile> {
+    return this.http.post<Profile>(`${this.apiUrl}`, data);
   }
 
   /** Marca el perfil con el que se va a navegar y lo persiste. */

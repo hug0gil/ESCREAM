@@ -10,7 +10,9 @@ import { MovieDetailsComponent } from './components/movies/movie-details/movie-d
 import { PlansListComponent } from './components/plans/plans-list/plans-list.component';
 import { ProfilesBrowserComponent } from './components/profiles/profiles-browser/profiles-browser.component';
 import { authGuard } from './guards/auth.guard';
+import { profileSelectedGuard } from './guards/profile-selected.guard';
 import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.component';
+import { profileRedirectGuard } from './guards/profile-redirect.guard';
 
 export const routes: Routes = [
   // Layout en blanco: sin header/footer, solo el logo para volver al inicio.
@@ -32,10 +34,10 @@ export const routes: Routes = [
     path: '',
     component: MainLayoutComponent,
     children: [
-      { path: 'movies', component: MoviesListComponent },
-      { path: 'movies/:slug', component: MovieDetailsComponent },
+      { path: 'movies', component: MoviesListComponent, canActivate: [profileRedirectGuard] },
+      { path: 'movies/:slug', component: MovieDetailsComponent, canActivate: [profileRedirectGuard] },
       { path: 'plans', component: PlansListComponent },
-      { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard] },
+      { path: 'dashboard', component: DashboardComponent, canActivate: [authGuard, profileSelectedGuard] },
       { path: 'admin-dashboard', component: AdminDashboardComponent, canActivate: [authGuard] }
     ],
   },

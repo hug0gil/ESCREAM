@@ -5,11 +5,12 @@ import { Movie } from '../../../interfaces/movie-interface';
 import { Observable, switchMap } from 'rxjs';
 import { MovieService } from '../../../services/movie/movie.service';
 import { RatingSkullsComponent } from '../rating-skulls/rating-skulls.component';
+import { MovieReviewsComponent } from "../movie-reviews/movie-reviews.component";
 
 @Component({
   selector: 'app-movie-details',
   standalone: true,
-  imports: [CommonModule, RatingSkullsComponent],
+  imports: [CommonModule, RatingSkullsComponent, MovieReviewsComponent],
   templateUrl: './movie-details.component.html',
   styleUrl: './movie-details.component.css'
 })

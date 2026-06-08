@@ -70,4 +70,6 @@ export class LoginComponent {
   loginGoogle() {
     console.log('Login en Google');
   }
+
+
 }

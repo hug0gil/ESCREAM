@@ -16,7 +16,6 @@ export class AdminDashboardComponent {
   /** Placeholder: navegará a la sección de administración cuando exista. */
   manage(section: string): void {
     // TODO: enrutar a /admin/<section> cuando se cree el panel de administración
-    console.log('Administrar:', section);
   }
 
 }

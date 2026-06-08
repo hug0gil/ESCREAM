@@ -589,6 +589,23 @@ nav a.pillLogin:hover img {
   filter: drop-shadow(0 0 4px rgba(255, 60, 56, 0.7));
 }
 
+.dropdown-item.profiles {
+  color: #7dd3fc;
+}
+
+.dropdown-item.profiles svg {
+  color: #7dd3fc;
+}
+
+.dropdown-item.profiles:hover {
+  background: rgba(125, 211, 252, 0.12);
+  color: #38bdf8;
+}
+
+.dropdown-item.profiles:hover svg {
+  color: #38bdf8;
+}
+
 /* ==============================================================
    BADGE DE ROL
    ============================================================== */

@@ -1,8 +1,9 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, catchError, Observable, of, tap, map } from 'rxjs';
-import { environment } from '../../../environments/environment';
-import { Subgenre } from '../../interfaces/subgenre-interface';
+import { Subgenre } from '../interfaces/subgenre-interface';
+import { environment } from '../../environments/environment';
+
 
 @Injectable({
   providedIn: 'root'

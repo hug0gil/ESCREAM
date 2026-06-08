@@ -1,0 +1,718 @@
+/* ============================================================
+   REVIEWS SECTION
+============================================================ */
+.reviews-section {
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.5rem, 3vw, 2.4rem);
+  padding: clamp(0.5rem, 2vw, 1.5rem);
+}
+
+/* ============================================================
+   DETAIL-CARD BASE (replicada localmente para autocontenido)
+============================================================ */
+.review-form-card,
+.reviews-list-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.2rem, 2.5vw, 2rem);
+  padding: clamp(1.8rem, 3vw, 2.6rem);
+  background: linear-gradient(135deg, #0d0a16 0%, #1a0b2e 55%, #0d0a16 100%);
+  border: 1px solid var(--surface-border);
+  border-radius: 1.2rem;
+  overflow: hidden;
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.6),
+    0 0 28px rgba(47, 47, 255, 0.15);
+}
+
+.review-form-card::before,
+.reviews-list-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 6px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    var(--color-accent2) 50%,
+    transparent 100%
+  );
+  box-shadow: 0 0 18px rgba(255, 159, 28, 0.55);
+}
+
+.review-form-card > *,
+.reviews-list-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* ============================================================
+   SHEET TITLE con icono SVG
+============================================================ */
+.sheet-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: "Monoton", cursive;
+  font-size: 1rem;
+  letter-spacing: 3px;
+  color: var(--color-accent2);
+  text-shadow: var(--neon-amber);
+  margin: 0;
+}
+
+.section-icon {
+  width: 1.15rem;
+  height: 1.15rem;
+  color: var(--color-accent2);
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+.reviews-count {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: rgba(255, 255, 255, 0.4);
+  margin-left: 0.2rem;
+}
+
+/* ============================================================
+   CABECERA DE LISTADO
+============================================================ */
+.reviews-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+/* ============================================================
+   FORMULARIO
+============================================================ */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.field-label {
+  font-family: "Righteous", sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.optional {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.7rem;
+  letter-spacing: 0;
+  text-transform: none;
+  color: rgba(255, 255, 255, 0.3);
+}
+
+/* ── SELECTOR DE CALAVERAS (mismo estilo que el filtro avanzado) ── */
+.rating-track {
+  display: flex;
+  justify-content: flex-start;
+  gap: 0.15rem;
+  flex-wrap: wrap;
+}
+
+.rating-skull {
+  background: none;
+  border: none;
+  padding: 0.3rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 1.6rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  /* estado base: silueta apagada */
+  --skull-base: rgba(255, 255, 255, 0.08);
+  --skull-shade: rgba(255, 255, 255, 0.04);
+  --skull-outline: rgba(255, 255, 255, 0.18);
+  --skull-glow: none;
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.rating-skull:hover {
+  background: rgba(255, 60, 56, 0.08);
+  transform: translateY(-1px);
+}
+
+/* calavera encendida (hover o valor bloqueado) */
+.rating-skull.filled {
+  --skull-base: #f5f0e6;
+  --skull-shade: #b9b1a1;
+  --skull-outline: #1a1014;
+  --skull-glow: drop-shadow(0 0 4px rgba(255, 60, 56, 0.4));
+}
+
+/* las que quedan por encima del cursor se atenúan */
+.rating-skull.dim {
+  opacity: 0.55;
+}
+
+.rating-skull app-rating-skulls {
+  pointer-events: none;
+}
+
+.rating-preview {
+  font-family: "Righteous", sans-serif;
+  font-size: 0.9rem;
+  color: var(--color-accent2);
+  margin-left: 0.5rem;
+  min-width: 4rem;
+}
+
+/* TEXTAREA */
+.review-textarea {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.035);
+  border: 1px solid var(--surface-border);
+  border-radius: 0.7rem;
+  color: rgba(255, 255, 255, 0.9);
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  padding: 0.85rem 1rem;
+  resize: vertical;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+  box-sizing: border-box;
+}
+
+.review-textarea::placeholder {
+  color: rgba(255, 255, 255, 0.22);
+}
+
+.review-textarea:focus {
+  outline: none;
+  border-color: rgba(255, 159, 28, 0.6);
+  box-shadow: 0 0 0 3px rgba(255, 159, 28, 0.1);
+}
+
+.char-counter {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.72rem;
+  color: rgba(255, 255, 255, 0.28);
+  text-align: right;
+  padding: 10px;
+}
+
+/* ERRORES / FEEDBACK */
+.field-error {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.78rem;
+  color: #ff7070;
+}
+
+.form-feedback {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.6rem;
+  margin: 0;
+}
+
+.form-feedback svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex-shrink: 0;
+}
+
+.form-feedback.error {
+  margin: 10px 0;
+  background: rgba(229, 51, 51, 0.1);
+  border: 1px solid rgba(229, 51, 51, 0.4);
+  color: #ff7070;
+}
+
+.form-feedback.success {
+  background: rgba(28, 199, 139, 0.1);
+  border: 1px solid rgba(28, 199, 139, 0.4);
+  color: #4ef0b4;
+}
+
+/* BOTÓN PRINCIPAL */
+.btn-with-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.btn-with-icon svg {
+  width: 1.1rem;
+  height: 1.1rem;
+  flex-shrink: 0;
+}
+
+/* Spinner */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin {
+  animation: spin 0.9s linear infinite;
+}
+
+.already-reviewed-msg {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  color: rgba(78, 240, 180, 0.85);
+  padding: 0.6rem 0;
+}
+
+.already-reviewed-msg svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   ESTADO VACÍO
+============================================================ */
+.empty-reviews {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.empty-skull-icon {
+  width: 5rem;
+  height: auto;
+  opacity: 0.22;
+}
+
+.empty-skull-icon .skull-outline {
+  fill: rgba(255, 255, 255, 0.9);
+}
+
+.empty-reviews p {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.95rem;
+  color: rgba(255, 255, 255, 0.4);
+  margin: 0;
+}
+
+/* ── LOADING ────────────────────────────────────────── */
+.loading-state {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  justify-content: center;
+  padding: 2rem;
+  font-family: "Righteous", sans-serif;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.loading-state svg {
+  width: 1.4rem;
+  height: 1.4rem;
+  color: var(--color-accent2);
+}
+
+/* ============================================================
+   GRID DE RESEÑAS
+============================================================ */
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 1.1rem;
+}
+
+/* ── Tarjeta individual ──────────────────────────────── */
+.review-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding: 1.1rem 1.2rem;
+  background: rgba(255, 255, 255, 0.025);
+  border: 1px solid var(--surface-border);
+  border-radius: 0.8rem;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.review-card:hover {
+  border-color: rgba(255, 159, 28, 0.3);
+  box-shadow:
+    0 4px 20px rgba(0, 0, 0, 0.4),
+    0 0 14px rgba(255, 159, 28, 0.1);
+  transform: translateY(-2px);
+}
+
+.review-card.own-review {
+  border-color: rgba(255, 159, 28, 0.4);
+  background: rgba(255, 159, 28, 0.035);
+}
+
+/* Cabecera de la tarjeta */
+.review-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+}
+
+.review-author-block {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  min-width: 0;
+}
+
+.review-avatar {
+  flex-shrink: 0;
+  width: 2.2rem;
+  height: 2.2rem;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    var(--color-accent2),
+    var(--color-accent1, #e53)
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Righteous", sans-serif;
+  font-size: 1rem;
+  color: #0d0a16;
+}
+
+.review-author-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.review-author-name-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.review-author {
+  font-family: "Righteous", sans-serif;
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 14ch;
+}
+
+.own-badge {
+  display: inline-block;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  background: rgba(255, 159, 28, 0.12);
+  border: 1px solid rgba(255, 159, 28, 0.5);
+  color: var(--color-accent2);
+  padding: 0.1rem 0.45rem;
+  border-radius: 50px;
+}
+
+.review-date {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.7rem;
+  color: rgba(255, 255, 255, 0.32);
+}
+
+/* Rating block con calaveras */
+.review-rating-block {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.2rem;
+  flex-shrink: 0;
+}
+
+.review-rating-num {
+  font-family: "Righteous", sans-serif;
+  font-size: 0.75rem;
+  letter-spacing: 0.5px;
+}
+
+.review-rating-block.rating-high {
+  --skull-base: #f5f0e6;
+  --skull-shade: #b9b1a1;
+  --skull-outline: #1a1014;
+  --skull-glow: drop-shadow(0 0 5px rgba(78, 240, 180, 0.55));
+}
+.review-rating-block.rating-high .review-rating-num {
+  color: #4ef0b4;
+}
+
+.review-rating-block.rating-mid {
+  --skull-base: #f5f0e6;
+  --skull-shade: #b9b1a1;
+  --skull-outline: #1a1014;
+  --skull-glow: drop-shadow(0 0 5px rgba(255, 159, 28, 0.55));
+}
+.review-rating-block.rating-mid .review-rating-num {
+  color: var(--color-accent2);
+}
+
+.review-rating-block.rating-low {
+  --skull-base: #f5f0e6;
+  --skull-shade: #b9b1a1;
+  --skull-outline: #1a1014;
+  --skull-glow: drop-shadow(0 0 5px rgba(255, 60, 56, 0.55));
+}
+.review-rating-block.rating-low .review-rating-num {
+  color: #ff7070;
+}
+
+/* Comentario */
+.review-comment {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.88rem;
+  color: rgba(255, 255, 255, 0.78);
+  line-height: 1.55;
+  margin: 0;
+  flex: 1;
+}
+
+.review-comment.no-comment {
+  color: rgba(255, 255, 255, 0.25);
+  font-style: italic;
+}
+
+/* Acciones */
+.review-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.btn-delete {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-family: "Righteous", sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0.5px;
+  background: rgba(229, 51, 51, 0.07);
+  border: 1px solid rgba(229, 51, 51, 0.3);
+  color: #ff7070;
+  padding: 0.4rem 0.9rem;
+  border-radius: 50px;
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+.btn-delete svg {
+  width: 0.95rem;
+  height: 0.95rem;
+  flex-shrink: 0;
+}
+
+.btn-delete:hover:not(:disabled) {
+  background: rgba(229, 51, 51, 0.16);
+  box-shadow: 0 0 10px rgba(229, 51, 51, 0.3);
+  transform: translateY(-1px);
+}
+
+.btn-delete:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   PAGINADOR
+============================================================ */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding-top: 0.5rem;
+}
+
+.page-btn {
+  font-family: "Righteous", sans-serif;
+  font-size: 0.85rem;
+  min-width: 2.2rem;
+  height: 2.2rem;
+  padding: 0 0.5rem;
+  border-radius: 0.5rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--surface-border);
+  color: rgba(255, 255, 255, 0.65);
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.page-btn-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+.page-btn-arrow svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.page-btn:hover:not(:disabled):not(.active) {
+  background: rgba(255, 159, 28, 0.1);
+  border-color: rgba(255, 159, 28, 0.4);
+  color: var(--color-accent2);
+}
+
+.page-btn.active {
+  background: rgba(255, 159, 28, 0.15);
+  border-color: var(--color-accent2);
+  color: var(--color-accent2);
+  box-shadow: 0 0 10px rgba(255, 159, 28, 0.28);
+  cursor: default;
+}
+
+.page-btn:disabled {
+  opacity: 0.28;
+  cursor: not-allowed;
+}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media (max-width: 640px) {
+  .reviews-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .review-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .review-rating-block {
+    align-items: flex-start;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .rating-track {
+    gap: 0.1rem;
+  }
+}
+
+/* ============================================================
+   BOTÓN PUBLICAR RESEÑA
+============================================================ */
+
+.btn-with-icon {
+  width: 100%;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem;
+
+  padding: 0.95rem 1.4rem;
+
+  border-radius: 0.9rem;
+  border: 1px solid rgba(255, 159, 28, 0.45);
+
+  background: linear-gradient(
+    135deg,
+    rgba(255, 159, 28, 0.12) 0%,
+    rgba(255, 159, 28, 0.04) 100%
+  );
+
+  color: var(--color-accent2);
+
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+
+  letter-spacing: 1px;
+  text-transform: uppercase;
+
+  cursor: pointer;
+
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 0 14px rgba(255, 159, 28, 0.08);
+
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease,
+    background-color 0.22s ease;
+}
+
+.btn-with-icon svg {
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+}
+
+.btn-with-icon:hover:not(:disabled) {
+  transform: translateY(-2px);
+
+  border-color: var(--color-accent2);
+
+  box-shadow:
+    0 0 18px rgba(255, 159, 28, 0.25),
+    0 0 32px rgba(255, 159, 28, 0.15);
+}
+
+.btn-with-icon:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-with-icon:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Estado enviando */
+.btn-with-icon.loading {
+  pointer-events: none;
+}

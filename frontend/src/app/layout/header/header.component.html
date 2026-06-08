@@ -47,6 +47,19 @@
             Editar perfil
           </button>
 
+          <button class="dropdown-item profiles" (click)="go('/profiles')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+              stroke-linejoin="round">
+
+              <path d="M17 3h4v4" />
+              <path d="M21 3l-5 5" />
+
+              <circle cx="9" cy="8" r="4" />
+              <path d="M3 21c0-3.5 2.7-6 6-6s6 2.5 6 6" />
+            </svg>
+            Cambiar perfil
+          </button>
+
           @if (auth.canEdit()) {
           <button class="dropdown-item admin" (click)="go('/admin-dashboard')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
@@ -59,8 +72,7 @@
               <line x1="5" y1="15" x2="16" y2="15" />
               <line x1="5" y1="18" x2="12" y2="18" />
             </svg>
-            Panel de admin
-            <span class="badge">{{ auth.currentUser()?.role }}</span>
+            Panel de {{auth.currentUser()?.role?.toLowerCase()}}
           </button>
           }
         </div>
@@ -81,7 +93,12 @@
       </div>
       }
     </div>
-    } @else {
+    } @else if (auth.hasSelectedProfile()) {
+    <a routerLink="/browse" class="pillLogin">
+      <img src="assets/img/profileLogo.svg" alt="Perfil">
+    </a>
+    }
+    @else {
     <a routerLink="/login" class="pillLogin">
       <img src="assets/img/profileLogo.svg" alt="Perfil">
     </a>

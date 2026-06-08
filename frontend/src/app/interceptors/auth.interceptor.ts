@@ -1,14 +1,19 @@
 import { HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { AuthService } from '../services/auth/auth.service';
 
-/** Añade `Authorization: Bearer <token>` a cada petición si hay sesión. */
+const TOKEN_KEY = 'escream_token';
+
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const token = inject(AuthService).getToken();
-  if (!token) return next(req);
+  const token = localStorage.getItem(TOKEN_KEY);
 
-  const authReq = req.clone({
-    setHeaders: { Authorization: `Bearer ${token}` },
-  });
-  return next(authReq);
+  if (!token) {
+    return next(req);
+  }
+
+  return next(
+    req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+  );
 };

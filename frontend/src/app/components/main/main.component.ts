@@ -15,7 +15,6 @@ import { Profile } from '../../interfaces/profile-interface';
 export class MainComponent implements OnInit, OnDestroy {
 
   private readonly movieService = inject(MovieService);
-  private readonly authService = inject(AuthService);
 
   public currentProfile: Profile | null = null;
 

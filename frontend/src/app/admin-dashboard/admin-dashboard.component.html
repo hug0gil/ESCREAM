@@ -30,16 +30,6 @@
                 <span>Reviews</span>
             </button>
             @if (auth.isAdmin()) {
-            <button class="admin-btn" (click)="manage('subscripciones')">
-                <span class="icon">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
-                        stroke-linejoin="round" aria-hidden="true">
-                        <rect x="2" y="5" width="20" height="14" rx="2" />
-                        <line x1="2" y1="10" x2="22" y2="10" />
-                    </svg>
-                </span>
-                <span>Suscripciones</span>
-            </button>
             <button class="admin-btn" (click)="manage('usuarios')">
                 <span class="icon">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
@@ -50,7 +40,7 @@
                         <path d="M16 3.13a4 4 0 0 1 0 7.75" />
                     </svg>
                 </span>
-                <span>Usuarios</span>
+                <span>Usuarios y perfiles</span>
             </button>
             }
         </div>

@@ -5,7 +5,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { filter, debounceTime, distinctUntilChanged } from 'rxjs';
 import { AuthService } from '../../services/auth/auth.service';
 import { MovieSearchService } from '../../services/movie/movie-search.service';
-import { ProfileService } from '../../services/profile/profile.service';
+import { ProfileService } from '../../services/profile.service';
 
 @Component({
   selector: 'app-header',
@@ -91,21 +91,26 @@ export class HeaderComponent {
     }
   }
 
-/**
- * Comportamiento del logo.
- *
- * - Si estamos en /movies, volvemos a la página principal ('').
- * - Si estamos en cualquier otra ruta, vamos al catálogo.
- */
   onLogoClick(): void {
     const currentPath = this.router.url.split('?')[0];
+    switch (currentPath) {
+      case '/movies':
+        this.router.navigate(['']);
+        break;
 
-    if (currentPath === '/movies') {
-      this.router.navigate(['']);
-      return;
+      case '/profiles':
+        console.log('profiles')
+        if (this.profileService.activeProfile()) {
+          this.router.navigate(['/movies']);
+        } else {
+          this.router.navigate(['']);
+        }
+        break;
+
+      default:
+        this.router.navigate(['/movies']);
+        break;
     }
-
-    this.router.navigate(['/movies']);
   }
 
 }
