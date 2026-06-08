@@ -20,7 +20,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json",
     "seed": "tsx prisma/seed.ts",
     "seed:images": "tsx prisma/seed-images.ts",
-    "seed:refreshAll": "tsx prisma/seed.ts && tsx prisma/seed-images.ts"
+    "seed:urls": "tsx prisma/seed-urls.ts",
+    "seed:refreshAll": "tsx prisma/seed.ts && tsx prisma/seed-images.ts && tsx prisma/seed-urls.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",

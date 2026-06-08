@@ -101,6 +101,7 @@ CREATE TABLE "movies" (
     "director_id" INTEGER NOT NULL,
     "production_company_id" INTEGER NOT NULL,
     "country" TEXT NOT NULL,
+    "movie_url" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -130,11 +131,10 @@ CREATE TABLE "movie_subgenre" (
 -- CreateTable
 CREATE TABLE "reviews" (
     "id" SERIAL NOT NULL,
-    "user_id" INTEGER NOT NULL,
+    "profile_id" INTEGER NOT NULL,
     "movie_id" INTEGER NOT NULL,
     "rating" DECIMAL(2,1) NOT NULL,
     "comment" TEXT,
-    "date" DATE NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -181,4 +181,4 @@ ALTER TABLE "movie_subgenre" ADD CONSTRAINT "movie_subgenre_subgenre_id_fkey" FO
 ALTER TABLE "reviews" ADD CONSTRAINT "reviews_movie_id_fkey" FOREIGN KEY ("movie_id") REFERENCES "movies"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "reviews" ADD CONSTRAINT "reviews_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "reviews" ADD CONSTRAINT "reviews_profile_id_fkey" FOREIGN KEY ("profile_id") REFERENCES "profiles"("id") ON DELETE CASCADE ON UPDATE CASCADE;

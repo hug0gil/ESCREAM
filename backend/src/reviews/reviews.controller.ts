@@ -23,10 +23,10 @@ export class ReviewsController {
   findAll(
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page?: number,
     @Query('perPage', new DefaultValuePipe(10), ParseIntPipe) perPage?: number,
-    @Query('userId', new ParseIntPipe({ optional: true })) userId?: number,
+    @Query('profileId', new ParseIntPipe({ optional: true })) profileId?: number,
     @Query('movieId', new ParseIntPipe({ optional: true })) movieId?: number,
   ) {
-    return this.reviews.findAll(page, perPage, userId, movieId);
+    return this.reviews.findAll(page, perPage, profileId, movieId);
   }
 
   @Get(':id')

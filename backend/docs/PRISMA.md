@@ -1,7 +1,7 @@
 # Prisma — Cheatsheet
 
 Comandos principales para el día a día con Prisma 7 + PostgreSQL en este proyecto.
-Todos se ejecutan desde la raíz: `~/Desktop/Development/NestJS/BackEndESCREAM`.
+Todos se ejecutan desde la raíz del backend: `~/Desktop/TFG/ESCREAM/backend`.
 
 ---
 
@@ -32,12 +32,18 @@ Todos se ejecutan desde la raíz: `~/Desktop/Development/NestJS/BackEndESCREAM`.
 
 ## Seeding
 
+Hay scripts npm definidos en `package.json` (usan `tsx`):
+
 | Acción | Comando |
 |---|---|
-| Ejecutar el seed principal (`prisma/seed.ts`) | `npx prisma db seed` |
-| Ejecutar el seed de imágenes TMDB (`prisma/seed-images.ts`) | `npx ts-node --transpile-only prisma/seed-images.ts` |
+| Seed principal — datos base (`prisma/seed.ts`) | `npm run seed` |
+| Seed de imágenes/pósters TMDB (`prisma/seed-images.ts`) | `npm run seed:images` |
+| Seed de URLs de las películas (`prisma/seed-urls.ts`) | `npm run seed:urls` |
+| Encadenar los tres (principal + imágenes + urls) | `npm run seed:refreshAll` |
 
-> El seed se configura en `prisma.config.ts` bajo `migrations.seed`.
+> El seed que ejecutan `migrate dev` / `migrate reset` se configura en `prisma.config.ts`
+> bajo `migrations.seed` (`ts-node --transpile-only prisma/seed.ts`) y solo corre `seed.ts`.
+> Las imágenes y urls hay que lanzarlas aparte con sus scripts.
 
 ---
 
@@ -64,8 +70,9 @@ npx prisma migrate dev --name lo_que_cambie
 
 ### Quiero empezar de cero con datos limpios
 ```bash
-npx prisma migrate reset --force
-npx ts-node --transpile-only prisma/seed-images.ts   # opcional: pósters TMDB
+npx prisma migrate reset --force   # reaplica migraciones + corre seed.ts
+npm run seed:images                # opcional: pósters TMDB
+npm run seed:urls                  # opcional: URLs de las películas
 ```
 
 ### Solo quiero refrescar el client
@@ -93,16 +100,17 @@ Borra la BD, vuelve a ejecutar **todas** las migraciones existentes, regenera el
 ### 2. Sincronizar schema con la BD sin migración (prototipos rápidos)
 ```bash
 npx prisma db push --force-reset
-npx prisma db seed
+npm run seed
 ```
 Tira la BD, recrea el schema directamente desde `schema.prisma` (sin tocar `prisma/migrations/`), regenera el client. Bueno cuando aún no tienes nada en producción y no te importa el historial. **No apto para prod.**
 
 ### 3. Empezar de cero también con las migraciones (cuando hay cambios destructivos)
 ```bash
+npx prisma migrate reset --force
 rm -rf prisma/migrations
-npx prisma migrate dev --name init    # responde "y" al prompt de drift/reset
-npx prisma generate                   # por si el migrate dijo "Already in sync"
-npx prisma db seed                    # idem
+npx prisma migrate dev --name init    
+npx prisma generate                   
+npm run seed                          
 ```
 Usar cuando has tocado `schema.prisma` quitando columnas/tablas y prefieres una migración inicial limpia en vez de acumular `ALTER TABLE`.
 
@@ -110,7 +118,7 @@ Usar cuando has tocado `schema.prisma` quitando columnas/tablas y prefieres una 
 
 ### Checklist tras cualquier reset
 1. `npx prisma generate` (si no lo hizo el comando).
-2. `npx prisma db seed` (si no lo encadenó).
+2. `npm run seed` (si no lo encadenó).
 3. Reiniciar el server de Nest (el dist puede tener el client viejo).
 
 ---

@@ -32,9 +32,9 @@ export class CreateMovieDto {
   @MaxLength(2048)
   image?: string;
 
-  @IsNumber({ maxDecimalPlaces: 1 })
-  @Min(0)
-  @Max(9.9)
+  @IsNumber()
+  @Min(1)
+  @Max(5)
   @IsOptional()
   rating?: number;
 

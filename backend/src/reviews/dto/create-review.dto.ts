@@ -1,7 +1,5 @@
 import {
-  IsDateString,
   IsInt,
-  IsNotEmpty,
   IsNumber,
   IsOptional,
   IsString,
@@ -12,7 +10,7 @@ import {
 export class CreateReviewDto {
   @IsInt()
   @Min(1)
-  userId: number;
+  profileId: number;
 
   @IsInt()
   @Min(1)
@@ -26,8 +24,4 @@ export class CreateReviewDto {
   @IsString()
   @IsOptional()
   comment?: string;
-
-  @IsDateString()
-  @IsNotEmpty()
-  date: string;
 }

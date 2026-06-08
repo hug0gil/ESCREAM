@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import {
   IsInt,
   IsNotEmpty,
@@ -13,6 +14,7 @@ export class CreateProfileDto {
   @MaxLength(255)
   profileName: string;
 
+  @Type(() => Number)
   @IsInt()
   @Min(0)
   @Max(18)

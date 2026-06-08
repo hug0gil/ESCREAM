@@ -38,7 +38,6 @@ model User {
   createdAt       DateTime  @default(now()) @map("created_at")
   updatedAt       DateTime  @updatedAt @map("updated_at")
   profiles        Profile[] //relacion, no es una columna virtual es la manera de hacer FK
-  reviews         Review[]
   plan            Plan      @relation(fields: [planId], references: [id])
 
   @@map("users")
@@ -52,6 +51,7 @@ model Profile {
   createdAt      DateTime @default(now()) @map("created_at")
   updatedAt      DateTime @updatedAt @map("updated_at")
   user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  reviews        Review[]
 
   @@map("profiles")
 }
@@ -113,6 +113,7 @@ model Movie {
   directorId          Int               @map("director_id")
   productionCompanyId Int               @map("production_company_id")
   country             String
+  movieUrl            String?           @map("movie_url")
   createdAt           DateTime          @default(now()) @map("created_at")
   updatedAt           DateTime          @updatedAt @map("updated_at")
   actors              MovieActor[]
@@ -150,15 +151,14 @@ model MovieSubgenre {
 
 model Review {
   id        Int      @id @default(autoincrement())
-  userId    Int      @map("user_id")
+  profileId Int      @map("profile_id")
   movieId   Int      @map("movie_id")
   rating    Decimal  @db.Decimal(2, 1)
   comment   String?
-  date      DateTime @db.Date
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   movie     Movie    @relation(fields: [movieId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   @@map("reviews")
 }

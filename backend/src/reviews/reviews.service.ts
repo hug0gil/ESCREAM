@@ -15,11 +15,11 @@ export class ReviewsService {
   async findAll(
     page = 1,
     perPage = 10,
-    userId?: number,
+    profileId?: number,
     movieId?: number,
   ) {
     const where: Prisma.ReviewWhereInput = {
-      ...(userId !== undefined && { userId }),
+      ...(profileId !== undefined && { profileId }),
       ...(movieId !== undefined && { movieId }),
     };
     const skip = (page - 1) * perPage;
@@ -30,7 +30,7 @@ export class ReviewsService {
         take: perPage,
         orderBy: { id: 'desc' },
         include: {
-          user: { select: { id: true, name: true } },
+          profile: { select: { id: true, profileName: true } },
           movie: { select: { id: true, title: true, slug: true } },
         },
       }),
@@ -52,7 +52,7 @@ export class ReviewsService {
     const review = await this.prisma.review.findUnique({
       where: { id },
       include: {
-        user: { select: { id: true, name: true } },
+        profile: { select: { id: true, profileName: true } },
         movie: { select: { id: true, title: true, slug: true } },
       },
     });
@@ -61,7 +61,7 @@ export class ReviewsService {
     }
     return review;
   }
-
+º
   async create(dto: CreateReviewDto) {
     try {
       return await this.prisma.review.create({ data: { ...dto } });
@@ -71,7 +71,7 @@ export class ReviewsService {
         e.code === 'P2003'
       ) {
         throw new BadRequestException(
-          `User ${dto.userId} or movie ${dto.movieId} does not exist`,
+          `Profile ${dto.profileId} or movie ${dto.movieId} does not exist`,
         );
       }
       throw e;
@@ -90,7 +90,7 @@ export class ReviewsService {
           throw new NotFoundException(`Review ${id} not found`);
         }
         if (e.code === 'P2003') {
-          throw new BadRequestException(`User or movie does not exist`);
+          throw new BadRequestException(`Profile or movie does not exist`);
         }
       }
       throw e;
