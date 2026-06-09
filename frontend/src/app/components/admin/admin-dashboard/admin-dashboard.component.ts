@@ -1,10 +1,13 @@
 import { Component, inject } from '@angular/core';
-import { AuthService } from '../services/auth/auth.service';
+import { AuthService } from '../../../services/auth/auth.service';
+import { RouterLink } from "@angular/router";
+import { MainComponent } from "../../main/main.component";
+import { MainLayoutComponent } from "../../../layout/main-layout/main-layout.component";
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [],
+  imports: [RouterLink, MainComponent, MainLayoutComponent],
   templateUrl: './admin-dashboard.component.html',
   styleUrl: './admin-dashboard.component.css'
 })

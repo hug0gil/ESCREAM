@@ -1,9 +1,11 @@
 export interface MoviesFilter {
-    search: string;
-    subgenreIds: number[];
-    rating: number[];
-    countries: string[];
-    yearRange: {
+    search?: string;
+
+    subgenreIds?: number[];
+    countries?: string[];
+    rating?: number[];
+
+    yearRange?: {
         min: number;
         max: number;
     };

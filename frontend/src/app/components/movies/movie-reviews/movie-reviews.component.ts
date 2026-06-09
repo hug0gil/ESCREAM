@@ -32,11 +32,13 @@ import { ReviewService } from '../../../services/review.service';
 import { AuthService } from '../../../services/auth/auth.service';
 import { ProfileService } from '../../../services/profile.service';
 import { Review } from '../../../interfaces/review-interface';
+import { RouterLink } from "@angular/router";
+
 
 @Component({
   selector: 'app-movie-reviews',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RatingSkullsComponent],
+  imports: [CommonModule, ReactiveFormsModule, RatingSkullsComponent, RouterLink],
   templateUrl: './movie-reviews.component.html',
   styleUrls: ['./movie-reviews.component.css'],
 })

@@ -40,6 +40,14 @@ export class MoviesController {
     return this.movies.findBySlug(slug);
   }
 
+  @ApiBearerAuth('user-jwt')
+  @UseGuards(JwtUserAuthGuard, RolesGuard)
+  @Roles(Role.EDITOR, Role.ADMIN)
+  @Post('seed-images')
+  seedImages() {
+    return this.movies.seedMissingImages();
+  }
+
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.movies.findOne(id);

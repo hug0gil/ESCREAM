@@ -1,15 +1,13 @@
 <section class="reviews-section">
 
     <!-- ══════════════════════════════════════════════
-       DETAIL-CARD: FORMULARIO DE RESEÑA
+     FORMULARIO DE RESEÑA
   ══════════════════════════════════════════════ -->
     @if (canSubmit()) {
     <div class="detail-card review-form-card">
 
         <h2 class="sheet-title">
-            <!-- SVG: pluma / escribir -->
-            <svg class="section-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
-                aria-hidden="true">
+            <svg class="section-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M12 20h9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
                 <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4 12.5-12.5z" stroke="currentColor"
                     stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
@@ -19,10 +17,9 @@
 
         <form [formGroup]="form" (ngSubmit)="submit()" novalidate>
 
-            <!-- RATING: calaveras interactivas -->
+            <!-- RATING -->
             <div class="form-field">
                 <label class="field-label">Valoración</label>
-
                 <div class="rating-track" (mouseleave)="hoveredStar.set(0)">
                     @for (skull of starsRange; track skull) {
                     <button type="button" class="rating-skull"
@@ -34,7 +31,6 @@
                     </button>
                     }
                 </div>
-
                 @if (ratingCtrl().invalid && ratingCtrl().touched) {
                 <span class="field-error">Selecciona una valoración entre 1 y 10.</span>
                 }
@@ -46,8 +42,7 @@
                     Comentario <span class="optional">(opcional)</span>
                 </label>
                 <textarea id="comment" formControlName="comment" class="review-textarea" rows="4"
-                    placeholder="¿Qué te pareció la película?" maxlength="1000">
-          </textarea>
+                    placeholder="¿Qué te pareció la película?" maxlength="1000"></textarea>
                 <span class="char-counter">
                     {{ commentCtrl().value?.length ?? 0 }} / 1000
                 </span>
@@ -102,7 +97,7 @@
     </div>
     }
 
-    <!-- Mensaje si el perfil ya reseñó -->
+    <!-- Ya ha reseñado -->
     @if (auth.isAuthenticated() && alreadyReviewed()) {
     <p class="already-reviewed-msg">
         <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -114,17 +109,60 @@
     </p>
     }
 
+    <!-- ══════════════════════════════════════════════
+     PANEL CTA (Call to Action) — ÚNETE A LA COMUNIDAD
+  ══════════════════════════════════════════════ -->
+    @if (!auth.isAuthenticated()) {
+    <div class="detail-card review-login-card">
+        <div class="login-card-content">
+
+            <!-- Calavera flotante decorativa -->
+            <img src="assets/img/LogoTransparenteESCREAM.png" alt="ESCREAM Logo" class="login-skull-deco">
+
+
+            <h2 class="sheet-title">
+                <svg class="section-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M20 21a8 8 0 1 0-16 0" stroke="currentColor" stroke-width="1.8" />
+                    <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.8" />
+                </svg>
+                Únete a la comunidad
+            </h2>
+
+            <hr class="login-divider" />
+
+            <p class="login-slogan">
+                Descubre, valora y comparte opiniones sobre las películas de la plataforma.
+                Tu próxima reseña puede ayudar a otros usuarios.
+            </p>
+
+            <div class="review-login-actions">
+                <button class="btn-primary btn-with-icon" [routerLink]="['/register']">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                    Crear cuenta
+                </button>
+                <button class="btn-secondary btn-with-icon" [routerLink]="['/login']">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path d="M10 17l5-5-5-5" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                        <path d="M15 12H3" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+                    </svg>
+                    Iniciar sesión
+                </button>
+            </div>
+
+        </div>
+    </div>
+    }
 
     <!-- ══════════════════════════════════════════════
-       DETAIL-CARD: LISTADO DE RESEÑAS
+     LISTADO DE RESEÑAS
   ══════════════════════════════════════════════ -->
     <div class="detail-card reviews-list-card">
 
         <div class="reviews-list-header">
             <h2 class="sheet-title">
-                <!-- SVG: cinta de película -->
-                <svg class="section-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"
-                    aria-hidden="true">
+                <svg class="section-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                     <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor"
                         stroke-width="1.8" stroke-linejoin="round" />
                     <path d="M8 10h8M8 13h5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" />
@@ -161,7 +199,6 @@
         <!-- VACÍO -->
         @if (!loading() && !error() && reviews().length === 0) {
         <div class="empty-reviews">
-            <!-- SVG: calavera vacía / sin contenido -->
             <svg class="empty-skull-icon" viewBox="0 0 700 642" shape-rendering="crispEdges" aria-hidden="true">
                 <g fill-rule="evenodd" clip-rule="evenodd">
                     <path class="skull-outline"
@@ -178,7 +215,6 @@
             @for (review of reviews(); track review.id) {
             <article class="review-card" [class.own-review]="isOwnReview(review)">
 
-                <!-- Cabecera: autor + fecha + badge "tuya" -->
                 <div class="review-header">
                     <div class="review-author-block">
                         <span class="review-avatar">{{ authorName(review).charAt(0).toUpperCase() }}</span>
@@ -189,24 +225,20 @@
                                 <span class="own-badge">Tú</span>
                                 }
                             </div>
-                            <span class="review-date">{{ review.createdAt | date:'short'}}</span>
+                            <span class="review-date">{{ review.createdAt | date:'short' }}</span>
                         </div>
                     </div>
-
-                    <!-- Rating pill con calaveras -->
                     <div class="review-rating-block" [ngClass]="ratingClass(review.rating)">
                         <app-rating-skulls [rating]="skullCount(review.rating)" />
                     </div>
                 </div>
 
-                <!-- Comentario -->
                 @if (review.comment) {
                 <p class="review-comment">{{ review.comment }}</p>
                 } @else {
                 <p class="review-comment no-comment">Sin comentario.</p>
                 }
 
-                <!-- Acciones: eliminar (admin/editor) -->
                 @if (canManage()) {
                 <div class="review-actions">
                     <button class="btn-delete" (click)="delete(review.id)" [disabled]="deletingId() === review.id"

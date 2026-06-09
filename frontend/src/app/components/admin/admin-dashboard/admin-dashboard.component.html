@@ -1,0 +1,115 @@
+<div>
+    @if (auth.canEdit()) {
+    <div class="admin-card">
+        <h2>Acciones</h2>
+
+        <div class="admin-grid">
+
+            <!-- MOVIES -->
+            <button class="admin-btn" [routerLink]="['movies']">
+                <span class="icon">
+                    <!-- clapperboard con tiras de película -->
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round" aria-hidden="true">
+                        <rect x="2" y="9" width="20" height="13" rx="1.5" />
+                        <rect x="2" y="6" width="20" height="4" rx="1" />
+                        <line x1="7" y1="6" x2="6" y2="10" />
+                        <line x1="12" y1="6" x2="11" y2="10" />
+                        <line x1="17" y1="6" x2="16" y2="10" />
+                        <line x1="5" y1="15" x2="16" y2="15" />
+                        <line x1="5" y1="18" x2="12" y2="18" />
+                    </svg>
+                </span>
+                <span>Películas</span>
+            </button>
+
+            <!-- REVIEWS -->
+            <button class="admin-btn" [routerLink]="['reviews']">
+                <span class="icon">
+                    <!-- bocadillo con estrellas dentro -->
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                        <path d="M8 10h.01M12 10h.01M16 10h.01" stroke-width="2.5" />
+                    </svg>
+                </span>
+                <span>Reviews</span>
+            </button>
+
+            <!-- USERS (ADMIN ONLY) -->
+            @if (auth.isAdmin()) {
+            <button class="admin-btn" [routerLink]="['users']">
+                <span class="icon">
+                    <!-- dos personas -->
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                </span>
+                <span>Usuarios</span>
+            </button>
+            }
+
+            <!-- DIRECTORS -->
+            <button class="admin-btn" [routerLink]="['directors']">
+                <span class="icon">
+                    <!-- megáfono de director -->
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M3 11v2a6 6 0 0 0 6 6h1l2 3" />
+                        <path d="M21 5 9 9v6l12 4V5z" />
+                        <path d="M5 10.5V13" />
+                    </svg>
+                </span>
+                <span>Directores</span>
+            </button>
+
+            <!-- ACTORS -->
+            <button class="admin-btn" [routerLink]="['actors']">
+                <span class="icon">
+                    <!-- persona con estrella -->
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="9" cy="7" r="4" />
+                        <path d="M3 21v-2a7 7 0 0 1 10.7-5.95" />
+                        <path d="M17 14l.9 2.6 2.6.4-1.9 1.9.5 2.6L17 20l-2.1 1.5.5-2.6-1.9-1.9 2.6-.4L17 14z" />
+                    </svg>
+                </span>
+                <span>Actores</span>
+            </button>
+
+            <!-- PRODUCTION COMPANIES -->
+            <button class="admin-btn" [routerLink]="['production-companies']">
+                <span class="icon">
+                    <!-- cámara de cine -->
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <rect x="2" y="7" width="13" height="10" rx="2" />
+                        <path d="M15 10l5-3v10l-5-3v-4z" />
+                        <circle cx="8" cy="12" r="2" />
+                    </svg>
+                </span>
+                <span>Productoras</span>
+            </button>
+
+            <!-- SUBGENRES -->
+            <button class="admin-btn" [routerLink]="['subgenres']">
+                <span class="icon">
+                    <!-- etiquetas apiladas -->
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M3 7h10l4 5-4 5H3V7z" />
+                        <path d="M7 4h8l4 5" stroke-width="1.4" stroke-dasharray="2 1" opacity=".6" />
+                        <circle cx="7.5" cy="12" r="1" fill="currentColor" stroke="none" />
+                    </svg>
+                </span>
+                <span>Subgéneros</span>
+            </button>
+
+        </div>
+    </div>
+    }
+</div>

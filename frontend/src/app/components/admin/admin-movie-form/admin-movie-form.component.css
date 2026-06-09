@@ -1,0 +1,499 @@
+/* ============================================================
+   🎬  MOVIE FORM — sistema visual advanced-filter
+============================================================ */
+
+form {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── HEADER ──────────────────────────────────────────────── */
+.form-header {
+  display: grid;
+  grid-template-columns: minmax(8rem, auto) 1fr minmax(8rem, auto);
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.4rem;
+}
+
+.back-button {
+  min-height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0 0.9rem;
+  border: 1px solid rgba(255, 159, 28, 0.35);
+  border-radius: 999px;
+  background: rgba(255, 159, 28, 0.08);
+  color: var(--color-accent2);
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.back-button:hover {
+  transform: translateX(-2px);
+  border-color: var(--color-accent2);
+  background: rgba(255, 159, 28, 0.14);
+  box-shadow: var(--neon-amber);
+}
+
+.form-title {
+  margin: 0;
+  text-align: center;
+}
+
+.form-title__text {
+  display: inline-block;
+  font-family: "Righteous", sans-serif;
+  font-size: clamp(2rem, 5vw, 3.25rem);
+  font-weight: 400;
+  line-height: 1.05;
+  color: #fff;
+  text-shadow:
+    0 0 18px rgba(255, 60, 56, 0.35),
+    0 0 28px rgba(255, 159, 28, 0.2);
+}
+
+.form-header__spacer {
+  width: 8rem;
+  height: 2.75rem;
+}
+
+/* ── GRID ─────────────────────────────────────────────────── */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+@media (max-width: 900px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── COLUMNAS ─────────────────────────────────────────────── */
+.form-col {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--surface-border);
+  border-radius: 0.8rem;
+  overflow: hidden;
+  padding: 1.25rem 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.form-col:hover {
+  border-color: rgba(255, 159, 28, 0.4);
+}
+
+/* ── FIELD ────────────────────────────────────────────────── */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.field__label {
+  font-family: "Righteous", sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 159, 28, 0.75);
+  user-select: none;
+}
+
+/* ── INPUTS / TEXTAREA / SELECT ───────────────────────────── */
+input,
+textarea,
+select {
+  width: 100%;
+  padding: 0.72rem 0.9rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--surface-border);
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.88rem;
+  outline: none;
+  box-sizing: border-box;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(255, 255, 255, 0.25);
+  font-style: italic;
+}
+
+input:hover,
+textarea:hover,
+select:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: var(--color-accent2);
+  box-shadow:
+    0 0 0 3px rgba(255, 159, 28, 0.15),
+    var(--neon-amber);
+  background: rgba(255, 255, 255, 0.07);
+}
+
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='rgba(255,159,28,0.7)' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  padding-right: 2.2rem;
+  cursor: pointer;
+}
+
+select option {
+  background: #0f0a18;
+  color: #fff;
+}
+
+select option[value=""] {
+  color: rgba(255, 255, 255, 0.35);
+  font-style: italic;
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+/* ── DROPDOWN PAÍS — tokens del filtro ───────────────────── */
+.filter-section {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--surface-border);
+  border-radius: 0.8rem;
+  overflow: hidden;
+  transition:
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+.filter-section:hover {
+  border-color: rgba(255, 159, 28, 0.4);
+}
+
+.layout-container-dropdown {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.8rem 1rem;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.layout-container-dropdown label {
+  cursor: pointer;
+  user-select: none;
+  font-family: "Righteous", sans-serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 159, 28, 0.75);
+}
+
+.layout-container-dropdown.open {
+  background: rgba(255, 159, 28, 0.08);
+  text-shadow: var(--neon-amber);
+}
+
+.list-button {
+  background: none;
+  border: none;
+  color: var(--color-accent2);
+  font-family: "Righteous", sans-serif;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+  width: 1.7rem;
+  height: 1.7rem;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  padding: 0;
+  transition:
+    background-color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.list-button:hover {
+  background: rgba(255, 159, 28, 0.15);
+  transform: scale(1.1);
+}
+
+/* ── CHIP GRID PAÍSES ─────────────────────────────────────── */
+.chip-grid-countries {
+  margin: 0;
+  padding: 0 1rem;
+  max-height: 0;
+  opacity: 0;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 0.7rem;
+  row-gap: 0;
+  transition:
+    max-height 0.4s ease,
+    opacity 0.3s ease,
+    padding 0.3s ease;
+}
+
+.chip-grid-countries.open {
+  max-height: 420px;
+  opacity: 1;
+  padding: 0.55rem 1rem 0.9rem;
+  row-gap: 0.6rem;
+  overflow-y: auto;
+}
+
+/* ── CHIP LIST (actores / subgéneros) ─────────────────────── */
+.chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.chip-list button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.85rem;
+  border-radius: 50px;
+  border: 1px solid var(--surface-border);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.8rem;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.chip-list button:hover {
+  transform: scale(1.05);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.chip-list button.chip--selected {
+  border-color: var(--color-accent1);
+  color: #fff;
+  box-shadow: var(--neon-red);
+}
+
+/* ── CHIP PAÍS ────────────────────────────────────────────── */
+.chip,
+.chip-country {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: 50px;
+  border: 1px solid var(--surface-border);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: pointer;
+  user-select: none;
+  width: 100%;
+  min-height: 2.25rem;
+  transition:
+    background-color 0.18s ease,
+    color 0.18s ease,
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+.chip:hover,
+.chip-country:hover {
+  transform: scale(1.03);
+  color: #fff;
+}
+
+.chip.active,
+.chip-country.active {
+  border-color: var(--color-accent1);
+  color: #fff;
+  box-shadow: var(--neon-red);
+}
+
+.chip-country .flag {
+  width: 22px;
+  height: auto;
+  border-radius: 3px;
+  flex: 0 0 auto;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.45);
+}
+
+/* ── CALAVERAS ────────────────────────────────────────────── */
+.rating-stars {
+  padding: 0.1rem 0;
+}
+
+.rating-track {
+  display: flex;
+  justify-content: center;
+  gap: 0.15rem;
+  flex-wrap: wrap;
+}
+
+.rating-skull {
+  background: none;
+  border: none;
+  padding: 0.3rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 1.6rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  --skull-base: rgba(255, 255, 255, 0.08);
+  --skull-shade: rgba(255, 255, 255, 0.04);
+  --skull-outline: rgba(255, 255, 255, 0.18);
+  --skull-glow: none;
+  transition:
+    background-color 0.15s ease,
+    transform 0.15s ease;
+}
+
+.rating-skull:hover {
+  background: rgba(255, 60, 56, 0.08);
+  transform: translateY(-1px);
+}
+
+.rating-skull.filled {
+  --skull-base: #f5f0e6;
+  --skull-shade: #b9b1a1;
+  --skull-outline: #1a1014;
+  --skull-glow: drop-shadow(0 0 4px rgba(255, 60, 56, 0.4));
+}
+
+.rating-skull.dim {
+  opacity: 0.55;
+}
+
+/* ── ERROR SERVIDOR ───────────────────────────────────────── */
+.server-error {
+  background: rgba(255, 60, 56, 0.08);
+  border: 1px solid rgba(255, 60, 56, 0.35);
+  border-radius: 0.6rem;
+  padding: 0.7rem 1rem;
+  font-size: 0.85rem;
+  color: rgba(255, 90, 90, 0.95);
+  margin: 0;
+}
+
+.field-error {
+  color: rgba(255, 90, 90, 0.95);
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+/* ── FOOTER + BOTÓN ───────────────────────────────────────── */
+.form-footer {
+  padding-top: 0.25rem;
+}
+
+.action-btn {
+  width: 100%;
+  padding: 0.95rem;
+  border: 1.5px solid var(--surface-border);
+  border-radius: 0.8rem;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--color-text);
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    background-color 0.22s ease,
+    border-color 0.22s ease;
+}
+
+.action-btn:hover:not(:disabled) {
+  transform: translateY(-3px);
+}
+
+.action-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.action-btn.primary {
+  background: rgba(255, 159, 28, 0.08);
+  border-color: var(--color-accent2);
+  color: var(--color-accent2);
+}
+
+.action-btn.primary:hover:not(:disabled) {
+  background: rgba(255, 159, 28, 0.14);
+  box-shadow: var(--neon-amber);
+}
+
+/* ── RESPONSIVE ───────────────────────────────────────────── */
+@media (max-width: 420px) {
+  .form-header {
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+
+  .back-button {
+    justify-self: start;
+  }
+
+  .form-header__spacer {
+    display: none;
+  }
+
+  .chip-grid-countries {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,236 @@
+<section class="admin-page">
+
+    <!-- Header -->
+    <div class="admin-header">
+        <div class="admin-header__left">
+            <h1 class="admin-title">Películas</h1>
+            <span class="admin-count">{{ total() }} en total</span>
+        </div>
+
+        <div class="admin-header__actions">
+            <button class="action-btn" [disabled]="seedingImages()" (click)="seedImages()">
+                {{ seedingImages() ? 'Buscando posters...' : 'Actualizar posters' }}
+            </button>
+
+            <button class="action-btn primary" (click)="goToCreate()">
+                + Nueva película
+            </button>
+        </div>
+    </div>
+
+    <!-- Search -->
+    <div class="admin-toolbar">
+
+        <div class="search-wrap">
+
+            <span class="search-icon">⌕</span>
+
+            <input class="search-input" type="text" placeholder="Buscar película..." [value]="searchTerm"
+                (input)="onSearchChange($any($event.target).value)" />
+
+            @if (searchTerm) {
+            <button class="search-clear" (click)="clearSearch()">
+                ✕
+            </button>
+            }
+
+        </div>
+
+    </div>
+
+    <!-- Table -->
+    <div class="admin-table-wrap">
+
+        @if (loading()) {
+
+        <div class="admin-loading">
+            <div class="spinner"></div>
+            <span>Cargando películas...</span>
+        </div>
+
+        } @else if (movies().length === 0) {
+
+        <div class="admin-empty">
+            <span>No se encontraron películas</span>
+        </div>
+
+        } @else {
+
+        <table class="admin-table">
+
+            <thead>
+                <tr>
+                    <th class="col-id">#</th>
+                    <th class="col-poster"></th>
+                    <th class="col-title">Título</th>
+                    <th class="col-director">Director</th>
+                    <th class="col-year">Año</th>
+                    <th class="col-actions">Acciones</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @for (movie of movies(); track movie.id) {
+
+                <tr class="admin-row">
+
+                    <td class="col-id muted">
+                        {{ movie.id }}
+                    </td>
+
+                    <td class="col-poster">
+
+                        @if (movie.image) {
+
+                        <img class="table-thumb" [src]="movie.image" [alt]="movie.title" />
+
+                        } @else {
+
+                        <div class="table-thumb placeholder">
+                            🎬
+                        </div>
+
+                        }
+
+                    </td>
+
+                    <td class="col-title">
+
+                        <span class="movie-title">
+                            {{ movie.title }}
+                        </span>
+
+                    </td>
+
+                    <td class="col-director">
+
+                        <span class="movie-director">
+                            {{ movie.director?.name }}
+                        </span>
+
+                    </td>
+
+                    <td class="col-year muted">
+                        {{ movie.year }}
+                    </td>
+
+                    <td class="col-actions">
+
+                        <div class="row-actions">
+
+                            <button class="icon-btn edit" title="Editar" (click)="goToEdit(movie.id)">
+                                ✎
+                            </button>
+
+                            <button class="icon-btn delete" title="Eliminar" (click)="confirmDelete(movie)">
+                                ✕
+                            </button>
+
+                        </div>
+
+                    </td>
+
+                </tr>
+
+                }
+
+            </tbody>
+
+        </table>
+
+        }
+
+    </div>
+
+    <!-- Pagination -->
+    @if (lastPage() > 1) {
+
+    <div class="pagination">
+
+        <button class="page-btn" [disabled]="currentPage() === 1" (click)="goToPage(1)">
+            «
+        </button>
+
+        <button class="page-btn" [disabled]="currentPage() === 1" (click)="goToPage(currentPage() - 1)">
+            ‹
+        </button>
+
+        @for (p of visiblePages(); track p) {
+
+        @if (p === '...') {
+
+        <span class="page-ellipsis">…</span>
+
+        } @else {
+
+        <button class="page-btn" [class.active]="p === currentPage()" (click)="goToPage(+p)">
+            {{ p }}
+        </button>
+
+        }
+
+        }
+
+        <button class="page-btn" [disabled]="currentPage() === lastPage()" (click)="goToPage(currentPage() + 1)">
+            ›
+        </button>
+
+        <button class="page-btn" [disabled]="currentPage() === lastPage()" (click)="goToPage(lastPage())">
+            »
+        </button>
+
+    </div>
+
+    }
+
+    <!-- Modal eliminar -->
+    @if (movieToDelete()) {
+
+    <div class="modal-backdrop" (click)="cancelDelete()">
+
+        <div class="modal-box" (click)="$event.stopPropagation()">
+
+            <h2 class="modal-title">
+                Eliminar película
+            </h2>
+
+            <p class="modal-body">
+
+                ¿Seguro que quieres eliminar
+                <strong>{{ movieToDelete()!.title }}</strong>?
+
+                Esta acción no se puede deshacer.
+
+            </p>
+
+            <div class="modal-actions">
+
+                <button class="action-btn" (click)="cancelDelete()">
+                    Cancelar
+                </button>
+
+                <button class="action-btn danger" [disabled]="deleting()" (click)="deleteMovie()">
+
+                    {{ deleting() ? 'Eliminando...' : 'Eliminar' }}
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    }
+
+    <!-- Toast -->
+    @if (toast()) {
+
+    <div class="success-toast">
+        {{ toast() }}
+    </div>
+
+    }
+
+</section>

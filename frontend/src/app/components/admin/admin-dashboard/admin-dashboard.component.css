@@ -6,12 +6,15 @@
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  width: 100%;
+  min-width: 0;
 }
 
 .admin-card {
   padding: clamp(1.5rem, 4vw, 2rem);
   width: 100%;
-  max-width: 460px;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .admin-card h2 {
@@ -27,7 +30,7 @@
 
 .admin-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
   margin-top: 1.5rem;
 }
@@ -60,7 +63,6 @@
     background-color 0.22s ease;
 }
 
-/* Icono de línea en una insignia cuadrada sobria */
 .admin-btn .icon {
   display: inline-flex;
   align-items: center;

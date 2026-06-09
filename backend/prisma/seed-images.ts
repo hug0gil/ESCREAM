@@ -40,10 +40,12 @@ async function main() {
   console.log(`Procesando ${movies.length} películas…`);
 
   for (const movie of movies) {
+    if (movie.image) continue;
+
     const params = new URLSearchParams({
       api_key: apiKey,
       query: movie.title,
-      year: String(movie.year),
+      year: movie.year ? String(movie.year) : '',
       language: 'es-ES'
     });
 

@@ -40,8 +40,45 @@ Todo el controller pasa por `LogRequestsInterceptor` (loguea la petición sin `p
 | `GET`    | `/movies/slug/:slug` | 🌐 | — | Detalle por *slug* (lo que usa el frontend en `/movies/:slug`). |
 | `GET`    | `/movies/:id` | 🌐 | — | Detalle por id. |
 | `POST`   | `/movies` | 🛡️ `EDITOR/ADMIN` | `CreateMovieDto` | Crear. |
+| `POST`   | `/movies/seed-images` | 🛡️ `EDITOR/ADMIN` | — | Busca posters en TMDB para películas sin imagen. |
 | `PATCH`  | `/movies/:id` | 🛡️ `EDITOR/ADMIN` | `UpdateMovieDto` | Actualizar parcial. |
 | `DELETE` | `/movies/:id` | 👑 `ADMIN` | — | Borrar (204). |
+
+### `POST /movies/seed-images`
+
+Acción manual usada por el botón **Actualizar posters** del listado de películas del panel admin.
+
+Funcionamiento del botón:
+
+1. En `AdminMovieListComponent`, el botón se muestra junto a **Nueva película**.
+2. Al pulsarlo, el frontend activa el estado `seedingImages` para deshabilitar el botón y cambiar el texto a `Buscando posters...`.
+3. El frontend llama a `MovieService.seedMissingImages()`.
+4. Ese método hace un `POST` a `/movies/seed-images`.
+5. El backend busca únicamente películas cuyo campo `image` está en `null` o `''`.
+6. Para cada película pendiente, consulta TMDB usando título, año y director para escoger el resultado más fiable.
+7. Si TMDB devuelve `poster_path`, el backend actualiza `image` con una URL de tipo `https://image.tmdb.org/t/p/w500/...`.
+8. Cuando el endpoint responde, el frontend muestra un toast con `Imágenes actualizadas: updated/processed`.
+9. Después recarga la lista de películas para que los posters aparezcan en la tabla sin navegar a otra pantalla.
+
+El backend replica la estrategia de `prisma/seed-images.ts`, pero ejecutada bajo demanda desde la API en lugar de como script de consola.
+
+Requiere `TMDB_API_KEY` en el `.env` del backend. Si no existe, devuelve `400 Bad Request`.
+
+Respuesta:
+
+```json
+{
+  "processed": 3,
+  "updated": 2,
+  "skipped": 1,
+  "failed": []
+}
+```
+
+- `processed`: películas sin imagen que se han intentado procesar.
+- `updated`: películas a las que se ha añadido URL de poster.
+- `skipped`: películas para las que TMDB no devolvió un poster usable.
+- `failed`: películas que fallaron durante la búsqueda/actualización.
 
 ---
 

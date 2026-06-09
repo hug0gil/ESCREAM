@@ -12,7 +12,7 @@ interface NestPaginated<T> {
 }
 
 // Movie tal y como llega del back (camelCase + relaciones anidadas por pivot Prisma)
-interface NestMovie {
+export interface NestMovie {
   id: number;
   title: string;
   slug: string;
@@ -22,10 +22,13 @@ interface NestMovie {
   rating: string | number;
   country: string;
   movieUrl: string | null;
+
   directorId: number;
   productionCompanyId: number;
+
   director?: { id: number; name: string } | null;
   productionCompany?: { id: number; name: string } | null;
+
   actors?: { actor: { id: number; name: string } }[];
   subgenres?: { subgenre: { id: number; name: string; slug?: string } }[];
 }
@@ -40,6 +43,13 @@ export interface PaginatedMoviesResponse {
   data: Movie[];
   last_page: number;
   total: number;
+}
+
+export interface SeedImagesResponse {
+  processed: number;
+  updated: number;
+  skipped: number;
+  failed: { id: number; title: string }[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -182,5 +192,27 @@ export class MovieService {
         return throwError(() => err);
       }),
     );
+  }
+
+
+  deleteMovie(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  getMovieById(id: number): Observable<NestMovie> {
+    return this.http.get<NestMovie>(`${this.apiUrl}/${id}`);
+  }
+
+
+  updateMovie(id: number, payload: any) {
+    return this.http.patch(`${environment.apiUrl}/movies/${id}`, payload);
+  }
+
+  createMovie(payload: any) {
+    return this.http.post(`${environment.apiUrl}/movies`, payload);
+  }
+
+  seedMissingImages(): Observable<SeedImagesResponse> {
+    return this.http.post<SeedImagesResponse>(`${this.apiUrl}/seed-images`, {});
   }
 }

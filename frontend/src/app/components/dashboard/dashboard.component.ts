@@ -7,6 +7,7 @@ import { ProfileService } from '../../services/profile.service';
 import { FormGroup, Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { PlanService } from '../../services/plan.service';
+import { forkJoin, of } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -61,15 +62,30 @@ export class DashboardComponent {
     const profileId = this.profileService.activeProfile()?.id;
     if (!profileId) return;
 
-    const { profileName, ageRestriction } = this.form.getRawValue();
+    const user = this.auth.currentUser();
+    if (!user) return;
 
-    this.profileService.updateProfile(profileId, { profileName, ageRestriction }).subscribe({
-      next: (updated) => {
+    const { profileName, ageRestriction, email } = this.form.getRawValue();
+    const cleanEmail = email.trim();
+    const updateUser$ = cleanEmail !== user.email
+      ? this.auth.updateCurrentUser({ email: cleanEmail })
+      : of(user);
+
+    forkJoin({
+      profile: this.profileService.updateProfile(profileId, { profileName, ageRestriction }),
+      user: updateUser$,
+    }).subscribe({
+      next: ({ profile, user }) => {
+        this.form.patchValue({
+          profileName: profile.profileName,
+          ageRestriction: profile.ageRestriction,
+          email: user.email,
+        }, { emitEvent: false });
         this.form.markAsPristine();
         this.saveToast.set(true);
-        this.profileService.selectProfile(updated);
+        this.profileService.selectProfile(profile);
       },
-      error: (err) => console.error('Error al actualizar perfil', err),
+      error: (err) => console.error('Error al actualizar datos', err),
     });
   }
 

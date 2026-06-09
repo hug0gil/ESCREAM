@@ -107,8 +107,8 @@ model Movie {
   title               String            @unique
   slug                String            @unique
   year                Int?
-  synopsis            String
-  image               String?
+  synopsis            String 
+  image               String?           
   rating              Decimal?          @db.Decimal(2, 1)
   directorId          Int               @map("director_id")
   productionCompanyId Int               @map("production_company_id")

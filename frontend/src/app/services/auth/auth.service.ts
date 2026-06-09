@@ -23,6 +23,7 @@ export class AuthService {
   private router = inject(Router);
   private profiles = inject(ProfileService);
   private readonly apiUrl = `${environment.apiUrl}/auth`;
+  private readonly usersUrl = `${environment.apiUrl}/users`;
 
   // Estado reactivo del usuario autenticado (se rehidrata de localStorage al cargar)
   private _currentUser = signal<AuthUser | null>(this.readStoredUser());
@@ -82,6 +83,17 @@ export class AuthService {
     return this.http
       .patch<AuthUser>(`${this.apiUrl}/changeSubscription`, body)
       .pipe(tap(user => this.setUser(user)));
+  }
+
+  updateCurrentUser(data: Partial<Pick<AuthUser, 'name' | 'email'>>): Observable<AuthUser> {
+    const user = this.currentUser();
+    if (!user) {
+      throw new Error('No hay usuario autenticado');
+    }
+
+    return this.http
+      .patch<AuthUser>(`${this.usersUrl}/${user.id}`, data)
+      .pipe(tap(updated => this.setUser(updated)));
   }
 
   getToken(): string | null {

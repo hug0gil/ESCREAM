@@ -1,0 +1,113 @@
+<section class="admin-form-page">
+  <div class="form-header">
+    <button type="button" class="back-button" (click)="goBack()" [attr.aria-label]="'Volver a ' + config.plural">
+      <span aria-hidden="true">&larr;</span>
+      <span>{{ config.plural }}</span>
+    </button>
+    <h1 class="form-title">
+      {{ isEdit() ? 'Editar ' + config.singular : 'Nuevo ' + config.singular }}
+    </h1>
+    <span class="form-header__spacer" aria-hidden="true"></span>
+  </div>
+
+  @if (loading()) {
+  <div class="admin-loading">
+    <div class="spinner"></div>
+    <span>Cargando...</span>
+  </div>
+  } @else {
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    <div class="form-grid">
+      @for (field of visibleFields(); track field.key) {
+      <div class="field" [class.field--wide]="field.type === 'textarea'" [class.field--country]="field.type === 'country'">
+        @if (field.type === 'checkbox') {
+        <label class="checkbox-field">
+          <input type="checkbox" [formControlName]="field.key" />
+          <span>{{ field.label }}</span>
+        </label>
+        } @else {
+        @if (field.type !== 'country') {
+        <label class="field__label" [for]="field.key">{{ field.label }}</label>
+        }
+
+        @if (field.type === 'country') {
+        <div class="filter-section">
+          <div class="layout-container-dropdown" [class.open]="isCountryOpen(field)"
+            (click)="toggleCountryField(field)">
+            <label [for]="field.key">
+              <span class="country-label">{{ field.label }}</span>
+              <span class="country-value">{{ control(field).value}}</span>
+            </label>
+            <button type="button" class="list-button" [class.open]="isCountryOpen(field)"
+              [attr.aria-label]="isCountryOpen(field) ? 'Cerrar países' : 'Abrir países'">
+              +
+            </button>
+          </div>
+
+          <div class="chip-grid-countries" [class.open]="isCountryOpen(field)">
+            @for (country of countryOptions(field); track country) {
+            <button type="button" class="chip chip-country" [class.active]="isCountrySelected(field, country)"
+              [attr.aria-pressed]="isCountrySelected(field, country)" (click)="selectCountry(field, country)">
+              <span>{{ country }}</span>
+              <img class="flag" [src]="'https://flagsapi.com/' + country + '/flat/32.png'" [alt]="country" />
+            </button>
+            }
+          </div>
+        </div>
+        } @else if (field.type === 'multiselect') {
+        <div class="chip-list">
+          @for (option of fieldOptions(field); track option.id) {
+          <button type="button" class="chip-option"
+            [class.chip-option--selected]="isMultiValueSelected(field, option.id)"
+            [attr.aria-pressed]="isMultiValueSelected(field, option.id)" (click)="toggleMultiValue(field, option.id)">
+            {{ optionLabel(option, field) }}
+          </button>
+          }
+        </div>
+        } @else if (field.type === 'rating') {
+        <div class="rating-track" (mouseleave)="setHoveredRating(field, 0)">
+          @for (rating of [1, 2, 3, 4, 5]; track rating) {
+          <button type="button" class="rating-skull"
+            [class.filled]="hoverRating(field) ? rating <= hoverRating(field) : rating <= currentRating(field)"
+            [class.dim]="hoverRating(field) > 0 && rating > hoverRating(field)"
+            (mouseenter)="setHoveredRating(field, rating)" (click)="setRating(field, rating)"
+            [attr.aria-label]="rating + ' calaveras'" [attr.aria-pressed]="rating === currentRating(field)">
+            <app-rating-skulls [rating]="1" />
+          </button>
+          }
+        </div>
+        } @else if (field.type === 'select') {
+        <select [id]="field.key" [formControlName]="field.key">
+          <option value="">Selecciona una opción</option>
+          @for (option of fieldOptions(field); track option.id) {
+          <option [value]="option.id">{{ optionLabel(option, field) }}</option>
+          }
+        </select>
+        } @else {
+        <input [id]="field.key" [type]="field.type" [formControlName]="field.key" [attr.min]="field.min ?? null"
+          [attr.max]="field.max ?? null" [attr.step]="field.step ?? null" [attr.minlength]="field.minLength ?? null"
+          [attr.maxlength]="field.maxLength ?? null" [placeholder]="field.placeholder ?? ''" />
+        }
+
+        @if (control(field).invalid && control(field).touched) {
+        <span class="field-error">
+          {{ field.label }} no es válido.
+        </span>
+        }
+        }
+      </div>
+      }
+    </div>
+
+    @if (serverError()) {
+    <p class="server-error">{{ serverError() }}</p>
+    }
+
+    <div class="form-footer">
+      <button type="submit" class="action-btn primary" [disabled]="saving()">
+        {{ saving() ? 'Guardando...' : 'Guardar' }}
+      </button>
+    </div>
+  </form>
+  }
+</section>

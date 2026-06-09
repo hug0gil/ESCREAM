@@ -18,7 +18,7 @@ export class CreateMovieDto {
   title: string;
 
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   synopsis: string;
 
   @IsInt()
@@ -31,6 +31,11 @@ export class CreateMovieDto {
   @IsOptional()
   @MaxLength(2048)
   image?: string;
+
+  @IsString()
+  @IsOptional()
+  @MaxLength(2048)
+  movieUrl?: string;
 
   @IsNumber()
   @Min(1)

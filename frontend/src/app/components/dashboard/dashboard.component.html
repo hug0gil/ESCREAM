@@ -15,8 +15,8 @@
             <span class="role-badge">{{ auth.currentUser()?.role }}</span>
 
             <ul class="user-info">
-                <li><span>Correo</span><strong><input [value]="auth.currentUser()?.email" id="email" type="email"
-                            formControlName="email" placeholder="tu@correo.com" />
+                <li><span>Correo</span><strong><input id="email" type="email" formControlName="email"
+                            placeholder="tu@correo.com" />
                         @if (form.get('email')?.invalid && form.get('email')?.touched) {
                         <span class="field-error">Correo no válido</span>
                         }</strong></li>

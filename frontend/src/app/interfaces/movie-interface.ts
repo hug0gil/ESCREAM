@@ -6,14 +6,35 @@ export interface Movie {
   synopsis: string;
   image: string;
   rating: string;
-  directorId: number;
-  productionCompanyId: number;
+
   country: string;
   movie_url: string | null;
 
-  // Relaciones (planas; el service aplana los pivots Prisma)
-  actors?: { id: number; name: string }[];
-  director?: { id: number; name: string } | null;
-  productionCompany?: { id: number; name: string } | null;
-  subgenres?: { id: number; name: string; slug?: string }[];
+  // Relaciones
+
+  directorId: number;
+  productionCompanyId: number;
+
+  director: { id: number; name: string } | null;
+  productionCompany: { id: number; name: string } | null;
+
+  actors: { id: number; name: string }[];
+  subgenres: { id: number; name: string; slug?: string }[];
+}
+
+export interface MoviePayload {
+  title: string;
+  synopsis: string;
+  year?: number;
+  image?: string;
+  movieUrl?: string;
+  rating?: number;
+
+  country: string;
+
+  directorId: number;
+  productionCompanyId: number;
+
+  actorIds?: number[];
+  subgenreIds?: number[];
 }

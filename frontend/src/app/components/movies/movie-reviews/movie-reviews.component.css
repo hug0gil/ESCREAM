@@ -9,7 +9,7 @@
 }
 
 /* ============================================================
-   DETAIL-CARD BASE (replicada localmente para autocontenido)
+   DETAIL-CARD BASE
 ============================================================ */
 .review-form-card,
 .reviews-list-card {
@@ -51,7 +51,7 @@
 }
 
 /* ============================================================
-   SHEET TITLE con icono SVG
+   SHEET TITLE
 ============================================================ */
 .sheet-title {
   display: flex;
@@ -118,7 +118,7 @@
   color: rgba(255, 255, 255, 0.3);
 }
 
-/* ── SELECTOR DE CALAVERAS (mismo estilo que el filtro avanzado) ── */
+/* ── SELECTOR DE CALAVERAS ── */
 .rating-track {
   display: flex;
   justify-content: flex-start;
@@ -137,7 +137,6 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  /* estado base: silueta apagada */
   --skull-base: rgba(255, 255, 255, 0.08);
   --skull-shade: rgba(255, 255, 255, 0.04);
   --skull-outline: rgba(255, 255, 255, 0.18);
@@ -152,7 +151,6 @@
   transform: translateY(-1px);
 }
 
-/* calavera encendida (hover o valor bloqueado) */
 .rating-skull.filled {
   --skull-base: #f5f0e6;
   --skull-shade: #b9b1a1;
@@ -160,7 +158,6 @@
   --skull-glow: drop-shadow(0 0 4px rgba(255, 60, 56, 0.4));
 }
 
-/* las que quedan por encima del cursor se atenúan */
 .rating-skull.dim {
   opacity: 0.55;
 }
@@ -213,7 +210,7 @@
   padding: 10px;
 }
 
-/* ERRORES / FEEDBACK */
+/* ── FEEDBACK Y ERRORES ── */
 .field-error {
   font-family: "Montserrat", sans-serif;
   font-size: 0.78rem;
@@ -250,20 +247,67 @@
   color: #4ef0b4;
 }
 
-/* BOTÓN PRINCIPAL */
+/* ── BOTÓN PRINCIPAL ── */
 .btn-with-icon {
+  width: 100%;
   display: inline-flex;
   align-items: center;
-  gap: 0.55rem;
+  justify-content: center;
+  gap: 0.65rem;
+  padding: 0.95rem 1.4rem;
+  border-radius: 0.9rem;
+  border: 1px solid rgba(255, 159, 28, 0.45);
+  background: linear-gradient(
+    135deg,
+    rgba(255, 159, 28, 0.12) 0%,
+    rgba(255, 159, 28, 0.04) 100%
+  );
+  color: var(--color-accent2);
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    0 0 14px rgba(255, 159, 28, 0.08);
+  transition:
+    transform 0.22s ease,
+    box-shadow 0.22s ease,
+    border-color 0.22s ease,
+    background-color 0.22s ease;
 }
 
 .btn-with-icon svg {
-  width: 1.1rem;
-  height: 1.1rem;
+  width: 1rem;
+  height: 1rem;
   flex-shrink: 0;
 }
 
-/* Spinner */
+.btn-with-icon:hover:not(:disabled) {
+  transform: translateY(-2px);
+  border-color: var(--color-accent2);
+  box-shadow:
+    0 0 18px rgba(255, 159, 28, 0.25),
+    0 0 32px rgba(255, 159, 28, 0.15);
+}
+
+.btn-with-icon:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.btn-with-icon:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.btn-with-icon.loading {
+  pointer-events: none;
+}
+
+/* ── SPINNER ── */
 @keyframes spin {
   to {
     transform: rotate(360deg);
@@ -274,6 +318,7 @@
   animation: spin 0.9s linear infinite;
 }
 
+/* ── YA RESEÑADO ── */
 .already-reviewed-msg {
   display: flex;
   align-items: center;
@@ -319,7 +364,7 @@
   margin: 0;
 }
 
-/* ── LOADING ────────────────────────────────────────── */
+/* ── LOADING ── */
 .loading-state {
   display: flex;
   align-items: center;
@@ -346,7 +391,7 @@
   gap: 1.1rem;
 }
 
-/* ── Tarjeta individual ──────────────────────────────── */
+/* ── Tarjeta individual ── */
 .review-card {
   display: flex;
   flex-direction: column;
@@ -452,7 +497,7 @@
   color: rgba(255, 255, 255, 0.32);
 }
 
-/* Rating block con calaveras */
+/* Rating block */
 .review-rating-block {
   display: flex;
   flex-direction: column;
@@ -617,6 +662,234 @@
 }
 
 /* ============================================================
+   PANEL CTA — ÚNETE A LA COMUNIDAD
+   Estilo "santuario maldito": rojo sangre + calavera central,
+   borde animado con pulso, fondo con venas de luz carmesí.
+============================================================ */
+@keyframes border-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes skull-float {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+    transform: scale(1.2);
+  }
+  50% {
+    transform: translateY(-6px) scale(1.04);
+  }
+}
+
+@keyframes drip {
+  0% {
+    transform: scaleY(0);
+    opacity: 0;
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    transform: scaleY(1);
+    opacity: 0.6;
+  }
+}
+
+.review-login-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: clamp(2.4rem, 4vw, 3.6rem) clamp(1.8rem, 4vw, 3rem);
+  overflow: hidden;
+  border-radius: 1.2rem;
+
+  /* Fondo: oscuro con venas carmesí */
+  background:
+    radial-gradient(
+      ellipse 70% 55% at 50% 0%,
+      rgba(180, 20, 20, 0.22) 0%,
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 50% 40% at 50% 100%,
+      rgba(120, 10, 10, 0.18) 0%,
+      transparent 65%
+    ),
+    linear-gradient(160deg, #110508 0%, #1c0810 40%, #0e0414 70%, #110508 100%);
+
+  /* Borde carmesí animado */
+  border: 1px solid rgba(200, 30, 30, 0.5);
+  animation: border-pulse 3.2s ease-in-out infinite;
+
+  /* Sombra exterior con halo rojo */
+  box-shadow:
+    0 0 40px rgba(180, 20, 20, 0.2),
+    0 0 80px rgba(180, 20, 20, 0.08),
+    0 16px 40px rgba(0, 0, 0, 0.7),
+    inset 0 1px 0 rgba(255, 80, 80, 0.08);
+}
+
+/* Línea izquierda: rojo sangre en lugar del ámbar habitual */
+.review-login-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 5px;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    #c41a1a 35%,
+    #ff3b3b 50%,
+    #c41a1a 65%,
+    transparent 100%
+  );
+  box-shadow: 0 0 20px rgba(200, 30, 30, 0.7);
+  animation: border-pulse 3.2s ease-in-out infinite;
+}
+
+/* Goteos decorativos en la parte superior */
+.review-login-card::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent 8%,
+    rgba(200, 30, 30, 0.9) 20%,
+    rgba(255, 60, 60, 1) 35%,
+    rgba(200, 30, 30, 0.7) 50%,
+    rgba(255, 60, 60, 1) 65%,
+    rgba(200, 30, 30, 0.9) 80%,
+    transparent 92%
+  );
+  box-shadow: 0 0 14px rgba(255, 30, 30, 0.6);
+}
+
+/* ── Calavera decorativa central ── */
+.login-skull-deco {
+  width: 4rem;
+  height: auto;
+  margin-bottom: 0.6rem;
+  animation: skull-float 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 12px rgba(220, 40, 40, 0.7))
+    drop-shadow(0 0 28px rgba(180, 20, 20, 0.4));
+  height: 200px;
+  width: auto;
+}
+
+.login-skull-deco .skull-outline {
+  fill: #f5e8e8;
+}
+
+/* ── Contenido interior ── */
+.login-card-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  text-align: center;
+}
+
+/* Título con color rojo sangriento */
+.review-login-card .sheet-title {
+  font-size: 1.05rem;
+  letter-spacing: 4px;
+  color: #ff5555;
+  text-shadow:
+    0 0 12px rgba(255, 50, 50, 0.8),
+    0 0 28px rgba(200, 20, 20, 0.5);
+}
+
+.review-login-card .section-icon {
+  color: #ff5555;
+  opacity: 1;
+  filter: drop-shadow(0 0 6px rgba(255, 50, 50, 0.7));
+}
+
+.login-slogan {
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: rgba(255, 200, 200, 0.6);
+  max-width: 38ch;
+  margin: 0;
+}
+
+/* Separador de sangre */
+.login-divider {
+  width: 3rem;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(200, 30, 30, 0.8),
+    transparent
+  );
+  border: none;
+  margin: 0.2rem 0;
+}
+
+/* ── Acciones CTA ── */
+.review-login-actions {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 0.8rem;
+}
+
+/* Botón primario: rojo en este panel */
+.review-login-card .btn-primary {
+  min-width: 170px;
+  flex: 1;
+  justify-content: center;
+  border-color: rgba(220, 50, 50, 0.6);
+  background: linear-gradient(
+    135deg,
+    rgba(200, 30, 30, 0.22) 0%,
+    rgba(150, 20, 20, 0.1) 100%
+  );
+  color: #ff6b6b;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 100, 100, 0.1),
+    0 0 18px rgba(200, 30, 30, 0.15);
+}
+
+.review-login-card .btn-primary:hover:not(:disabled) {
+  border-color: #ff4444;
+  box-shadow:
+    0 0 22px rgba(220, 40, 40, 0.4),
+    0 0 44px rgba(180, 20, 20, 0.2);
+  color: #ff8888;
+}
+
+/* Botón secundario */
+.review-login-card .btn-secondary {
+  min-width: 170px;
+  flex: 1;
+  justify-content: center;
+}
+
+.review-login-card .btn-secondary:hover {
+  transform: translateY(-2px);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+/* ============================================================
    RESPONSIVE
 ============================================================ */
 @media (max-width: 640px) {
@@ -630,7 +903,6 @@
   }
 
   .review-rating-block {
-    align-items: flex-start;
     flex-direction: row;
     align-items: center;
     gap: 0.5rem;
@@ -639,80 +911,14 @@
   .rating-track {
     gap: 0.1rem;
   }
-}
 
-/* ============================================================
-   BOTÓN PUBLICAR RESEÑA
-============================================================ */
+  .review-login-actions {
+    flex-direction: column;
+  }
 
-.btn-with-icon {
-  width: 100%;
-
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.65rem;
-
-  padding: 0.95rem 1.4rem;
-
-  border-radius: 0.9rem;
-  border: 1px solid rgba(255, 159, 28, 0.45);
-
-  background: linear-gradient(
-    135deg,
-    rgba(255, 159, 28, 0.12) 0%,
-    rgba(255, 159, 28, 0.04) 100%
-  );
-
-  color: var(--color-accent2);
-
-  font-family: "Montserrat", sans-serif;
-  font-size: 0.92rem;
-  font-weight: 700;
-
-  letter-spacing: 1px;
-  text-transform: uppercase;
-
-  cursor: pointer;
-
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.06),
-    0 0 14px rgba(255, 159, 28, 0.08);
-
-  transition:
-    transform 0.22s ease,
-    box-shadow 0.22s ease,
-    border-color 0.22s ease,
-    background-color 0.22s ease;
-}
-
-.btn-with-icon svg {
-  width: 1rem;
-  height: 1rem;
-  flex-shrink: 0;
-}
-
-.btn-with-icon:hover:not(:disabled) {
-  transform: translateY(-2px);
-
-  border-color: var(--color-accent2);
-
-  box-shadow:
-    0 0 18px rgba(255, 159, 28, 0.25),
-    0 0 32px rgba(255, 159, 28, 0.15);
-}
-
-.btn-with-icon:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.btn-with-icon:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-  box-shadow: none;
-}
-
-/* Estado enviando */
-.btn-with-icon.loading {
-  pointer-events: none;
+  .review-login-actions .btn-primary,
+  .review-login-actions .btn-secondary {
+    width: 100%;
+    flex: none;
+  }
 }

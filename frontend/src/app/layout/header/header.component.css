@@ -215,7 +215,6 @@ nav a {
 /* Hover/focus: el texto se ilumina y aparece el subrayado neón */
 nav a.pillLink:hover,
 nav a.pillLink:focus-visible {
-  color: #fff;
   outline: none;
 }
 

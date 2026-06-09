@@ -1,0 +1,171 @@
+<div class="form-header">
+    <button type="button" class="back-button" (click)="goBack()" aria-label="Volver a películas">
+        <span aria-hidden="true">&larr;</span>
+        <span>Películas</span>
+    </button>
+    <h1 class="form-title">
+        <span class="form-title__text">
+            {{ isEdit() ? 'Editar película' : 'Añadir película' }}
+        </span>
+    </h1>
+    <span class="form-header__spacer" aria-hidden="true"></span>
+</div>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+
+    <div class="form-grid">
+
+        <!-- Col izquierda: datos básicos -->
+        <div class="form-col">
+
+            <div class="field">
+                <label class="field__label">Título</label>
+                <input formControlName="title" placeholder="Ej: Escream" maxlength="255" />
+                @if (fieldInvalid('title')) {
+                <span class="field-error">El título es obligatorio y no puede superar 255 caracteres.</span>
+                }
+            </div>
+
+            <div class="field">
+                <label class="field__label">Sinopsis</label>
+                <textarea formControlName="synopsis" placeholder="Breve descripción de la película…"></textarea>
+            </div>
+
+            <div class="field">
+                <label class="field__label">URL imagen</label>
+                <input formControlName="image" placeholder="https://…" maxlength="2048" />
+                @if (fieldInvalid('image')) {
+                <span class="field-error">La URL de imagen no puede superar 2048 caracteres.</span>
+                }
+            </div>
+
+            <div class="field">
+                <label class="field__label">URL película</label>
+                <input formControlName="movieUrl" placeholder="https://…" maxlength="2048" />
+                @if (fieldInvalid('movieUrl')) {
+                <span class="field-error">La URL de película no puede superar 2048 caracteres.</span>
+                }
+            </div>
+
+            <div class="field">
+                <label class="field__label">Año</label>
+                <input formControlName="year" type="number" min="1800" max="2100" placeholder="Ej: 1972" />
+                @if (fieldInvalid('year')) {
+                <span class="field-error">El año debe estar entre 1800 y 2100.</span>
+                }
+            </div>
+
+            <!-- CALAVERAS -->
+            <div class="field">
+                <label class="field__label">Nivel de miedo</label>
+                <div class="rating-stars open">
+                    <div class="rating-track" (mouseleave)="hoverRating = 0">
+                        @for (r of [1, 2, 3, 4, 5]; track r) {
+                        <button type="button" class="rating-skull"
+                            [class.filled]="hoverRating ? r <= hoverRating : r <= currentRating"
+                            [class.dim]="hoverRating > 0 && r > hoverRating" (mouseenter)="hoverRating = r"
+                            (click)="setRating(r)" [attr.aria-label]="r + ' calaveras'"
+                            [attr.aria-pressed]="r === currentRating">
+                            <app-rating-skulls [rating]="1" />
+                        </button>
+                        }
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Col derecha: relaciones -->
+        <div class="form-col">
+
+            <div class="field">
+                <label class="field__label">Director</label>
+                <select formControlName="directorId" required>
+                    <option value="" disabled selected>— Selecciona un director —</option>
+                    @for (d of directors(); track d.id) {
+                    <option [ngValue]="d.id">{{ d.name }}</option>
+                    }
+                </select>
+                @if (fieldInvalid('directorId')) {
+                <span class="field-error">Selecciona un director.</span>
+                }
+            </div>
+
+            <div class="field">
+                <label class="field__label">Productora</label>
+                <select formControlName="productionCompanyId" required>
+                    <option value="" disabled selected>— Selecciona una productora —</option>
+                    @for (c of companies(); track c.id) {
+                    <option [ngValue]="c.id">{{ c.name }}</option>
+                    }
+                </select>
+                @if (fieldInvalid('productionCompanyId')) {
+                <span class="field-error">Selecciona una productora.</span>
+                }
+            </div>
+
+            <!-- PAÍS DESPLEGABLE -->
+            <div class="field">
+                <div class="filter-section">
+                    <div class="layout-container-dropdown" [class.open]="countryOpen"
+                        (click)="countryOpen = !countryOpen">
+                        <label>{{ form.get('country')?.value || 'País' }}</label>
+                        <button type="button" class="list-button">
+                            {{ countryOpen ? '-' : '+' }}
+                        </button>
+                    </div>
+                    <div class="chip-grid-countries" [class.open]="countryOpen">
+                        @for (c of countries; track $index) {
+                        <button type="button" class="chip chip-country" [class.active]="isCountrySelected(c)"
+                            [attr.aria-pressed]="isCountrySelected(c)" (click)="selectCountry(c)">
+                            <span>{{ c }}</span>
+                            <img class="flag" [src]="'https://flagsapi.com/' + c + '/flat/32.png'" [alt]="c" />
+                        </button>
+                        }
+                    </div>
+                </div>
+                @if (fieldInvalid('country')) {
+                <span class="field-error">Selecciona un país.</span>
+                }
+            </div>
+
+            <!-- ACTORES -->
+            <div class="field">
+                <label class="field__label">Actores</label>
+                <div class="chip-list">
+                    @for (a of actors(); track a.id) {
+                    <button type="button" (click)="toggleActor(a.id)" [class.chip--selected]="isActorSelected(a.id)">
+                        {{ a.name }}
+                    </button>
+                    }
+                </div>
+            </div>
+
+            <!-- SUBGÉNEROS -->
+            <div class="field">
+                <label class="field__label">Subgéneros</label>
+                <div class="chip-list">
+                    @for (s of subgenres(); track s.id) {
+                    <button type="button" (click)="toggleSubgenre(s.id)"
+                        [class.chip--selected]="isSubgenreSelected(s.id)">
+                        {{ s.name }}
+                    </button>
+                    }
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    @if (serverError()) {
+    <p class="server-error">{{ serverError() }}</p>
+    }
+
+    <div class="form-footer">
+        <button type="submit" class="action-btn primary" [disabled]="form.invalid">
+            Guardar película
+        </button>
+    </div>
+
+</form>
