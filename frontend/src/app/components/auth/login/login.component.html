@@ -47,21 +47,26 @@
             <p class="error-message">{{ errorMsg() }}</p>
             }
 
+            @if (successMsg()) {
+            <p class="success-message">{{ successMsg() }}</p>
+            }
+
             <button type="submit" [disabled]="loading()">
                 {{ loading() ? 'Entrando…' : 'Iniciar Sesión' }}
             </button>
+
+            @if (canResendVerification()) {
+            <button type="button" class="loginPill resend-button" (click)="resendVerification()"
+                [disabled]="resendLoading()">
+                {{ resendLoading() ? 'Enviando…' : 'Reenviar verificación' }}
+            </button>
+            }
 
             <div class="extra-links">
                 <a routerLink="/forgot-password">¿Olvidaste tu contraseña?</a>
                 <span class="separator">|</span>
                 <a routerLink="/register">Crear cuenta</a>
             </div>
-
-            <div class="O2AuthContent">
-                <button type="button" class="loginPill" (click)="loginGoogle()">Google</button>
-                <button type="button" class="loginPill" (click)="loginGithub()">GitHub</button>
-            </div>
-
         </form>
     </div>
 </div>

@@ -13,6 +13,9 @@ import { profileRedirectGuard } from './guards/profile-redirect.guard';
 import { LoginComponent } from './components/auth/login/login.component';
 import { AdminDashboardComponent } from './components/admin/admin-dashboard/admin-dashboard.component';
 import { RegisterComponent } from './components/auth/register/register.component';
+import { ForgotPasswordComponent } from './components/auth/forgot-password/forgot-password.component';
+import { ResetPasswordComponent } from './components/auth/reset-password/reset-password.component';
+import { TokenActionComponent } from './components/auth/token-action/token-action.component';
 import { ADMIN_CRUD_CONFIGS } from './components/admin/admin-crud/admin-crud.config';
 import { AdminMoviesListComponent } from './components/admin/admin-movies/admin-movies-list/admin-movies-list.component';
 import { AdminMoviesFormComponent } from './components/admin/admin-movies/admin-movies-form/admin-movies-form.component';
@@ -40,6 +43,10 @@ export const routes: Routes = [
       { path: '', pathMatch: 'full', component: MainComponent },  // página de inicio
       { path: 'login', component: LoginComponent },
       { path: 'register', component: RegisterComponent },
+      { path: 'forgot-password', component: ForgotPasswordComponent },
+      { path: 'reset-password', component: ResetPasswordComponent },
+      { path: 'verify-email', component: TokenActionComponent, data: { action: 'verify-email' } },
+      { path: 'confirm-email-change', component: TokenActionComponent, data: { action: 'confirm-email-change' } },
       // Selector de perfiles tras iniciar sesión (pantalla limpia, sin header)
       { path: 'profiles', component: ProfilesBrowserComponent, canActivate: [authGuard] },
     ],

@@ -8,9 +8,14 @@ import {
   AuthResponse,
   AuthUser,
   ChangeSubscriptionRequest,
+  EmailChangeResponse,
   LoginRequest,
+  MessageResponse,
   RefreshResponse,
   RegisterRequest,
+  RegisterResponse,
+  RequestEmailChangeRequest,
+  ResetPasswordRequest,
   Role,
 } from '../../interfaces/auth-interface';
 
@@ -39,10 +44,8 @@ export class AuthService {
   // ============================================================
   // SESIÓN: register / login / logout
   // ============================================================
-  register(data: RegisterRequest): Observable<AuthResponse> {
-    return this.http
-      .post<AuthResponse>(`${this.apiUrl}/register`, data)
-      .pipe(tap(res => this.persistSession(res)));
+  register(data: RegisterRequest): Observable<RegisterResponse> {
+    return this.http.post<RegisterResponse>(`${this.apiUrl}/register`, data);
   }
 
   login(data: LoginRequest): Observable<AuthResponse> {
@@ -53,9 +56,9 @@ export class AuthService {
       );
   }
 
-  /** Cierra sesión eliminando el token (y el usuario) y vuelve a /login. */
+  /** Cierra sesión eliminando el token, el usuario y el perfil activo. */
   logout(): void {
-    this.clearSession();
+    this.clearSession(['/']);
   }
 
   // ============================================================
@@ -96,6 +99,40 @@ export class AuthService {
       .pipe(tap(updated => this.setUser(updated)));
   }
 
+  verifyEmail(token: string): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${this.apiUrl}/verify-email`, { token });
+  }
+
+  resendVerification(email: string): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${this.apiUrl}/resend-verification`, { email });
+  }
+
+  forgotPassword(email: string): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${this.apiUrl}/forgot-password`, { email });
+  }
+
+  resetPassword(data: ResetPasswordRequest): Observable<MessageResponse> {
+    return this.http
+      .post<MessageResponse>(`${this.apiUrl}/reset-password`, data)
+      .pipe(tap(() => this.clearSession()));
+  }
+
+  requestEmailChange(data: RequestEmailChangeRequest): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${this.apiUrl}/request-email-change`, data);
+  }
+
+  confirmEmailChange(token: string): Observable<EmailChangeResponse> {
+    return this.http
+      .post<EmailChangeResponse>(`${this.apiUrl}/confirm-email-change`, { token })
+      .pipe(
+        tap(res => {
+          if (this.currentUser()?.id === res.user.id) {
+            this.setUser(res.user);
+          }
+        }),
+      );
+  }
+
   getToken(): string | null {
     return localStorage.getItem(TOKEN_KEY);
   }
@@ -122,12 +159,14 @@ export class AuthService {
     this._currentUser.set(user);
   }
 
-  private clearSession(): void {
+  private clearSession(redirectTo?: string[]): void {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
     this._currentUser.set(null);
     this.profiles.clearProfile();
-    this.router.navigate(['/']);
+    if (redirectTo) {
+      this.router.navigate(redirectTo);
+    }
   }
 
   private readStoredUser(): AuthUser | null {

@@ -1,0 +1,27 @@
+<div class="logo">
+    <img src="assets/img/LogoTransparenteESCREAM.png" alt="ESCREAM Logo" routerLink="/">
+</div>
+
+<div class="login">
+    <div class="login-container">
+        <form>
+            <h1>{{ title }}</h1>
+
+            @if (loading()) {
+            <p class="info-message">Validando enlace…</p>
+            }
+
+            @if (successMsg()) {
+            <p class="success-message">{{ successMsg() }}</p>
+            }
+
+            @if (errorMsg()) {
+            <p class="error-message">{{ errorMsg() }}</p>
+            }
+
+            <div class="extra-links">
+                <a routerLink="/login">Ir a iniciar sesión</a>
+            </div>
+        </form>
+    </div>
+</div>

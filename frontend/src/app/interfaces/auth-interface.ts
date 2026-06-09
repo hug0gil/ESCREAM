@@ -29,10 +29,16 @@ export interface RegisterRequest {
   password: string;
 }
 
-/** Respuesta de /auth/login y /auth/register. */
+/** Respuesta de /auth/login. */
 export interface AuthResponse {
   access_token: string;
   user: AuthUser;
+}
+
+/** Respuesta de /auth/register. El backend no devuelve token hasta verificar email. */
+export interface RegisterResponse {
+  user: AuthUser;
+  message: string;
 }
 
 /** Respuesta de /auth/refresh (ojo: el back devuelve `token`, no `access_token`). */
@@ -48,4 +54,22 @@ export interface ChangeSubscriptionRequest {
 /** Respuesta de /auth/logout. */
 export interface LogoutResponse {
   message: string;
+}
+
+export interface MessageResponse {
+  message: string;
+}
+
+export interface EmailChangeResponse extends MessageResponse {
+  user: AuthUser;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  password: string;
+}
+
+export interface RequestEmailChangeRequest {
+  newEmail: string;
+  currentPassword: string;
 }

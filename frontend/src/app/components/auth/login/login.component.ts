@@ -22,7 +22,10 @@ export class LoginComponent {
   form: FormGroup;
   submitted = false;
   loading = signal(false);
+  resendLoading = signal(false);
   errorMsg = signal<string | null>(null);
+  successMsg = signal<string | null>(null);
+  canResendVerification = signal(false);
   showPassword = signal(false);
 
   togglePassword(): void {
@@ -43,6 +46,8 @@ export class LoginComponent {
   isValid(): void {
     this.submitted = true;
     this.errorMsg.set(null);
+    this.successMsg.set(null);
+    this.canResendVerification.set(false);
     if (this.form.invalid) return;
 
     this.loading.set(true);
@@ -54,8 +59,14 @@ export class LoginComponent {
       },
       error: err => {
         this.loading.set(false);
+        const message = Array.isArray(err.error?.message)
+          ? err.error.message.join(' ')
+          : err.error?.message;
+        this.canResendVerification.set(message === 'Email not verified');
         this.errorMsg.set(
-          err.status === 401
+          message === 'Email not verified'
+            ? 'Tienes que verificar tu correo antes de iniciar sesión.'
+            : err.status === 401
             ? 'Correo o contraseña incorrectos.'
             : 'Error al iniciar sesión. Inténtalo de nuevo.',
         );
@@ -63,13 +74,22 @@ export class LoginComponent {
     });
   }
 
-  loginGithub() {
-    console.log('Login en GitHub');
+  resendVerification(): void {
+    const mail = this.form.value.mail;
+    if (!mail) return;
+
+    this.resendLoading.set(true);
+    this.errorMsg.set(null);
+    this.successMsg.set(null);
+    this.auth.resendVerification(mail).subscribe({
+      next: () => {
+        this.resendLoading.set(false);
+        this.successMsg.set('Correo de verificación reenviado. Revisa también spam.');
+      },
+      error: () => {
+        this.resendLoading.set(false);
+        this.errorMsg.set('No se pudo reenviar la verificación.');
+      },
+    });
   }
-
-  loginGoogle() {
-    console.log('Login en Google');
-  }
-
-
 }

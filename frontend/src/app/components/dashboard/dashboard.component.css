@@ -297,6 +297,96 @@
   animation: toastIn 0.22s ease;
 }
 
+.email-change-panel {
+  width: min(1120px, calc(100% - 2rem));
+  margin: 0 auto clamp(1.5rem, 4vw, 3rem);
+  border: 1px solid var(--surface-border);
+  border-radius: 0.9rem;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.025)),
+    #120d1f;
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.42);
+  padding: clamp(1rem, 3vw, 1.4rem);
+}
+
+.email-change-panel h2 {
+  margin: 0 0 1rem;
+  color: var(--color-accent2);
+  font-family: "Righteous", sans-serif;
+  font-size: 1.35rem;
+  font-weight: 400;
+}
+
+.email-change-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.email-change-panel label {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.email-change-panel label span {
+  color: rgba(255, 255, 255, 0.58);
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.email-change-panel input {
+  width: 100%;
+  min-height: 2.8rem;
+  border: 1px solid var(--surface-border);
+  border-radius: 0.55rem;
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--color-text);
+  outline: none;
+  padding: 0.65rem 0.8rem;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.email-change-panel input:focus {
+  border-color: var(--color-accent2);
+  background: rgba(255, 255, 255, 0.065);
+  box-shadow: 0 0 0 3px rgba(255, 159, 28, 0.12);
+}
+
+.email-change-panel small {
+  color: #ff6b6b;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.panel-success,
+.panel-error {
+  padding: 0.85rem 1rem;
+  margin: 0 0 1rem;
+  border-radius: 0.65rem;
+  font-family: "Montserrat", sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+.panel-success {
+  border: 1px solid rgba(46, 204, 113, 0.35);
+  background: rgba(46, 204, 113, 0.12);
+  color: #d9ffe8;
+}
+
+.panel-error {
+  border: 1px solid rgba(255, 60, 56, 0.45);
+  background: rgba(255, 60, 56, 0.12);
+  color: #ffd9d8;
+}
+
 @keyframes toastIn {
   from {
     opacity: 0;
@@ -316,6 +406,10 @@
 
   .user-actions {
     position: static;
+    grid-template-columns: 1fr;
+  }
+
+  .email-change-grid {
     grid-template-columns: 1fr;
   }
 }

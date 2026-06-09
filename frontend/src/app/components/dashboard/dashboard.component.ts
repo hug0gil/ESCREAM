@@ -2,17 +2,21 @@
 import { CommonModule } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth/auth.service';
-import { ProfileService } from '../../services/profile.service';
-import { FormGroup, Validators, FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { PlanService } from '../../services/plan.service';
-import { forkJoin, of } from 'rxjs';
+import { ProfileService } from '../../services/profile.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
@@ -25,8 +29,12 @@ export class DashboardComponent {
 
   protected saveToast = signal(false);
   protected deleteToast = signal(false);
+  protected emailChangeMsg = signal<string | null>(null);
+  protected emailChangeError = signal<string | null>(null);
+  protected emailChangeLoading = signal(false);
 
   protected form!: FormGroup;
+  protected emailChangeForm!: FormGroup;
 
   ngOnInit(): void {
     const profile = this.profileService.activeProfile();
@@ -37,14 +45,18 @@ export class DashboardComponent {
         profile?.profileName.trim() ?? '',
         [Validators.required, Validators.minLength(2)],
       ],
-      email: [
+      ageRestriction: [profile?.ageRestriction ?? '', [Validators.required]],
+    });
+
+    this.emailChangeForm = this.fb.group({
+      newEmail: [
         user?.email.trim() ?? '',
         [Validators.required, Validators.email],
       ],
-      ageRestriction: [
-        profile?.ageRestriction ?? '',
-        [Validators.required]
-      ]
+      currentPassword: [
+        '',
+        [Validators.required, Validators.minLength(8)],
+      ],
     });
   }
 
@@ -62,31 +74,69 @@ export class DashboardComponent {
     const profileId = this.profileService.activeProfile()?.id;
     if (!profileId) return;
 
-    const user = this.auth.currentUser();
-    if (!user) return;
+    const { profileName, ageRestriction } = this.form.getRawValue();
 
-    const { profileName, ageRestriction, email } = this.form.getRawValue();
-    const cleanEmail = email.trim();
-    const updateUser$ = cleanEmail !== user.email
-      ? this.auth.updateCurrentUser({ email: cleanEmail })
-      : of(user);
+    this.profileService
+      .updateProfile(profileId, { profileName, ageRestriction })
+      .subscribe({
+        next: profile => {
+          this.form.patchValue(
+            {
+              profileName: profile.profileName,
+              ageRestriction: profile.ageRestriction,
+            },
+            { emitEvent: false },
+          );
+          this.form.markAsPristine();
+          this.saveToast.set(true);
+          this.profileService.selectProfile(profile);
+        },
+        error: err => console.error('Error al actualizar datos', err),
+      });
+  }
 
-    forkJoin({
-      profile: this.profileService.updateProfile(profileId, { profileName, ageRestriction }),
-      user: updateUser$,
-    }).subscribe({
-      next: ({ profile, user }) => {
-        this.form.patchValue({
-          profileName: profile.profileName,
-          ageRestriction: profile.ageRestriction,
-          email: user.email,
-        }, { emitEvent: false });
-        this.form.markAsPristine();
-        this.saveToast.set(true);
-        this.profileService.selectProfile(profile);
-      },
-      error: (err) => console.error('Error al actualizar datos', err),
-    });
+  protected requestEmailChange(): void {
+    this.emailChangeMsg.set(null);
+    this.emailChangeError.set(null);
+    if (this.emailChangeForm.invalid) {
+      this.emailChangeForm.markAllAsTouched();
+      return;
+    }
+
+    const currentEmail = this.auth.currentUser()?.email;
+    const { newEmail, currentPassword } = this.emailChangeForm.getRawValue();
+    if (newEmail.trim() === currentEmail) {
+      this.emailChangeError.set('Introduce un correo diferente al actual.');
+      return;
+    }
+
+    this.emailChangeLoading.set(true);
+    this.auth
+      .requestEmailChange({
+        newEmail: newEmail.trim(),
+        currentPassword,
+      })
+      .subscribe({
+        next: () => {
+          this.emailChangeLoading.set(false);
+          this.emailChangeMsg.set(
+            'Revisa tu nuevo correo para confirmar el cambio.',
+          );
+          this.emailChangeForm.patchValue({ currentPassword: '' });
+          this.emailChangeForm.markAsPristine();
+          // this.auth.logout();
+        },
+        error: err => {
+          this.emailChangeLoading.set(false);
+          this.emailChangeError.set(
+            err.status === 409
+              ? 'Ese correo ya está en uso.'
+              : err.status === 401
+                ? 'La contraseña actual no es correcta.'
+                : 'No se pudo solicitar el cambio de correo.',
+          );
+        },
+      });
   }
 
   // ✅ toSignal se suscribe a getPlans$(), shareReplay evita petición duplicada
@@ -104,10 +154,12 @@ export class DashboardComponent {
     this.profileService.deleteProfile(profileId).subscribe({
       next: () => {
         this.profileService.clearProfile();
-        this.router.navigate(['/profiles'])
+        this.router.navigate(['/profiles']);
         this.deleteToast.set(true);
       },
-      error: (err) => { console.error('Error al actualizar perfil', err) },
+      error: err => {
+        console.error('Error al actualizar perfil', err);
+      },
     });
   }
 }

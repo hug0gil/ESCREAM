@@ -217,6 +217,48 @@
     font-family: "Montserrat", sans-serif;
 }
 
+.success-message,
+.info-message {
+    color: #d9ffe8;
+    background-color: rgba(46, 204, 113, 0.12);
+    border: 1px solid rgba(46, 204, 113, 0.42);
+    padding: 0.85rem 1rem;
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 8px;
+    font-size: 0.9em;
+    text-align: center;
+    text-transform: none;
+    letter-spacing: normal;
+    font-weight: 400;
+    font-family: "Montserrat", sans-serif;
+}
+
+.secondary-button {
+    width: 100%;
+    padding: 1rem;
+    margin-top: 0.5rem;
+    border: 1.5px solid rgba(255, 159, 28, 0.55);
+    border-radius: 8px;
+    background: rgba(255, 159, 28, 0.08);
+    color: var(--color-accent2);
+    font-family: "Montserrat", sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+
+.secondary-button:hover:enabled {
+    box-shadow: var(--neon-amber);
+}
+
+.secondary-button:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
 /* ==============================================================
    KEYFRAMES PARA ANIMACIÓN DE ENTRADA
    ============================================================== */

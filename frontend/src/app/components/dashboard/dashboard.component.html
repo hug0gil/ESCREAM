@@ -15,11 +15,7 @@
             <span class="role-badge">{{ auth.currentUser()?.role }}</span>
 
             <ul class="user-info">
-                <li><span>Correo</span><strong><input id="email" type="email" formControlName="email"
-                            placeholder="tu@correo.com" />
-                        @if (form.get('email')?.invalid && form.get('email')?.touched) {
-                        <span class="field-error">Correo no válido</span>
-                        }</strong></li>
+                <li><span>Correo</span><strong>{{ auth.currentUser()?.email }}</strong></li>
                 <li><span for="ageRestriction">Restricción de edad</span>
                     <select id="ageRestriction" formControlName="ageRestriction"
                         [value]="form.get('ageRestriction')?.value">
@@ -55,13 +51,51 @@
             </span>
             }
 
+            <button type="button" class="action-btn primary" [routerLink]="'/forgot-password'">
+                Cambiar contraseña
+            </button>
+
             <button type="button" class="action-btn danger" (click)="deleteProfile()">
                 Borrar perfil
             </button>
+
         </div>
 
     </div>
 </form>
+
+<section class="email-change-panel" [formGroup]="emailChangeForm">
+    <h2>Cambiar correo</h2>
+    <div class="email-change-grid">
+        <label>
+            <span>Nuevo correo</span>
+            <input type="email" formControlName="newEmail" placeholder="nuevo@correo.com">
+            @if (emailChangeForm.get('newEmail')?.invalid && emailChangeForm.get('newEmail')?.touched) {
+            <small>Correo no válido</small>
+            }
+        </label>
+
+        <label>
+            <span>Contraseña actual</span>
+            <input type="password" formControlName="currentPassword" placeholder="••••••••">
+            @if (emailChangeForm.get('currentPassword')?.invalid) {
+            <small>Introduce tu contraseña actual</small>
+            }
+        </label>
+    </div>
+
+    @if (emailChangeMsg()) {
+    <p class="panel-success">{{ emailChangeMsg() }}</p>
+    }
+
+    @if (emailChangeError()) {
+    <p class="panel-error">{{ emailChangeError() }}</p>
+    }
+
+    <button type="button" class="action-btn primary" (click)="requestEmailChange()" [disabled]="emailChangeLoading()">
+        {{ emailChangeLoading() ? 'Enviando…' : 'Enviar verificación' }}
+    </button>
+</section>
 }
 
 

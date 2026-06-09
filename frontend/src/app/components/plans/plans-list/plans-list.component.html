@@ -8,6 +8,18 @@
 
         <p class="plans-sub">Terror en español sin límites. Sin permanencia. Cancela cuando quieras.</p>
 
+        @if (auth.currentUser()?.endDate; as endDate) {
+        <p class="plans-renewal">Tu suscripción se renueva el {{ endDate | date: 'dd/MM/yyyy' }}.</p>
+        }
+
+        @if (successMessage()) {
+        <p class="plans-message success">{{ successMessage() }}</p>
+        }
+
+        @if (errorMessage()) {
+        <p class="plans-message error">{{ errorMessage() }}</p>
+        }
+
     </header>
 
     <div class="plans-grid">
@@ -51,11 +63,19 @@
 
             </ul>
 
-            <button class="plan-cta" type="button">
-                @if (getSelectedPlan(p)) {
-                Suscrito ✓
+            <button
+                class="plan-cta"
+                type="button"
+                [class.selected]="getSelectedPlan(p)"
+                [disabled]="getSelectedPlan(p) || loadingPlanId() !== null"
+                (click)="changePlan(p)"
+            >
+                @if (loadingPlanId() === p.id) {
+                Cambiando...
+                } @else if (getSelectedPlan(p)) {
+                Plan actual
                 } @else {
-                Suscribirme
+                Cambiar plan
                 }
             </button>
 

@@ -40,6 +40,26 @@
   margin: 0 auto;
 }
 
+.plans-renewal,
+.plans-message {
+  font-family: "Montserrat", sans-serif;
+  margin: 0.85rem auto 0;
+  max-width: 60ch;
+  font-size: 0.92rem;
+}
+
+.plans-renewal {
+  color: rgba(255, 255, 255, 0.76);
+}
+
+.plans-message.success {
+  color: #9ee6b5;
+}
+
+.plans-message.error {
+  color: #ff9b9b;
+}
+
 /* ============================================================
 🃏 REJILLA DE TARJETAS DE PLAN
 ============================================================ */
@@ -235,6 +255,20 @@
   box-shadow: var(--neon-blue);
 }
 
+.plan-cta:disabled {
+  cursor: default;
+  opacity: 0.72;
+  transform: none;
+  box-shadow: none;
+}
+
+.plan-cta.selected,
+.plan-cta.selected:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.34);
+  color: rgba(255, 255, 255, 0.8);
+}
+
 /* En el plan destacado el CTA va relleno en azul desde el inicio */
 .plan-card.featured .plan-cta {
   background: var(--color-primary);
@@ -243,6 +277,13 @@
 
 .plan-card.featured .plan-cta:hover {
   box-shadow: var(--neon-blue);
+}
+
+.plan-card.featured .plan-cta.selected,
+.plan-card.featured .plan-cta.selected:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: rgba(255, 255, 255, 0.34);
+  box-shadow: none;
 }
 
 /* ============================================================

@@ -254,6 +254,26 @@
   font-family: "Montserrat", sans-serif;
 }
 
+.success-message {
+  color: #d9ffe8;
+  background-color: rgba(46, 204, 113, 0.12);
+  border: 1px solid rgba(46, 204, 113, 0.42);
+  padding: 0.85rem 1rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  border-radius: 8px;
+  font-size: 0.9em;
+  text-align: center;
+  text-transform: none;
+  letter-spacing: normal;
+  font-weight: 400;
+  font-family: "Montserrat", sans-serif;
+}
+
+.resend-button {
+  margin-top: 0.85rem;
+}
+
 /* ==============================================================
    KEYFRAMES PARA ANIMACIÓN DE ENTRADA
    ============================================================== */

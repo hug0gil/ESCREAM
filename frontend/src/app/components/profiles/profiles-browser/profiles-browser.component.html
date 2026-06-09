@@ -54,7 +54,12 @@
     } @else if (errorMsg()) {
     <p class="profiles-status error">{{ errorMsg() }}</p>
     } @else if (profiles().length === 0) {
-    <p class="profiles-status">No hay perfiles asociados a esta cuenta.</p>
+    <div class="add-profile">
+        <button class="profile-card" type="button" (click)="showCreateForm()">
+            <span class="profile-avatar">+</span>
+            <span class="profile-name">Añadir perfil</span>
+        </button>
+    </div>
     } @else {
     <ul class="profiles-grid">
         @for (p of profiles(); track p.id) {

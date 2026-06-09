@@ -489,3 +489,9 @@
     flex-direction: column;
   }
 }
+
+.add-profile{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

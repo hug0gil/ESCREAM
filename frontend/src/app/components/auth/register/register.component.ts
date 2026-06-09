@@ -5,7 +5,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../../services/auth/auth.service';
 
 @Component({
@@ -17,11 +17,13 @@ import { AuthService } from '../../../services/auth/auth.service';
 })
 export class RegisterComponent {
   private auth = inject(AuthService);
-  private router = inject(Router);
 
   submitted = false;
   loading = signal(false);
+  resendLoading = signal(false);
   errorMsg = signal<string | null>(null);
+  successMsg = signal<string | null>(null);
+  registeredEmail = signal<string | null>(null);
   showPassword = signal(false);
 
   togglePassword(): void {
@@ -50,7 +52,10 @@ export class RegisterComponent {
       .subscribe({
         next: () => {
           this.loading.set(false);
-          this.router.navigate(['/profiles']);
+          this.registeredEmail.set(mail!);
+          this.successMsg.set('Cuenta creada. Revisa tu correo para verificarla.');
+          this.form.reset();
+          this.submitted = false;
         },
         error: err => {
           this.loading.set(false);
@@ -61,5 +66,23 @@ export class RegisterComponent {
           );
         },
       });
+  }
+
+  resendVerification(): void {
+    const email = this.registeredEmail();
+    if (!email) return;
+
+    this.resendLoading.set(true);
+    this.errorMsg.set(null);
+    this.auth.resendVerification(email).subscribe({
+      next: () => {
+        this.resendLoading.set(false);
+        this.successMsg.set('Te hemos enviado otro correo de verificación.');
+      },
+      error: () => {
+        this.resendLoading.set(false);
+        this.errorMsg.set('No se pudo reenviar el correo. Inténtalo de nuevo.');
+      },
+    });
   }
 }
