@@ -1,230 +1,236 @@
-# Autenticación y autorización (JWT + Guards + Roles)
+# JWT Auth y Roles en NestJS — Guía completa
 
-Cómo funciona el sistema de auth del backend ESCREAM, pieza por pieza.
+## 1. El token JWT
 
-Dos conceptos a separar:
+Cuando el usuario hace login, el servidor firma un token con sus datos:
 
-- **Autenticación** = "¿quién eres?" → JWT + estrategia Passport + `JwtUserAuthGuard`.
-- **Autorización** = "¿puedes hacer esto?" → `@Roles(...)` + `RolesGuard`.
+```typescript
+this.jwt.sign({ sub: 1, email: 'hugo@example.com', role: Role.USER })
+```
+
+Ese token viaja en cada request siguiente en el header:
+
+```
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+El token tiene tres partes separadas por puntos: **header.payload.firma**. El payload contiene los datos que metiste con `sign()`. La firma garantiza que nadie ha manipulado el token.
 
 ---
 
-## 1. El JWT: creación, contenido y verificación
+## 2. Strategy — la lógica de verificación
 
-**Creación** (al hacer login/register) — `src/auth/auth.service.ts`:
+`JwtUserStrategy` es la clase que sabe **cómo** verificar un token:
 
-```ts
-private signToken(sub: number, email: string, role: Role): string {
-  return this.jwt.sign({ sub, email, role });
-}
-```
-
-`this.jwt` es el `JwtService` configurado en `src/auth/auth.module.ts`:
-
-```ts
-JwtModule.register({
-  secret: process.env.JWT_USER_SECRET,
-  signOptions: { expiresIn: process.env.JWT_USER_EXPIRES_IN ?? '7d' },
-})
-```
-
-- El token se **firma** con `JWT_USER_SECRET`. Esa firma hace que el contenido
-  (`sub`, `email`, `role`) sea **imposible de falsificar**: si el cliente cambia
-  `role` a `ADMIN`, la firma deja de cuadrar y el token se rechaza.
-- `sub` = id del usuario, `role` = su rol, y caduca en 7 días.
-
-Un JWT son 3 partes (`header.payload.firma`) en base64. El **payload es legible por
-cualquiera** (no está cifrado, solo firmado) → nunca metas secretos ahí, solo
-identificadores.
-
-**Envío**: el frontend manda en cada petición:
-
-```
-Authorization: Bearer <token>
-```
-
-(de eso se encarga el interceptor de Angular).
-
----
-
-## 2. La estrategia Passport: el puente token → usuario
-
-`src/auth/strategies/jwt-user.strategy.ts`:
-
-```ts
-@Injectable()
+```typescript
 export class JwtUserStrategy extends PassportStrategy(Strategy, 'jwt-user') {
   constructor(private readonly users: UsersService) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // de dónde saca el token
-      ignoreExpiration: false,                                  // rechaza caducados
-      secretOrKey: process.env.JWT_USER_SECRET,                 // con qué verifica la firma
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // dónde buscar el token
+      ignoreExpiration: false,                                   // rechaza tokens expirados
+      secretOrKey: process.env.JWT_USER_SECRET,                 // clave para verificar la firma
     });
   }
 
   async validate(payload: JwtUserPayload) {
+    // payload = { sub: 1, email: 'hugo@example.com', role: Role.USER }
     const user = await this.users.findById(payload.sub).catch(() => null);
     if (!user) throw new UnauthorizedException();
-    return user; // ← esto acaba en req.user
+    return user; // esto se convierte en request.user
   }
 }
 ```
 
-Lo que hace Passport **antes** de llamar a `validate`:
+`validate()` se llama automáticamente cuando el token es válido. Busca el usuario en BD porque el token puede ser válido pero el usuario puede haber sido borrado desde que se emitió.
 
-1. Saca el token del header `Authorization: Bearer`.
-2. Verifica la firma con el secret y comprueba que no esté caducado. Si falla → 401.
-3. Si es válido, decodifica el `payload` y lo pasa a `validate`.
-
-En `validate` hay un paso clave: **se recarga el usuario de la BD** por su `sub` (id).
-Por tanto:
-
-- Lo que acaba en `req.user` es el usuario **fresco de BD** (incluido su `role`
-  actual), no el del token.
-- Si degradas a alguien de ADMIN a USER, aplica en su siguiente petición aunque su
-  token siga diciendo `ADMIN`.
-
-El `'jwt-user'` de `PassportStrategy(Strategy, 'jwt-user')` es el **nombre** de la
-estrategia; se usa en el guard.
+Lo que devuelves en `validate()` Passport lo inyecta en `request.user`.
 
 ---
 
-## 3. `JwtUserAuthGuard`: guard de autenticación
+## 3. Guard — el activador
 
-`src/auth/guards/jwt-user-auth.guard.ts`:
+`JwtUserAuthGuard` es el "candado" que aplicas en los controladores:
 
-```ts
-@Injectable()
+```typescript
 export class JwtUserAuthGuard extends AuthGuard('jwt-user') {}
 ```
 
-Un **guard** es una clase con `canActivate()` que devuelve `true` (pasa) o lanza
-excepción (corta). Este hereda de `AuthGuard('jwt-user')`, así que su `canActivate`
-**dispara la estrategia `jwt-user`**. Resultado:
+El string `'jwt-user'` es el enlace entre Guard y Strategy — Passport busca la Strategy registrada con ese nombre.
 
-- Token válido → deja pasar y coloca el usuario en `req.user`.
-- Token ausente/inválido/caducado → `401 Unauthorized`.
-
-Se aplica con `@UseGuards(JwtUserAuthGuard)`.
+Sin Guard, la ruta es pública. Con Guard, Passport ejecuta la Strategy antes de dejar pasar la request.
 
 ---
 
-## 4. `@Roles(...)` + `RolesGuard`: la autorización
+## 4. Cómo se enlazan
 
-El **decorador** solo **etiqueta** el endpoint con los roles permitidos —
-`src/auth/decorators/roles.decorator.ts`:
-
-```ts
-export const ROLES_KEY = 'roles';
-export const Roles = (...roles: Role[]) => SetMetadata(ROLES_KEY, roles);
+```
+'jwt-user' en PassportStrategy(Strategy, 'jwt-user')
+         ↕  mismo string
+'jwt-user' en AuthGuard('jwt-user')
 ```
 
-`SetMetadata` adjunta metadatos (`'roles' → [EDITOR, ADMIN]`) a la ruta. **No comprueba
-nada**, solo deja una nota.
+---
 
-El **guard** lee esa nota y decide — `src/auth/guards/roles.guard.ts`:
+## 5. Flujo completo de una request protegida
 
-```ts
+```
+Request con "Authorization: Bearer <token>"
+        ↓
+@UseGuards(JwtUserAuthGuard)  ← intercepta la request
+        ↓
+Passport busca la Strategy registrada como 'jwt-user'
+        ↓
+Strategy extrae el token del header
+        ↓
+Verifica la firma con JWT_USER_SECRET
+        ↓
+Decodifica el payload: { sub: 1, email: '...', role: 'USER' }
+        ↓
+Llama a validate(payload)
+        ↓
+validate() busca el usuario en BD por payload.sub
+        ↓
+return user  →  Passport lo mete en request.user
+        ↓
+La request llega al controlador con request.user disponible
+```
+
+---
+
+## 6. Usar el usuario en el controlador
+
+### Con `@Request()` (forma larga)
+
+```typescript
+@UseGuards(JwtUserAuthGuard)
+@Get('profile')
+getProfile(@Request() req) {
+  return req.user
+}
+```
+
+### Con `@CurrentUser()` (decorador personalizado, forma limpia)
+
+```typescript
+@UseGuards(JwtUserAuthGuard)
+@Post('refresh')
+refresh(@CurrentUser() user: Omit<User, 'password'>) {
+  return this.auth.refresh(user)
+}
+```
+
+`@CurrentUser()` es simplemente un decorador que extrae `request.user` por ti:
+
+```typescript
+export const CurrentUser = createParamDecorator(
+  (_, ctx: ExecutionContext) => ctx.switchToHttp().getRequest().user
+)
+```
+
+`Omit<User, 'password'>` le dice a TypeScript que el objeto tiene todos los campos de User excepto `password`. No elimina nada en runtime — es solo tipado.
+
+---
+
+## 7. Cuándo NO se usa request.user
+
+Si una ruta solo necesita comprobar que el usuario está autenticado y tiene el rol correcto (como un panel de admin), el Guard hace su trabajo pero `request.user` no se usa dentro del controlador:
+
+```typescript
+@UseGuards(JwtUserAuthGuard, RolesGuard)
+@Roles(Role.ADMIN)
+@Get()
+findAll() {
+  return this.users.findAll() // no necesita saber quién pregunta
+}
+```
+
+`request.user` se usa cuando la lógica depende de **quién** hace la petición (ver mi perfil, crear una review como yo, etc.).
+
+---
+
+## 8. Roles — control de acceso por rol
+
+### Las tres piezas
+
+**`@Roles()` — el decorador**
+
+Es una etiqueta que pegas en una ruta para declarar qué roles pueden acceder. Por debajo solo guarda esa información en los metadatos de la ruta. No hace nada por sí solo:
+
+```typescript
+@Roles(Role.EDITOR, Role.ADMIN)
+@Post()
+create() { ... }
+```
+
+**`RolesGuard` — quien lee esa etiqueta**
+
+```typescript
 canActivate(context: ExecutionContext): boolean {
-  const required = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
-    context.getHandler(),  // metadatos del método
-    context.getClass(),    // o de la clase
-  ]);
+  // 1. Lee los roles que declaraste con @Roles()
+  const required = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [...]);
+  // required = [Role.EDITOR, Role.ADMIN]
 
-  if (!required || required.length === 0) return true; // sin @Roles → libre
+  // 2. Si la ruta no tiene @Roles, deja pasar a todo el mundo
+  if (!required || required.length === 0) return true;
 
-  const user = context.switchToHttp().getRequest().user; // lo puso JwtUserAuthGuard
-  if (!user) throw new ForbiddenException('No autenticado');
+  // 3. Coge el usuario que JwtUserAuthGuard dejó en request.user
+  const user = context.switchToHttp().getRequest().user;
 
+  // 4. Comprueba si su rol está en la lista
   if (!required.includes(user.role)) {
-    throw new ForbiddenException('No tienes permisos para esta acción');
+    throw new ForbiddenException('No tienes permisos');
   }
   return true;
 }
 ```
 
-- El `Reflector` **lee los metadatos** que puso `@Roles`. `getAllAndOverride` mira
-  primero el método y, si no, la clase (puedes poner `@Roles` a nivel de clase y
-  sobreescribir en un método).
-- Lee `req.user.role` (fresco de BD, por el paso 2) y comprueba que esté entre los
-  permitidos.
-- Si el endpoint **no tiene** `@Roles`, devuelve `true` → no restringe por rol.
+### Por qué van juntos `JwtUserAuthGuard, RolesGuard`
 
-> ⚠️ `RolesGuard` **depende** de que `JwtUserAuthGuard` corra antes (es quien deja
-> `req.user`).
+El orden importa — no se pueden intercambiar:
 
----
-
-## 5. `@CurrentUser`: decorador de parámetro
-
-`src/auth/decorators/current-user.decorator.ts`:
-
-```ts
-export const CurrentUser = createParamDecorator(
-  (_data, ctx) => ctx.switchToHttp().getRequest().user,
-);
+```
+JwtUserAuthGuard → verifica el token y mete el usuario en request.user
+        ↓
+RolesGuard → lee request.user.role y comprueba si tiene permiso
 ```
 
-Atajo para inyectar `req.user` directamente en un argumento del controlador:
+Si pusiera solo `RolesGuard` sin el JWT guard, `request.user` sería `undefined` y no habría rol que comprobar.
 
-```ts
-@Get('who')
-who(@CurrentUser() user) { return user; }
-```
+### Ejemplo real del controlador
 
-No protege nada; solo entrega el usuario que dejó el guard.
+```typescript
+// Ruta pública — cualquiera
+@Get()
+findAll() { ... }
 
----
+// Solo EDITOR o ADMIN — token requerido + rol comprobado
+@UseGuards(JwtUserAuthGuard, RolesGuard)
+@Roles(Role.EDITOR, Role.ADMIN)
+@Post()
+create() { ... }
 
-## 6. Todo junto: una petición real
-
-`DELETE /movies/:id` (en `src/movies/movies.controller.ts`):
-
-```ts
+// Solo ADMIN
 @UseGuards(JwtUserAuthGuard, RolesGuard)
 @Roles(Role.ADMIN)
 @Delete(':id')
-remove(...) { ... }
+remove() { ... }
 ```
 
-```
-Petición: DELETE /api/movies/5  con header Authorization: Bearer eyJ...
-        │
-        ▼
-1. JwtUserAuthGuard  → Passport saca el token, verifica firma+caducidad con
-        │              JWT_USER_SECRET, decodifica payload {sub,email,role},
-        │              validate() recarga el user de BD → req.user
-        │              (si algo falla → 401)
-        ▼
-2. RolesGuard        → Reflector lee @Roles = [ADMIN]
-        │              ¿req.user.role === ADMIN? sí → pasa / no → 403
-        ▼
-3. remove()          → se ejecuta el método del controlador
-```
+### De dónde viene el rol
 
-**Los guards corren en el orden de `@UseGuards(...)`**: primero autentica, luego
-autoriza. Si pusieras `RolesGuard` primero, no habría `req.user` todavía y fallaría.
+El rol viene de la BD, no del token. `validate()` en la Strategy busca el usuario en BD en cada request, así que si cambias el rol de un usuario en BD el cambio es inmediato — no hace falta que el usuario vuelva a hacer login.
 
 ---
 
-## Resumen mental
+## Resumen
 
-- **JWT** = carnet firmado que dice quién eres (y tu rol). El secret garantiza que no
-  se falsifica.
-- **Estrategia** = verifica el carnet y trae el usuario real de BD.
-- **`JwtUserAuthGuard`** = "enseña un carnet válido o no pasas" (401).
-- **`@Roles` + `RolesGuard`** = "además, tu rol tiene que estar en la lista" (403).
-- **`@CurrentUser`** = "dame el usuario ya identificado".
-
----
-
-## Dónde se usa hoy
-
-| Endpoint | Protección |
-|---|---|
-| `POST /auth/register`, `POST /auth/login` | Público |
-| `POST/PATCH/GET /auth/*` (logout, refresh, who, changeSubscription) | `JwtUserAuthGuard` |
-| `GET /movies`, `GET /movies/:id`, `/movies/facets`, `/movies/slug/:slug` | Público |
-| `POST /movies`, `PATCH /movies/:id` | `JwtUserAuthGuard` + `RolesGuard` → `EDITOR`, `ADMIN` |
-| `DELETE /movies/:id` | `JwtUserAuthGuard` + `RolesGuard` → `ADMIN` |
-| `/users/*` (CRUD) | `JwtUserAuthGuard` + `RolesGuard` → `ADMIN` |
+| Pieza                            | Qué es                                       | Dónde va                          |
+| -------------------------------- | -------------------------------------------- | --------------------------------- |
+| `jwt.sign({ sub, email, role })` | Crea el token                                | AuthService al hacer login        |
+| `JwtUserStrategy`                | Lógica de verificación                       | Se registra en el módulo          |
+| `JwtUserAuthGuard`               | Activa la Strategy                           | `@UseGuards()` en el controlador  |
+| `validate()`                     | Busca el usuario en BD                       | Dentro de la Strategy             |
+| `request.user`                   | El usuario verificado                        | Disponible en el controlador      |
+| `@CurrentUser()`                 | Extrae `request.user`                        | Decorador en parámetro del método |
+| `@Roles(Role.ADMIN)`             | Declara qué roles pueden acceder             | Decorador en la ruta              |
+| `RolesGuard`                     | Lee `@Roles` y comprueba `request.user.role` | Segundo en `@UseGuards()`         |

@@ -12,6 +12,7 @@ import { ProfilesModule } from './profiles/profiles.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { SubgenresModule } from './subgenres/subgenres.module';
 import { UsersModule } from './users/users.module';
+import { MailModule } from './mail/mail.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { UsersModule } from './users/users.module';
     MoviesModule,
     UsersModule,
     AuthModule,
+    MailModule,
   ],
   controllers: [AppController],
   providers: [AppService],

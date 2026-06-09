@@ -100,7 +100,7 @@ async function main() {
       if (chosen) {
         await prisma.movie.update({
           where: { id: movie.id },
-          data: { image: `${POSTER_BASE}${chosen?.poster_path}`, synopsis: chosen?.overview },
+          data: { image: `${POSTER_BASE}${chosen?.poster_path}`, synopsis: chosen?.overview ?? movie.synopsis },
         });
         const how = byDirector
           ? 'director'

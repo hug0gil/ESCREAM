@@ -16,7 +16,17 @@ describe('AuthService', () => {
     update: jest.Mock;
   };
   let jwt: { sign: jest.Mock };
-  let prisma: { user: { update: jest.Mock } };
+  let prisma: {
+    user: { findUnique: jest.Mock; update: jest.Mock };
+    verificationToken: {
+      create: jest.Mock;
+      findUnique: jest.Mock;
+      update: jest.Mock;
+      updateMany: jest.Mock;
+    };
+    $transaction: jest.Mock;
+  };
+  let mail: { sendVerificationEmail: jest.Mock };
   let loggerSpy: jest.SpyInstance;
 
   beforeEach(() => {
@@ -29,11 +39,25 @@ describe('AuthService', () => {
     jwt = { sign: jest.fn().mockReturnValue('signed-token') };
     prisma = {
       user: {
+        findUnique: jest.fn(),
         update: jest.fn(),
       },
+      verificationToken: {
+        create: jest.fn(),
+        findUnique: jest.fn(),
+        update: jest.fn(),
+        updateMany: jest.fn(),
+      },
+      $transaction: jest.fn(),
     };
+    mail = { sendVerificationEmail: jest.fn() };
 
-    service = new AuthService(users as any, jwt as any, prisma as any);
+    service = new AuthService(
+      users as any,
+      jwt as any,
+      prisma as any,
+      mail as any,
+    );
     jest.mocked(bcrypt.compare).mockReset(); // se resetea para que no interfiera el valor que aplicamos con mockResolvedValue
   });
 
@@ -41,13 +65,15 @@ describe('AuthService', () => {
     loggerSpy.mockRestore();
   });
 
-  it('registers a user and returns a signed token', async () => {
+  it('registers a user and sends a verification email', async () => {
     const user = {
       id: 1,
       email: 'hugo@example.com',
       role: Role.USER,
     };
     users.create.mockResolvedValue(user);
+    prisma.verificationToken.updateMany.mockResolvedValue({ count: 0 });
+    prisma.verificationToken.create.mockResolvedValue({});
 
     await expect(
       service.register({
@@ -56,8 +82,8 @@ describe('AuthService', () => {
         password: 'password123',
       }),
     ).resolves.toEqual({
-      access_token: 'signed-token',
       user,
+      message: 'User registered. Check your email to verify the account.',
     });
 
     expect(users.create).toHaveBeenCalledWith({
@@ -65,11 +91,20 @@ describe('AuthService', () => {
       email: 'hugo@example.com',
       password: 'password123',
     });
-    expect(jwt.sign).toHaveBeenCalledWith({
-      sub: 1,
-      email: 'hugo@example.com',
-      role: Role.USER,
+    expect(prisma.verificationToken.create).toHaveBeenCalledWith({
+      data: {
+        userId: 1,
+        type: 'EMAIL_VERIFICATION',
+        newEmail: undefined,
+        expiresAt: expect.any(Date),
+        tokenHash: expect.any(String),
+      },
     });
+    expect(mail.sendVerificationEmail).toHaveBeenCalledWith(
+      'hugo@example.com',
+      expect.any(String),
+    );
+    expect(jwt.sign).not.toHaveBeenCalled();
   });
 
   it('rejects login when the user does not exist', async () => {
@@ -86,6 +121,7 @@ describe('AuthService', () => {
       email: 'hugo@example.com',
       password: 'hashed',
       role: Role.USER,
+      emailVerifiedAt: new Date(),
     });
     jest.mocked(bcrypt.compare).mockResolvedValue(false as never);
 
@@ -102,6 +138,7 @@ describe('AuthService', () => {
       password: 'hashed',
       role: Role.USER,
       subscribed: false,
+      emailVerifiedAt: new Date(),
     };
     users.findByEmailWithPassword.mockResolvedValue(user);
     jest.mocked(bcrypt.compare).mockResolvedValue(true as never);
@@ -127,6 +164,69 @@ describe('AuthService', () => {
         endDate: expect.any(Date),
         subscribed: true,
       },
+    });
+  });
+
+  it('changes the current user plan and renews the subscription', async () => {
+    users.update.mockResolvedValue({
+      id: 1,
+      name: 'Hugo',
+      email: 'hugo@example.com',
+      role: Role.USER,
+      subscribed: true,
+      planId: 2,
+      startDate: new Date('2026-01-01T00:00:00.000Z'),
+      endDate: new Date('2026-02-01T00:00:00.000Z'),
+    });
+
+    const result = await service.changeSubscription(1, { planId: 2 });
+
+    expect(result.planId).toBe(2);
+    expect(users.update).toHaveBeenCalledWith(1, {
+      planId: 2,
+      startDate: expect.any(String),
+      endDate: expect.any(String),
+      subscribed: true,
+    });
+  });
+
+  it('confirms an email change and returns the updated user', async () => {
+    const updatedUser = {
+      id: 1,
+      name: 'Hugo',
+      email: 'nuevo@example.com',
+      role: Role.USER,
+      subscribed: true,
+      planId: 1,
+      emailVerifiedAt: new Date(),
+    };
+    prisma.verificationToken.findUnique.mockResolvedValue({
+      id: 10,
+      userId: 1,
+      type: 'EMAIL_CHANGE',
+      newEmail: 'nuevo@example.com',
+      usedAt: null,
+      expiresAt: new Date(Date.now() + 60_000),
+    });
+    prisma.user.findUnique.mockResolvedValue(null);
+    prisma.user.update.mockResolvedValue(updatedUser);
+    prisma.verificationToken.update.mockResolvedValue({ id: 10 });
+    prisma.$transaction.mockResolvedValue([updatedUser, { id: 10 }]);
+
+    await expect(
+      service.confirmEmailChange({ token: 'valid-token' }),
+    ).resolves.toEqual({
+      message: 'Email changed successfully.',
+      user: updatedUser,
+    });
+
+    expect(prisma.user.update).toHaveBeenCalledWith({
+      where: { id: 1 },
+      data: {
+        email: 'nuevo@example.com',
+        emailVerifiedAt: expect.any(Date),
+      },
+      omit: { password: true },
     });
   });
 });

@@ -14,7 +14,7 @@ interface JwtUserPayload {
 export class JwtUserStrategy extends PassportStrategy(Strategy, 'jwt-user') {
   constructor(private readonly users: UsersService) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(), // busca: Authorization: Bearer <token>
       ignoreExpiration: false,
       secretOrKey: process.env.JWT_USER_SECRET as string,
     });

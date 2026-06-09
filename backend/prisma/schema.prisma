@@ -25,20 +25,21 @@ enum Role {
 }
 
 model User {
-  id              Int       @id @default(autoincrement())
-  name            String
-  email           String    @unique
-  emailVerifiedAt DateTime? @map("email_verified_at")
-  password        String
-  role            Role      @default(USER)
-  startDate       DateTime  @default(now()) @map("start_date")
-  endDate         DateTime? @map("end_date")
-  subscribed      Boolean   @default(false)
-  planId          Int       @default(1) @map("plan_id")
-  createdAt       DateTime  @default(now()) @map("created_at")
-  updatedAt       DateTime  @updatedAt @map("updated_at")
-  profiles        Profile[] //relacion, no es una columna virtual es la manera de hacer FK
-  plan            Plan      @relation(fields: [planId], references: [id])
+  id                 Int                 @id @default(autoincrement())
+  name               String
+  email              String              @unique
+  emailVerifiedAt    DateTime?           @map("email_verified_at")
+  password           String
+  role               Role                @default(USER)
+  startDate          DateTime            @default(now()) @map("start_date")
+  endDate            DateTime?           @map("end_date")
+  subscribed         Boolean             @default(false)
+  planId             Int                 @default(1) @map("plan_id")
+  createdAt          DateTime            @default(now()) @map("created_at")
+  updatedAt          DateTime            @updatedAt @map("updated_at")
+  profiles           Profile[] //relacion, no es una columna virtual es la manera de hacer FK
+  plan               Plan                @relation(fields: [planId], references: [id])
+  verificationTokens VerificationToken[]
 
   @@map("users")
 }
@@ -107,8 +108,8 @@ model Movie {
   title               String            @unique
   slug                String            @unique
   year                Int?
-  synopsis            String 
-  image               String?           
+  synopsis            String
+  image               String?
   rating              Decimal?          @db.Decimal(2, 1)
   directorId          Int               @map("director_id")
   productionCompanyId Int               @map("production_company_id")
@@ -161,4 +162,27 @@ model Review {
   profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
 
   @@map("reviews")
+}
+
+// Verificación por correo
+
+enum VerificationTokenType {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+  EMAIL_CHANGE
+}
+
+model VerificationToken {
+  id        Int                   @id @default(autoincrement())
+  userId    Int                   @map("user_id")
+  tokenHash String                @unique @map("token_hash")
+  type      VerificationTokenType
+  newEmail  String?               @map("new_email")
+  expiresAt DateTime              @map("expires_at")
+  usedAt    DateTime?             @map("used_at")
+  createdAt DateTime              @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("verification_tokens")
 }

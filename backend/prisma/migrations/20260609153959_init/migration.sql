@@ -1,6 +1,9 @@
 -- CreateEnum
 CREATE TYPE "Role" AS ENUM ('USER', 'EDITOR', 'ADMIN');
 
+-- CreateEnum
+CREATE TYPE "VerificationTokenType" AS ENUM ('EMAIL_VERIFICATION', 'PASSWORD_RESET', 'EMAIL_CHANGE');
+
 -- CreateTable
 CREATE TABLE "plans" (
     "id" SERIAL NOT NULL,
@@ -141,6 +144,20 @@ CREATE TABLE "reviews" (
     CONSTRAINT "reviews_pkey" PRIMARY KEY ("id")
 );
 
+-- CreateTable
+CREATE TABLE "verification_tokens" (
+    "id" SERIAL NOT NULL,
+    "user_id" INTEGER NOT NULL,
+    "token_hash" TEXT NOT NULL,
+    "type" "VerificationTokenType" NOT NULL,
+    "new_email" TEXT,
+    "expires_at" TIMESTAMP(3) NOT NULL,
+    "used_at" TIMESTAMP(3),
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "verification_tokens_pkey" PRIMARY KEY ("id")
+);
+
 -- CreateIndex
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
@@ -152,6 +169,9 @@ CREATE UNIQUE INDEX "movies_title_key" ON "movies"("title");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "movies_slug_key" ON "movies"("slug");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "verification_tokens_token_hash_key" ON "verification_tokens"("token_hash");
 
 -- AddForeignKey
 ALTER TABLE "users" ADD CONSTRAINT "users_plan_id_fkey" FOREIGN KEY ("plan_id") REFERENCES "plans"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -182,3 +202,6 @@ ALTER TABLE "reviews" ADD CONSTRAINT "reviews_movie_id_fkey" FOREIGN KEY ("movie
 
 -- AddForeignKey
 ALTER TABLE "reviews" ADD CONSTRAINT "reviews_profile_id_fkey" FOREIGN KEY ("profile_id") REFERENCES "profiles"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "verification_tokens" ADD CONSTRAINT "verification_tokens_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE ON UPDATE CASCADE;
