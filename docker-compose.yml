@@ -1,0 +1,63 @@
+version: '3.9'
+
+services:
+
+  postgres:
+    image: postgres:16
+    container_name: escream-pg
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: escream
+      POSTGRES_PASSWORD: escream
+      POSTGRES_DB: escream
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5556:5432"
+    networks:
+      - escream-net
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: escream-back
+    restart: unless-stopped
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - postgres
+    networks:
+      - escream-net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: escream-front
+    restart: unless-stopped
+    depends_on:
+      - backend
+    networks:
+      - escream-net
+
+  nginx:
+    image: nginx:alpine
+    container_name: escream-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - escream-net
+
+networks:
+  escream-net:
+    driver: bridge
+
+volumes:
+  postgres_data:
