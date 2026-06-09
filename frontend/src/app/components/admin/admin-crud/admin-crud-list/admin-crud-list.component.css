@@ -494,3 +494,10 @@
     border-color: #f09595;
   }
 }
+
+.country-div {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}

@@ -304,6 +304,10 @@
     text-shadow: 0 0 8px rgba(255, 159, 28, 0.4);
 }
 
+.scroll-status.end {
+    color: var(--color-accent2);
+}
+
 /* Menos columnas según se estrecha la pantalla */
 @media (max-width: 1100px) {
     .movies-container { grid-template-columns: repeat(4, 1fr); }

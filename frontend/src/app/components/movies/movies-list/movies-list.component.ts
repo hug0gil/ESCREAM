@@ -10,7 +10,7 @@ import {
   DestroyRef,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { skip, distinctUntilChanged } from 'rxjs';
+import { finalize, skip, distinctUntilChanged } from 'rxjs';
 import { Movie } from '../../../interfaces/movie-interface';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
@@ -61,6 +61,7 @@ export class MoviesListComponent implements OnInit, AfterViewInit, OnDestroy {
   private readonly batchSize = 18;       // pelis por carga (3 filas de 6)
   public loading = signal(false);
   public reachedEnd = signal(false);
+  public totalMovies = signal(0);
 
   // Skeletons solo para la primera carga.
   public skeletons = new Array(this.batchSize);
@@ -84,6 +85,7 @@ export class MoviesListComponent implements OnInit, AfterViewInit, OnDestroy {
       this.movies = this.state.movies;
       this.page = this.state.page;
       this.reachedEnd.set(this.state.reachedEnd);
+      this.totalMovies.set(this.state.total);
       this.restored = true;
       this.restoringScroll = true; // ignora al observer hasta restaurar scroll
     } else {
@@ -126,7 +128,10 @@ export class MoviesListComponent implements OnInit, AfterViewInit, OnDestroy {
       requestAnimationFrame(() => {
         window.scrollTo({ top: this.state.scrollY });
         this.restoringScroll = false;
+        this.fillViewportIfNeeded();
       });
+    } else {
+      this.fillViewportIfNeeded();
     }
   }
 
@@ -138,6 +143,7 @@ export class MoviesListComponent implements OnInit, AfterViewInit, OnDestroy {
       movies: this.movies,
       page: this.page,
       reachedEnd: this.reachedEnd(),
+      total: this.totalMovies(),
       scrollY: window.scrollY,
     });
   }
@@ -151,6 +157,8 @@ export class MoviesListComponent implements OnInit, AfterViewInit, OnDestroy {
     if (reset) {
       this.page = 1;
       this.reachedEnd.set(false);
+      this.totalMovies.set(0);
+      this.movies = [];
     } else if (this.reachedEnd()) {
       return;
     }
@@ -158,23 +166,28 @@ export class MoviesListComponent implements OnInit, AfterViewInit, OnDestroy {
     this.loading.set(true);
     const filters = this.effectiveFilters();
 
-    this.moviesService.getMoviesPaginated(this.page, this.batchSize, filters).subscribe({
+    this.moviesService.getMoviesPaginated(this.page, this.batchSize, filters).pipe(
+      finalize(() => this.loading.set(false)),
+    ).subscribe({
       next: res => {
-        this.movies = reset ? res.data : [...this.movies, ...res.data];
+        const existingIds = new Set(this.movies.map(movie => movie.id));
+        const newMovies = reset
+          ? res.data
+          : res.data.filter(movie => !existingIds.has(movie.id));
+
+        this.movies = reset ? newMovies : [...this.movies, ...newMovies];
+        this.totalMovies.set(res.total);
+
         if (this.page >= res.last_page || res.data.length === 0) {
           this.reachedEnd.set(true);
         }
         this.page++;
-        this.loading.set(false);
 
         // Si el centinela sigue a la vista (contenido corto), sigue llenando.
-        if (this.sentinelVisible && !this.reachedEnd()) {
-          this.loadMore();
-        }
+        this.fillViewportIfNeeded();
       },
       error: err => {
         console.error('Error cargando películas:', err);
-        this.loading.set(false);
       },
     });
   }
@@ -189,7 +202,7 @@ export class MoviesListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   /** Carga la película destacada del billboard: cambia cada 3 días. */
   private loadFeatured() {
-    this.moviesService.getSample(50).subscribe(movies => {
+    this.moviesService.getSample(100).subscribe(movies => {
       if (!movies.length) return;
 
       // Cambia cada 3 días: índice estable derivado del "bloque" de 3 días
@@ -224,5 +237,20 @@ export class MoviesListComponent implements OnInit, AfterViewInit, OnDestroy {
 
   closeFilter() {
     this.search.closeFilter();
+  }
+
+  private fillViewportIfNeeded(): void {
+    requestAnimationFrame(() => {
+      const el = this.sentinel()?.nativeElement;
+      if (!el || this.loading() || this.reachedEnd() || this.restoringScroll) {
+        return;
+      }
+
+      const sentinelTop = el.getBoundingClientRect().top;
+      const viewportThreshold = window.innerHeight + 400;
+      if (sentinelTop <= viewportThreshold) {
+        this.loadMore();
+      }
+    });
   }
 }

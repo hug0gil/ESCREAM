@@ -19,7 +19,8 @@
   <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
     <div class="form-grid">
       @for (field of visibleFields(); track field.key) {
-      <div class="field" [class.field--wide]="field.type === 'textarea'" [class.field--country]="field.type === 'country'">
+      <div class="field" [class.field--wide]="field.type === 'textarea'"
+        [class.field--country]="field.type === 'country'">
         @if (field.type === 'checkbox') {
         <label class="checkbox-field">
           <input type="checkbox" [formControlName]="field.key" />
@@ -36,7 +37,10 @@
             (click)="toggleCountryField(field)">
             <label [for]="field.key">
               <span class="country-label">{{ field.label }}</span>
-              <span class="country-value">{{ control(field).value}}</span>
+              <div class="country-div">
+                <span class=" country-value">{{ control(field).value}}</span>
+                <img [src]="'https://flagsapi.com/' + control(field).value + '/flat/16.png'" />
+              </div>
             </label>
             <button type="button" class="list-button" [class.open]="isCountryOpen(field)"
               [attr.aria-label]="isCountryOpen(field) ? 'Cerrar países' : 'Abrir países'">

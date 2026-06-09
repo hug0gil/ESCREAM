@@ -17,6 +17,7 @@ export class MovieListStateService {
   movies: Movie[] = [];
   page = 1;
   reachedEnd = false;
+  total = 0;
   scrollY = 0;
 
   save(state: {
@@ -24,12 +25,14 @@ export class MovieListStateService {
     movies: Movie[];
     page: number;
     reachedEnd: boolean;
+    total: number;
     scrollY: number;
   }) {
     this.filters = state.filters;
     this.movies = state.movies;
     this.page = state.page;
     this.reachedEnd = state.reachedEnd;
+    this.total = state.total;
     this.scrollY = state.scrollY;
     this.hasState = true;
   }
@@ -40,6 +43,7 @@ export class MovieListStateService {
     this.movies = [];
     this.page = 1;
     this.reachedEnd = false;
+    this.total = 0;
     this.scrollY = 0;
   }
 }

@@ -77,7 +77,14 @@
             } @else {
             <div class="table-thumb placeholder">🎬</div>
             }
-            } @else {
+            }
+            @else if (column.key === 'country') {
+            <div class="country-div">
+              {{ displayValue(item, column) }}
+              <img class="flag" [src]="'https://flagsapi.com/' + displayValue(item, column) + '/flat/16.png'" />
+            </div>
+            }
+            @else {
             <span [class.primary-cell]="column.key === 'name' || column.key === 'title' || column.key === 'email'">
               {{ displayValue(item, column) }}
             </span>
