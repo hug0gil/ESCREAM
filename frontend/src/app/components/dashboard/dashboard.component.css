@@ -441,3 +441,30 @@
     text-align: left;
   }
 }
+
+@media (max-width: 420px) {
+  .dashboard {
+    width: min(100% - 0.75rem, 680px);
+  }
+
+  .dashboard-panel,
+  .user-card,
+  .profile-card,
+  .plan-card {
+    padding: 1rem;
+    border-radius: 0.85rem;
+  }
+
+  .panel-actions,
+  .profile-actions,
+  .plan-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .panel-actions button,
+  .profile-actions button,
+  .plan-actions button {
+    width: 100%;
+  }
+}

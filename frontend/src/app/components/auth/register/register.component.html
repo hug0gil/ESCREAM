@@ -9,13 +9,6 @@
             <p class="info-message">
                 Hemos enviado un enlace de verificación a {{ registeredEmail() }}.
             </p>
-            <p class="info-message">
-                Abre el enlace desde tu correo para activar la cuenta antes de iniciar sesión.
-            </p>
-
-            @if (successMsg()) {
-            <p class="success-message">{{ successMsg() }}</p>
-            }
 
             @if (errorMsg()) {
             <p class="error-message">{{ errorMsg() }}</p>

@@ -49,6 +49,25 @@ body {
   flex-direction: column;
 }
 
+html {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+img,
+svg,
+video,
+canvas {
+  max-width: 100%;
+}
+
+input,
+select,
+textarea,
+button {
+  max-width: 100%;
+}
+
 /* Grano de película: textura VHS muy sutil sobre todo el sitio */
 body::before {
   content: "";
@@ -227,5 +246,50 @@ button:hover {
   to {
     transform: translateX(0);
     opacity: 1;
+  }
+}
+
+@media (max-width: 768px) {
+  body {
+    background-attachment: scroll;
+  }
+
+  h1,
+  h2,
+  .movie-title {
+    line-height: 1.12;
+    overflow-wrap: anywhere;
+  }
+
+  h3,
+  .label,
+  .category {
+    letter-spacing: 1.2px;
+  }
+
+  p,
+  .description,
+  .sinopsis {
+    line-height: 1.55;
+  }
+
+  button {
+    padding: 0.75rem 1rem;
+  }
+
+  .container {
+    width: min(100% - 1.5rem, 1200px);
+    margin: 1.25rem auto;
+  }
+
+  .card {
+    padding: 1rem;
+    border-radius: 12px;
+  }
+}
+
+@media (max-width: 420px) {
+  .container {
+    width: min(100% - 1rem, 1200px);
   }
 }

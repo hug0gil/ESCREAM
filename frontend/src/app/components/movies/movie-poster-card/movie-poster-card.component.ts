@@ -12,4 +12,19 @@ import { RatingSkullsComponent } from '../rating-skulls/rating-skulls.component'
 })
 export class MoviePosterCardComponent {
   @Input({ required: true }) movie!: Movie;
+
+  touching = false;
+  private touchTimeout?: ReturnType<typeof setTimeout>;
+
+  onTouchStart(): void {
+    this.touching = true;
+    clearTimeout(this.touchTimeout);
+  }
+
+  onTouchEnd(): void {
+    clearTimeout(this.touchTimeout);
+    this.touchTimeout = setTimeout(() => {
+      this.touching = false;
+    }, 220);
+  }
 }

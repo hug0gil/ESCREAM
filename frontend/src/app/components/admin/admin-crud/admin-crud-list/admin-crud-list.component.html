@@ -70,7 +70,7 @@
         @for (item of filteredItems(); track item.id) {
         <tr class="admin-row">
           @for (column of config.columns; track column.key) {
-          <td>
+          <td [attr.data-label]="column.label">
             @if (column.type === 'image') {
             @if (displayValue(item, column) !== '-') {
             <img class="table-thumb" [src]="displayValue(item, column)" [alt]="deleteLabel(item)" />
@@ -92,7 +92,7 @@
           </td>
           }
 
-          <td class="col-actions">
+          <td class="col-actions" data-label="Acciones">
             <div class="row-actions">
               <!-- Editar -->
               <button type="button" class="icon-btn edit" title="Editar" aria-label="Editar"
