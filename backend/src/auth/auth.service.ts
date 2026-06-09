@@ -49,6 +49,7 @@ export class AuthService {
     return { message: 'Logout successfully!' };
   }
 
+  // Omit es un tipo de TS que crea un objeto igual sin la propiedad que se indique
   refresh(user: Omit<User, 'password'>) {
     return {
       token: this.signToken(user.id, user.email, user.role),

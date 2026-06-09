@@ -19,7 +19,7 @@ export class CreateMovieDto {
 
   @IsString()
   @IsOptional()
-  synopsis: string;
+  synopsis?: string;
 
   @IsInt()
   @Min(1800)

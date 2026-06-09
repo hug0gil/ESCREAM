@@ -86,17 +86,9 @@ export class MoviesService {
       };
     }
     if (opts.rating && opts.rating.length > 0) {
-      // "rating 4" en el filtro = pelis con 4.0-4.9 → OR de rangos.
-      and.push({
-        OR: opts.rating.map((r) => ({
-          rating: { gte: r, lt: r + 1 },
-        })),
-      });
+      where.rating = { in: opts.rating };
     }
 
-    if (and.length > 0) {
-      where.AND = and;
-    }
     return where;
   }
 
@@ -193,7 +185,7 @@ export class MoviesService {
         data: {
           title: dto.title,
           slug,
-          synopsis: dto.synopsis,
+          synopsis: dto.synopsis || '',
           year: dto.year,
           image: dto.image,
           movieUrl: dto.movieUrl,
