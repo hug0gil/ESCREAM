@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
@@ -10,6 +11,8 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Injectable()
 export class ProfilesService {
+  private readonly logger = new Logger(ProfilesService.name);
+
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(page = 1, perPage = 10, userId?: number) {
@@ -50,7 +53,13 @@ export class ProfilesService {
 
   async create(dto: CreateProfileDto) {
     try {
-      return await this.prisma.profile.create({ data: { ...dto } });
+      const profile = await this.prisma.profile.create({ data: { ...dto } });
+      this.logger.log({
+        msg: 'Profile created',
+        profileId: profile.id,
+        userId: profile.userId,
+      });
+      return profile;
     } catch (e) {
       if (
         e instanceof Prisma.PrismaClientKnownRequestError &&
@@ -64,10 +73,17 @@ export class ProfilesService {
 
   async update(id: number, dto: UpdateProfileDto) {
     try {
-      return await this.prisma.profile.update({
+      const profile = await this.prisma.profile.update({
         where: { id },
         data: { ...dto },
       });
+      this.logger.log({
+        msg: 'Profile updated',
+        profileId: profile.id,
+        userId: profile.userId,
+        fields: Object.keys(dto),
+      });
+      return profile;
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         if (e.code === 'P2025') {
@@ -84,6 +100,7 @@ export class ProfilesService {
   async remove(id: number) {
     try {
       await this.prisma.profile.delete({ where: { id } });
+      this.logger.log({ msg: 'Profile deleted', profileId: id });
     } catch (e) {
       if (
         e instanceof Prisma.PrismaClientKnownRequestError &&

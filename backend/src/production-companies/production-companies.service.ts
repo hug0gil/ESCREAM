@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateProductionCompanyDto } from './dto/create-production-company.dto';
@@ -6,6 +6,8 @@ import { UpdateProductionCompanyDto } from './dto/update-production-company.dto'
 
 @Injectable()
 export class ProductionCompaniesService {
+  private readonly logger = new Logger(ProductionCompaniesService.name);
+
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(page = 1, perPage = 10) {
@@ -41,15 +43,27 @@ export class ProductionCompaniesService {
   }
 
   async create(dto: CreateProductionCompanyDto) {
-    return this.prisma.productionCompany.create({ data: { ...dto } });
+    const company = await this.prisma.productionCompany.create({ data: { ...dto } });
+    this.logger.log({
+      msg: 'Production company created',
+      companyId: company.id,
+      name: company.name,
+    });
+    return company;
   }
 
   async update(id: number, dto: UpdateProductionCompanyDto) {
     try {
-      return await this.prisma.productionCompany.update({
+      const company = await this.prisma.productionCompany.update({
         where: { id },
         data: { ...dto },
       });
+      this.logger.log({
+        msg: 'Production company updated',
+        companyId: company.id,
+        fields: Object.keys(dto),
+      });
+      return company;
     } catch (e) {
       if (
         e instanceof Prisma.PrismaClientKnownRequestError &&
@@ -64,6 +78,7 @@ export class ProductionCompaniesService {
   async remove(id: number) {
     try {
       await this.prisma.productionCompany.delete({ where: { id } });
+      this.logger.log({ msg: 'Production company deleted', companyId: id });
     } catch (e) {
       if (
         e instanceof Prisma.PrismaClientKnownRequestError &&

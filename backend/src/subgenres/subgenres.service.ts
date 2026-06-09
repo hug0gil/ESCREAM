@@ -1,6 +1,7 @@
 import {
   ConflictException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
@@ -11,6 +12,8 @@ import { UpdateSubgenreDto } from './dto/update-subgenre.dto';
 
 @Injectable()
 export class SubgenresService {
+  private readonly logger = new Logger(SubgenresService.name);
+
   constructor(private readonly prisma: PrismaService) { }
 
   async findAll(page = 1, perPage = 6) {
@@ -45,13 +48,19 @@ export class SubgenresService {
 
   async create(dto: CreateSubgenreDto) {
     try {
-      return await this.prisma.subgenre.create({
+      const subgenre = await this.prisma.subgenre.create({
         data: {
           name: dto.name,
           description: dto.description,
           slug: this.makeSlug(dto.name),
         },
       });
+      this.logger.log({
+        msg: 'Subgenre created',
+        subgenreId: subgenre.id,
+        slug: subgenre.slug,
+      });
+      return subgenre;
     } catch (e) {
       if (
         e instanceof Prisma.PrismaClientKnownRequestError &&
@@ -70,7 +79,13 @@ export class SubgenresService {
     }
 
     try {
-      return await this.prisma.subgenre.update({ where: { id }, data });
+      const subgenre = await this.prisma.subgenre.update({ where: { id }, data });
+      this.logger.log({
+        msg: 'Subgenre updated',
+        subgenreId: subgenre.id,
+        fields: Object.keys(dto),
+      });
+      return subgenre;
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         if (e.code === 'P2025') {
@@ -89,6 +104,7 @@ export class SubgenresService {
   async remove(id: number) {
     try {
       await this.prisma.subgenre.delete({ where: { id } });
+      this.logger.log({ msg: 'Subgenre deleted', subgenreId: id });
     } catch (e) {
       if (
         e instanceof Prisma.PrismaClientKnownRequestError &&

@@ -181,7 +181,7 @@ export class MoviesService {
   async create(dto: CreateMovieDto) {
     const slug = this.makeSlug(dto.title);
     try {
-      return await this.prisma.movie.create({
+      const movie = await this.prisma.movie.create({
         data: {
           title: dto.title,
           slug,
@@ -217,6 +217,13 @@ export class MoviesService {
           },
         },
       });
+      this.logger.log({
+        msg: 'Movie created',
+        movieId: movie.id,
+        title: movie.title,
+        slug: movie.slug,
+      });
+      return movie;
     } catch (e) {
       this.handlePrismaError(e);
     }
@@ -263,6 +270,14 @@ export class MoviesService {
         failed.push({ id: movie.id, title: movie.title });
       }
     }
+
+    this.logger.log({
+      msg: 'Movie images seeded',
+      processed: movies.length,
+      updated,
+      skipped,
+      failed: failed.length,
+    });
 
     return {
       processed: movies.length,
@@ -314,7 +329,7 @@ export class MoviesService {
     }
 
     try {
-      return await this.prisma.movie.update({
+      const movie = await this.prisma.movie.update({
         where: { id },
         data,
         include: {
@@ -326,6 +341,13 @@ export class MoviesService {
           },
         },
       });
+      this.logger.log({
+        msg: 'Movie updated',
+        movieId: movie.id,
+        title: movie.title,
+        fields: Object.keys(data),
+      });
+      return movie;
     } catch (e) {
       this.handlePrismaError(e, id);
     }
@@ -339,6 +361,7 @@ export class MoviesService {
   async remove(id: number) {
     try {
       await this.prisma.movie.delete({ where: { id } });
+      this.logger.log({ msg: 'Movie deleted', movieId: id });
     } catch (e) {
       if (
         e instanceof Prisma.PrismaClientKnownRequestError &&

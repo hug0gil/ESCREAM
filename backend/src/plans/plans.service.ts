@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreatePlanDto } from './dto/create-plan.dto';
@@ -6,6 +6,8 @@ import { UpdatePlanDto } from './dto/update-plan.dto';
 
 @Injectable()
 export class PlansService {
+  private readonly logger = new Logger(PlansService.name);
+
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(page = 1, perPage = 10) {
@@ -39,15 +41,23 @@ export class PlansService {
   }
 
   async create(dto: CreatePlanDto) {
-    return this.prisma.plan.create({ data: { ...dto } });
+    const plan = await this.prisma.plan.create({ data: { ...dto } });
+    this.logger.log({ msg: 'Plan created', planId: plan.id, name: plan.name });
+    return plan;
   }
 
   async update(id: number, dto: UpdatePlanDto) {
     try {
-      return await this.prisma.plan.update({
+      const plan = await this.prisma.plan.update({
         where: { id },
         data: { ...dto },
       });
+      this.logger.log({
+        msg: 'Plan updated',
+        planId: plan.id,
+        fields: Object.keys(dto),
+      });
+      return plan;
     } catch (e) {
       if (
         e instanceof Prisma.PrismaClientKnownRequestError &&
@@ -62,6 +72,7 @@ export class PlansService {
   async remove(id: number) {
     try {
       await this.prisma.plan.delete({ where: { id } });
+      this.logger.log({ msg: 'Plan deleted', planId: id });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         if (e.code === 'P2025') {

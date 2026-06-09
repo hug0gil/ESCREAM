@@ -1,6 +1,7 @@
 import {
   BadRequestException,
   Injectable,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
@@ -10,6 +11,8 @@ import { UpdateReviewDto } from './dto/update-review.dto';
 
 @Injectable()
 export class ReviewsService {
+  private readonly logger = new Logger(ReviewsService.name);
+
   constructor(private readonly prisma: PrismaService) {}
 
   async findAll(
@@ -64,7 +67,14 @@ export class ReviewsService {
 º
   async create(dto: CreateReviewDto) {
     try {
-      return await this.prisma.review.create({ data: { ...dto } });
+      const review = await this.prisma.review.create({ data: { ...dto } });
+      this.logger.log({
+        msg: 'Review created',
+        reviewId: review.id,
+        profileId: review.profileId,
+        movieId: review.movieId,
+      });
+      return review;
     } catch (e) {
       if (
         e instanceof Prisma.PrismaClientKnownRequestError &&
@@ -80,10 +90,16 @@ export class ReviewsService {
 
   async update(id: number, dto: UpdateReviewDto) {
     try {
-      return await this.prisma.review.update({
+      const review = await this.prisma.review.update({
         where: { id },
         data: { ...dto },
       });
+      this.logger.log({
+        msg: 'Review updated',
+        reviewId: review.id,
+        fields: Object.keys(dto),
+      });
+      return review;
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         if (e.code === 'P2025') {
@@ -100,6 +116,7 @@ export class ReviewsService {
   async remove(id: number) {
     try {
       await this.prisma.review.delete({ where: { id } });
+      this.logger.log({ msg: 'Review deleted', reviewId: id });
     } catch (e) {
       if (
         e instanceof Prisma.PrismaClientKnownRequestError &&
