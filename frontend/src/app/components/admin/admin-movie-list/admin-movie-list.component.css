@@ -562,3 +562,49 @@
   width: 100%;
   overflow-x: auto;
 }
+
+@media (max-width: 560px) {
+  .admin-page {
+    padding: 1rem 0.75rem 2rem;
+  }
+
+  .admin-header,
+  .admin-header__actions,
+  .admin-toolbar {
+    width: 100%;
+    align-items: stretch;
+  }
+
+  .admin-header__actions,
+  .admin-toolbar,
+  .pagination {
+    flex-direction: column;
+  }
+
+  .search-wrap,
+  .admin-header__actions .action-btn,
+  .pagination button {
+    width: 100%;
+  }
+
+  .admin-table {
+    min-width: 860px;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    padding: 0.65rem 0.55rem;
+  }
+
+  .confirm-modal {
+    width: calc(100vw - 1.5rem);
+    padding: 1rem;
+  }
+
+  .success-toast {
+    left: 0.75rem;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    text-align: center;
+  }
+}

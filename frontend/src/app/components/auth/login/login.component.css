@@ -349,3 +349,27 @@
     height: 72px;
   }
 }
+
+@media (max-width: 380px) {
+  .login {
+    padding: 1rem;
+    padding-top: 5rem;
+  }
+
+  .login h1,
+  .login h2 {
+    font-size: 1.45rem;
+    line-height: 1.15;
+  }
+
+  .form-actions,
+  .login-actions,
+  .links {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .logo img {
+    height: 64px;
+  }
+}

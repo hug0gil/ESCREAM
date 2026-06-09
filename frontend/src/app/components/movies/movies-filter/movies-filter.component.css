@@ -333,6 +333,16 @@ form {
 📱 RESPONSIVE — el drawer se estrecha mucho en móvil
 ============================================================ */
 @media (max-width: 420px) {
+  .filter-drawer {
+    width: 100vw;
+    padding: 1rem;
+  }
+
+  .drawer-header {
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
   .chip-grid-countries,
   .chip-grid-subgenres {
     grid-template-columns: 1fr;
@@ -340,5 +350,10 @@ form {
 
   .filter-buttons-container {
     flex-direction: column;
+  }
+
+  .filter-button,
+  .clean-button {
+    width: 100%;
   }
 }

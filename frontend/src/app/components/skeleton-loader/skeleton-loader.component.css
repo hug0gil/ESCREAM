@@ -116,3 +116,20 @@
     background-position: -200% 0;
   }
 }
+
+@media (max-width: 560px) {
+  .sk-card,
+  .sk-plan {
+    min-width: 0;
+    padding: 1rem;
+    border-radius: 0.85rem;
+  }
+
+  .sk-poster {
+    width: 100%;
+  }
+
+  .sk-plan-price {
+    width: 60%;
+  }
+}

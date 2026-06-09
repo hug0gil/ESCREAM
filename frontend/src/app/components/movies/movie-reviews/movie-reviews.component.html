@@ -225,7 +225,7 @@
                                 <span class="own-badge">Tú</span>
                                 }
                             </div>
-                            <span class="review-date">{{ review.createdAt | date:'short' }}</span>
+                            <span class="review-date">{{ review.createdAt | date:'dd/MM/yyyy' }}</span>
                         </div>
                     </div>
                     <div class="review-rating-block" [ngClass]="ratingClass(review.rating)">

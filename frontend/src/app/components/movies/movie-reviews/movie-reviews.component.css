@@ -922,3 +922,29 @@
     flex: none;
   }
 }
+
+@media (max-width: 420px) {
+  .reviews-section,
+  .review-form,
+  .review-card,
+  .review-login-card {
+    padding: 1rem;
+    border-radius: 0.85rem;
+  }
+
+  .review-actions,
+  .review-form-actions,
+  .review-login-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .review-actions button,
+  .review-form-actions button {
+    width: 100%;
+  }
+
+  .rating-track {
+    justify-content: center;
+  }
+}

@@ -1,4 +1,13 @@
-<a class="movie-card" [routerLink]="['/movies', movie.slug]" [attr.aria-label]="movie.title">
+<a
+    class="movie-card"
+    [class.touching]="touching"
+    [routerLink]="['/movies', movie.slug]"
+    [attr.aria-label]="movie.title"
+    (pointerdown)="onTouchStart()"
+    (pointerup)="onTouchEnd()"
+    (pointerleave)="onTouchEnd()"
+    (pointercancel)="onTouchEnd()"
+>
     <img class="poster" [src]="movie.image" [alt]="movie.title" loading="lazy" />
     <div class="card-overlay">
         <h3 class="movie-title">{{ movie.title }}</h3>
