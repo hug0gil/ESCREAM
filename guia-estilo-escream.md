@@ -1,4 +1,4 @@
-# 🎃 **GUÍA DE ESTILO — SVOD DE TERROR “ESCREAM”**  
+# 💀 **GUÍA DE ESTILO — SVOD DE TERROR “ESCREAM”**  
 ### *Estética: Retro Horror 80’s + Neon Skate + Indie Comic Shop*
 
 **Mood general:**  
