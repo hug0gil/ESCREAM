@@ -1,7 +1,8 @@
 # 🎃 ESCREAM — Documentación del proyecto
 
-Plataforma de streaming (SVOD) de cine de terror. Es una **aplicación web full-stack**
-dividida en dos proyectos independientes que se comunican por HTTP:
+Plataforma SVOD de películas de terror de habla castellana e hispanoamericana
+
+Esta página ha sido desarrollada exclusivamente con fines educativos y académicos como parte de mi TFG. Se trata de una simulación de una plataforma SVOD y no constituye un servicio comercial real. La aplicación se encuentra en un entorno de demostración sin HTTPS. No introduzcas datos personales, contraseñas ni información sensible.
 
 ```
 ┌──────────────────────┐        HTTP / JSON         ┌──────────────────────┐        SQL        ┌──────────────┐
