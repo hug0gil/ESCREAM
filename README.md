@@ -1,4 +1,4 @@
-# 🎃 ESCREAM — Documentación del proyecto
+# 💀 ESCREAM — Documentación del proyecto
 
 Plataforma SVOD de películas de terror de habla castellana e hispanoamericana
 
