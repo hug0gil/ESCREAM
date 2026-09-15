@@ -6,7 +6,7 @@ const prisma = new PrismaClient({
   adapter: new PrismaPg({ connectionString: process.env.DATABASE_URL }),
 });
 
-const STREAM_BASE = 'https://www.streamimdb.com/es-es/title';
+const STREAM_BASE = 'https://www.imdb.com/es-es/title';
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
