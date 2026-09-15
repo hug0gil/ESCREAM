@@ -32,10 +32,10 @@ export class MovieDetailsComponent implements OnInit {
   }
 
   goToTrailer(movie?: Movie | null) {
-    // const query = encodeURIComponent(`${movie?.title} ${movie?.year}`);
-    // const url = `https://www.imdb.com/es-es/find/?q=${query}`;
-    if (!movie?.movie_url) return;
-    const url = movie?.movie_url;
+    const query = encodeURIComponent(`${movie?.title} ${movie?.year}`);
+    const url = `https://www.imdb.com/es-es/find/?q=${query}`;
+    // if (!movie?.movie_url) return;
+    // const url = movie?.movie_url;
     window.open(url, '_blank');
   }
 
